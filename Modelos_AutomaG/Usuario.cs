@@ -18,5 +18,10 @@ namespace Modelos_AutomaG
         public string Email { get; set; }
 
         public string Password { get; set; }
+
+        //posible tabla
+        public string Rol {  get; set; }
+
+        public bool Activo { get; set; }
     }
 }
