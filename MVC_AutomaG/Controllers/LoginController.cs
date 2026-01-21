@@ -48,9 +48,9 @@ namespace MVC_AutomaG.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string nombre, string password)
+        public async Task<IActionResult> Register(string email, string nombre,string apellido,string password)
         {
-            if (await _authService.Register(email, nombre, password))
+            if (await _authService.Register(email, nombre, apellido,password))
             {
                 // Redirigir a la página de inicio de sesión
                 return RedirectToAction("Index", "Login");

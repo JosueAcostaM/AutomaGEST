@@ -54,7 +54,7 @@ namespace Servicios_AutomaG
 
         }
 
-        public async Task<bool> Register(string email, string nombre, string password)
+        public async Task<bool> Register(string email, string nombre, string apellido,string password)
         {
             var usuarioExistente = CRUD<Usuario>.GetAll()
                 .FirstOrDefault(u => u.Email == email);
@@ -71,6 +71,7 @@ namespace Servicios_AutomaG
                     Email = email,
                     Password = password, // Aquí deberías aplicar un hash a la contraseña antes de guardarla
                     Nombres = nombre,
+                    Apellidos= apellido
                 });
                 return true; // Registro exitoso
             }
