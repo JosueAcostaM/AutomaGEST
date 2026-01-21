@@ -33,7 +33,7 @@ namespace Servicios_AutomaG
                 if (usuario.Email == email)
                 {
 
-                    Console.WriteLine($"Comparadno pas ingrasado {password} con contraseña guardada {usuario.Password} ");
+                    Console.WriteLine($"Comparando pas ingresado {password} con contraseña guardada {usuario.Password} ");
                     if (BCrypt.Net.BCrypt.Verify(password, usuario.Password))
                     {
                         var datosUsuario = new List<Claim>

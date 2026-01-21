@@ -48,20 +48,31 @@ namespace MVC_AutomaG.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string nombre,string apellido,string password)
+        public async Task<IActionResult> Register(string email, string nombre, string apellido, string password, string ConfPassword)
         {
-            if (await _authService.Register(email, nombre, apellido,password))
+            email = email.Trim().ToLower();
+
+            var usuario = CRUD<Usuario>.GetAll()
+                .FirstOrDefault(u => u.Email.ToLower() == email);
+            if (usuario != null)
             {
-                // Redirigir a la página de inicio de sesión
-                return RedirectToAction("Index", "Login");
-            }
-            else
-            {
-                // Mostrar mensaje de error
-                ViewBag.ErrorMessage = "Error al registrar el usuario.";
+                ViewBag.ErrorMessage = "Esta cuenta ya está asociada a este correo";
                 return View();
             }
+            if (password != ConfPassword)
+            {
+                ViewBag.ErrorMessage = "Las contraseñas no son iguales";
+                return View();
+            }
+            if (await _authService.Register(email, nombre, apellido, password))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ViewBag.ErrorMessage = "Error al crear el usuario";
+            return View();
         }
+
         [HttpGet]
         public IActionResult RecuperarPassword()
         {
