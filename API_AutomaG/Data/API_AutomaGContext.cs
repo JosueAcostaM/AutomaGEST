@@ -15,5 +15,11 @@ namespace API_AutomaG.Data
         }
 
         public DbSet<Modelos_AutomaG.Usuario> Usuario { get; set; } = default!;
+        public DbSet<Modelos_AutomaG.Area> Area { get; set; } = default!;
+        public DbSet<Modelos_AutomaG.Conversacion> Conversacion { get; set; } = default!;
+        public DbSet<Modelos_AutomaG.EstadosInteres> EstadosInteres { get; set; } = default!;
+        public DbSet<Modelos_AutomaG.Interesado> Interesado { get; set; } = default!;
+        public DbSet<Modelos_AutomaG.Mensajes> Mensajes { get; set; } = default!;
+        public DbSet<Modelos_AutomaG.Postgrado> Postgrado { get; set; } = default!;
     }
 }
