@@ -49,8 +49,7 @@ namespace API_AutomaG.Migrations
                     Apellidos = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
-                    Rol = table.Column<string>(type: "text", nullable: false),
-                    Activo = table.Column<bool>(type: "boolean", nullable: false)
+                    Rol = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

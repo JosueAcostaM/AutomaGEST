@@ -236,9 +236,6 @@ namespace API_AutomaG.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Activo")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Apellidos")
                         .IsRequired()
                         .HasColumnType("text");

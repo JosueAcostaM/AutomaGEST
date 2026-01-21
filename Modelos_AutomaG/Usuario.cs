@@ -21,7 +21,5 @@ namespace Modelos_AutomaG
 
         //posible tabla
         public string Rol {  get; set; }
-
-        public bool Activo { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_AutomaG.Migrations
 {
     [DbContext(typeof(API_AutomaGContext))]
-    [Migration("20260121134926_v01")]
+    [Migration("20260121135922_v01")]
     partial class v01
     {
         /// <inheritdoc />
@@ -238,9 +238,6 @@ namespace API_AutomaG.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Apellidos")
                         .IsRequired()
