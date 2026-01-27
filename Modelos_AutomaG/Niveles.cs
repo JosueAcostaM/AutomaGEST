@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
-    public class UsuariosWhatsapp
+    public class Niveles
     {
         [Key] public int Id { get; set; }
 
-        public string NumeroWhatsapp { get; set; }
+        [Required]
+        public string CodigoNivel { get; set; }
 
-        public string NombreDetectado { get; set; }
+        [Required]
+        public string NombreNivel { get; set; }
 
-        public DateTime FechaCreacion { get; set; }
+        public  List<Programas>? Programas { get; set; }
     }
 }

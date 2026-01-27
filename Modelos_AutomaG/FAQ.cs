@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
-    public class EstadosInteres
+    public class FAQ
     {
-
         [Key] public int Id { get; set; }
 
-        public string NombreEstado { get; set; }
+        public string CategoriaFaq { get; set; }
+
+        public string PreguntaClave { get; set; }
+
+        public string Respuesta { get; set; }
     }
 }

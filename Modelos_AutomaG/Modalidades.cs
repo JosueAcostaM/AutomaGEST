@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
-    public class Area
+    public class Modalidades
     {
         [Key] public int Id { get; set; }
 
-        public string NombreArea { get; set; }
 
-        public string Descripcion { get; set; }
+        [Required]
+        public string NombreModalidad { get; set; }
+
+        public List<Programas>? Programas { get; set; }
+
     }
 }
