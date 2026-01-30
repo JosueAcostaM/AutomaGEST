@@ -1,30 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
+    [Table("usuarios")]
     public class Usuarios
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        [Column("idusu")]
+        public string idusu { get; set; }
+
 
         [Required]
-        public string NombreUsuario { get; set; }
+        [Column("nombreusu")]
+        public string nombreusu { get; set; }
+
 
         [Required]
-        public string EmailUsuario { get; set; }
+        [Column("emailusu")]
+        public string emailusu { get; set; }
+
 
         [Required]
-        public string PasswordHash { get; set; }
+        [Column("passwordhash")]
+        public string passwordhash { get; set; }
 
-        public bool ActivoUsu { get; set; } = true;
 
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        [Column("activousu")]
+        public bool activousu { get; set; } = true;
 
-        public List<UsuarioRoles>? UsuarioRoles { get; set; }
 
+        [Column("fechacreacion")]
+        public DateTime fechacreacion { get; set; } = DateTime.Now;
+
+
+        public  List<UsuarioRoles>? UsuarioRoles { get; set; } = new List<UsuarioRoles>();
     }
 }

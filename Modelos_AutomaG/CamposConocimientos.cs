@@ -1,25 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
-    public class CamposConocimientos
+    [Table("campos_conocimiento")]
+    public class CamposConocimiento
     {
-        [Key] public int id { get; set; }
+        [Key]
+        [Column("idcam")]
+        public string idcam { get; set; }
+
 
         [Required]
-        public string CodigoCampo { get; set; }
+        [Column("codigocam")]
+        public string codigocam { get; set; }
+
 
         [Required]
-        public string NombreCampoConoc {  get; set; }
-        
-        public string DescipcionCampo { get; set; } = "activo";
+        [Column("nombrecam")]
+        public string nombrecam { get; set; }
 
-        public List<Programas>? Programas { get; set; }
+
+        [Column("descripcioncam")]
+        public string? descripcioncam { get; set; }
+
+
+        [Column("estadocam")]
+        public string estadocam { get; set; } = "activo";
+
+
+        public List<Programas>? Programas { get; set; } = new List<Programas>();
 
     }
 }

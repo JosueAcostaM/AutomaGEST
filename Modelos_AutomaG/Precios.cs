@@ -8,21 +8,38 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
+    [Table("precios")]
     public class Precios
     {
-        [Key] public int Id { get; set; }
-
-
-        [Required, ForeignKey("IdProgramas")]
-        public string IdProgramas { get; set; }
-        public Programas Programa { get; set; }
+        [Key]
+        [Column("idpre")]
+        public string idpre { get; set; }
 
 
         [Required]
-        public decimal ValorPre { get; set; }
+        [Column("inscripcionpre")]
+        public decimal inscripcionpre { get; set; }
 
-        public string MonedaPre { get; set; } = "USD";
 
-        public bool Vigente { get; set; } = true;
+        [Required]
+        [Column("matriculapre")]
+        public decimal matriculapre { get; set; }
+
+
+        [Required]
+        [Column("arancelpre")]
+        public decimal arancelpre { get; set; }
+
+
+        [Column("monedapre")]
+        public string monedapre { get; set; } = "USD";
+
+
+        [Column("vigente")]
+        public bool vigente { get; set; } = true;
+
+
+        public List<Programas>? Programas { get; set; } = new List<Programas>();
+
     }
 }
