@@ -12,47 +12,47 @@ namespace API_AutomaG.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class AspirantesController : ControllerBase
     {
         private readonly API_AutomaGContext _context;
 
-        public UsuariosController(API_AutomaGContext context)
+        public AspirantesController(API_AutomaGContext context)
         {
             _context = context;
         }
 
-        // GET: api/Usuarios
+        // GET: api/Aspirantes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<Aspirantes>>> GetAspirantes()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Aspirantes.ToListAsync();
         }
 
-        // GET: api/Usuarios/5
+        // GET: api/Aspirantes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
+        public async Task<ActionResult<Aspirantes>> GetAspirantes(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var aspirantes = await _context.Aspirantes.FindAsync(id);
 
-            if (usuarios == null)
+            if (aspirantes == null)
             {
                 return NotFound();
             }
 
-            return usuarios;
+            return aspirantes;
         }
 
-        // PUT: api/Usuarios/5
+        // PUT: api/Aspirantes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
+        public async Task<IActionResult> PutAspirantes(string id, Aspirantes aspirantes)
         {
-            if (id != usuarios.idusu)
+            if (id != aspirantes.idasp)
             {
                 return BadRequest();
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            _context.Entry(aspirantes).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuariosExists(id))
+                if (!AspirantesExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Usuarios
+        // POST: api/Aspirantes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
+        public async Task<ActionResult<Aspirantes>> PostAspirantes(Aspirantes aspirantes)
         {
-            _context.Usuarios.Add(usuarios);
+            _context.Aspirantes.Add(aspirantes);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UsuariosExists(usuarios.idusu))
+                if (AspirantesExists(aspirantes.idasp))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace API_AutomaG.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
+            return CreatedAtAction("GetAspirantes", new { id = aspirantes.idasp }, aspirantes);
         }
 
-        // DELETE: api/Usuarios/5
+        // DELETE: api/Aspirantes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuarios(string id)
+        public async Task<IActionResult> DeleteAspirantes(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
+            var aspirantes = await _context.Aspirantes.FindAsync(id);
+            if (aspirantes == null)
             {
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuarios);
+            _context.Aspirantes.Remove(aspirantes);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuariosExists(string id)
+        private bool AspirantesExists(string id)
         {
-            return _context.Usuarios.Any(e => e.idusu == id);
+            return _context.Aspirantes.Any(e => e.idasp == id);
         }
     }
 }

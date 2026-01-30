@@ -12,47 +12,47 @@ namespace API_AutomaG.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class TiposHorariosController : ControllerBase
     {
         private readonly API_AutomaGContext _context;
 
-        public UsuariosController(API_AutomaGContext context)
+        public TiposHorariosController(API_AutomaGContext context)
         {
             _context = context;
         }
 
-        // GET: api/Usuarios
+        // GET: api/TiposHorarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<TiposHorario>>> GetTiposHorario()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.TiposHorario.ToListAsync();
         }
 
-        // GET: api/Usuarios/5
+        // GET: api/TiposHorarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
+        public async Task<ActionResult<TiposHorario>> GetTiposHorario(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var tiposHorario = await _context.TiposHorario.FindAsync(id);
 
-            if (usuarios == null)
+            if (tiposHorario == null)
             {
                 return NotFound();
             }
 
-            return usuarios;
+            return tiposHorario;
         }
 
-        // PUT: api/Usuarios/5
+        // PUT: api/TiposHorarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
+        public async Task<IActionResult> PutTiposHorario(string id, TiposHorario tiposHorario)
         {
-            if (id != usuarios.idusu)
+            if (id != tiposHorario.idtipo)
             {
                 return BadRequest();
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            _context.Entry(tiposHorario).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuariosExists(id))
+                if (!TiposHorarioExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Usuarios
+        // POST: api/TiposHorarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
+        public async Task<ActionResult<TiposHorario>> PostTiposHorario(TiposHorario tiposHorario)
         {
-            _context.Usuarios.Add(usuarios);
+            _context.TiposHorario.Add(tiposHorario);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UsuariosExists(usuarios.idusu))
+                if (TiposHorarioExists(tiposHorario.idtipo))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace API_AutomaG.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
+            return CreatedAtAction("GetTiposHorario", new { id = tiposHorario.idtipo }, tiposHorario);
         }
 
-        // DELETE: api/Usuarios/5
+        // DELETE: api/TiposHorarios/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuarios(string id)
+        public async Task<IActionResult> DeleteTiposHorario(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
+            var tiposHorario = await _context.TiposHorario.FindAsync(id);
+            if (tiposHorario == null)
             {
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuarios);
+            _context.TiposHorario.Remove(tiposHorario);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuariosExists(string id)
+        private bool TiposHorarioExists(string id)
         {
-            return _context.Usuarios.Any(e => e.idusu == id);
+            return _context.TiposHorario.Any(e => e.idtipo == id);
         }
     }
 }

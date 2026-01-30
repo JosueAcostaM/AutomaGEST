@@ -12,47 +12,47 @@ namespace API_AutomaG.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class CamposConocimientosController : ControllerBase
     {
         private readonly API_AutomaGContext _context;
 
-        public UsuariosController(API_AutomaGContext context)
+        public CamposConocimientosController(API_AutomaGContext context)
         {
             _context = context;
         }
 
-        // GET: api/Usuarios
+        // GET: api/CamposConocimientos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<CamposConocimiento>>> GetCamposConocimiento()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.CamposConocimiento.ToListAsync();
         }
 
-        // GET: api/Usuarios/5
+        // GET: api/CamposConocimientos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
+        public async Task<ActionResult<CamposConocimiento>> GetCamposConocimiento(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var camposConocimiento = await _context.CamposConocimiento.FindAsync(id);
 
-            if (usuarios == null)
+            if (camposConocimiento == null)
             {
                 return NotFound();
             }
 
-            return usuarios;
+            return camposConocimiento;
         }
 
-        // PUT: api/Usuarios/5
+        // PUT: api/CamposConocimientos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
+        public async Task<IActionResult> PutCamposConocimiento(string id, CamposConocimiento camposConocimiento)
         {
-            if (id != usuarios.idusu)
+            if (id != camposConocimiento.idcam)
             {
                 return BadRequest();
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            _context.Entry(camposConocimiento).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuariosExists(id))
+                if (!CamposConocimientoExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Usuarios
+        // POST: api/CamposConocimientos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
+        public async Task<ActionResult<CamposConocimiento>> PostCamposConocimiento(CamposConocimiento camposConocimiento)
         {
-            _context.Usuarios.Add(usuarios);
+            _context.CamposConocimiento.Add(camposConocimiento);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UsuariosExists(usuarios.idusu))
+                if (CamposConocimientoExists(camposConocimiento.idcam))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace API_AutomaG.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
+            return CreatedAtAction("GetCamposConocimiento", new { id = camposConocimiento.idcam }, camposConocimiento);
         }
 
-        // DELETE: api/Usuarios/5
+        // DELETE: api/CamposConocimientos/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuarios(string id)
+        public async Task<IActionResult> DeleteCamposConocimiento(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
+            var camposConocimiento = await _context.CamposConocimiento.FindAsync(id);
+            if (camposConocimiento == null)
             {
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuarios);
+            _context.CamposConocimiento.Remove(camposConocimiento);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuariosExists(string id)
+        private bool CamposConocimientoExists(string id)
         {
-            return _context.Usuarios.Any(e => e.idusu == id);
+            return _context.CamposConocimiento.Any(e => e.idcam == id);
         }
     }
 }

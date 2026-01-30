@@ -12,47 +12,47 @@ namespace API_AutomaG.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class HorariosController : ControllerBase
     {
         private readonly API_AutomaGContext _context;
 
-        public UsuariosController(API_AutomaGContext context)
+        public HorariosController(API_AutomaGContext context)
         {
             _context = context;
         }
 
-        // GET: api/Usuarios
+        // GET: api/Horarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<Horarios>>> GetHorarios()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Horarios.ToListAsync();
         }
 
-        // GET: api/Usuarios/5
+        // GET: api/Horarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
+        public async Task<ActionResult<Horarios>> GetHorarios(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var horarios = await _context.Horarios.FindAsync(id);
 
-            if (usuarios == null)
+            if (horarios == null)
             {
                 return NotFound();
             }
 
-            return usuarios;
+            return horarios;
         }
 
-        // PUT: api/Usuarios/5
+        // PUT: api/Horarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
+        public async Task<IActionResult> PutHorarios(string id, Horarios horarios)
         {
-            if (id != usuarios.idusu)
+            if (id != horarios.idhor)
             {
                 return BadRequest();
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            _context.Entry(horarios).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuariosExists(id))
+                if (!HorariosExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Usuarios
+        // POST: api/Horarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
+        public async Task<ActionResult<Horarios>> PostHorarios(Horarios horarios)
         {
-            _context.Usuarios.Add(usuarios);
+            _context.Horarios.Add(horarios);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UsuariosExists(usuarios.idusu))
+                if (HorariosExists(horarios.idhor))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace API_AutomaG.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
+            return CreatedAtAction("GetHorarios", new { id = horarios.idhor }, horarios);
         }
 
-        // DELETE: api/Usuarios/5
+        // DELETE: api/Horarios/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuarios(string id)
+        public async Task<IActionResult> DeleteHorarios(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
+            var horarios = await _context.Horarios.FindAsync(id);
+            if (horarios == null)
             {
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuarios);
+            _context.Horarios.Remove(horarios);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuariosExists(string id)
+        private bool HorariosExists(string id)
         {
-            return _context.Usuarios.Any(e => e.idusu == id);
+            return _context.Horarios.Any(e => e.idhor == id);
         }
     }
 }

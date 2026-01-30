@@ -5,13 +5,13 @@ using Servicios_AutomaG;
 using API_Consumer;
 
 
-CRUD<Usuario>.EndPoint = "https://localhost:7166/api/Usuarios"; // Cambia la URL según tu configuración de API 
+CRUD<Usuarios>.EndPoint = "https://localhost:7166/api/Usuarios"; // Cambia la URL según tu configuración de API 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddAuthentication("Cookies") //cokies
                 .AddCookie("Cookies", options =>

@@ -12,47 +12,47 @@ namespace API_AutomaG.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class ContactosController : ControllerBase
     {
         private readonly API_AutomaGContext _context;
 
-        public UsuariosController(API_AutomaGContext context)
+        public ContactosController(API_AutomaGContext context)
         {
             _context = context;
         }
 
-        // GET: api/Usuarios
+        // GET: api/Contactos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<Contactos>>> GetContactos()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Contactos.ToListAsync();
         }
 
-        // GET: api/Usuarios/5
+        // GET: api/Contactos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
+        public async Task<ActionResult<Contactos>> GetContactos(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var contactos = await _context.Contactos.FindAsync(id);
 
-            if (usuarios == null)
+            if (contactos == null)
             {
                 return NotFound();
             }
 
-            return usuarios;
+            return contactos;
         }
 
-        // PUT: api/Usuarios/5
+        // PUT: api/Contactos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
+        public async Task<IActionResult> PutContactos(string id, Contactos contactos)
         {
-            if (id != usuarios.idusu)
+            if (id != contactos.idcon)
             {
                 return BadRequest();
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            _context.Entry(contactos).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuariosExists(id))
+                if (!ContactosExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Usuarios
+        // POST: api/Contactos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
+        public async Task<ActionResult<Contactos>> PostContactos(Contactos contactos)
         {
-            _context.Usuarios.Add(usuarios);
+            _context.Contactos.Add(contactos);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UsuariosExists(usuarios.idusu))
+                if (ContactosExists(contactos.idcon))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace API_AutomaG.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
+            return CreatedAtAction("GetContactos", new { id = contactos.idcon }, contactos);
         }
 
-        // DELETE: api/Usuarios/5
+        // DELETE: api/Contactos/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuarios(string id)
+        public async Task<IActionResult> DeleteContactos(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
+            var contactos = await _context.Contactos.FindAsync(id);
+            if (contactos == null)
             {
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuarios);
+            _context.Contactos.Remove(contactos);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuariosExists(string id)
+        private bool ContactosExists(string id)
         {
-            return _context.Usuarios.Any(e => e.idusu == id);
+            return _context.Contactos.Any(e => e.idcon == id);
         }
     }
 }

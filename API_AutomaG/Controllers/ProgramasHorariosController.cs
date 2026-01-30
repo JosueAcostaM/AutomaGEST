@@ -12,47 +12,47 @@ namespace API_AutomaG.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class ProgramasHorariosController : ControllerBase
     {
         private readonly API_AutomaGContext _context;
 
-        public UsuariosController(API_AutomaGContext context)
+        public ProgramasHorariosController(API_AutomaGContext context)
         {
             _context = context;
         }
 
-        // GET: api/Usuarios
+        // GET: api/ProgramasHorarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<ProgramasHorarios>>> GetProgramasHorarios()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.ProgramasHorarios.ToListAsync();
         }
 
-        // GET: api/Usuarios/5
+        // GET: api/ProgramasHorarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
+        public async Task<ActionResult<ProgramasHorarios>> GetProgramasHorarios(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var programasHorarios = await _context.ProgramasHorarios.FindAsync(id);
 
-            if (usuarios == null)
+            if (programasHorarios == null)
             {
                 return NotFound();
             }
 
-            return usuarios;
+            return programasHorarios;
         }
 
-        // PUT: api/Usuarios/5
+        // PUT: api/ProgramasHorarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
+        public async Task<IActionResult> PutProgramasHorarios(string id, ProgramasHorarios programasHorarios)
         {
-            if (id != usuarios.idusu)
+            if (id != programasHorarios.idpro)
             {
                 return BadRequest();
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            _context.Entry(programasHorarios).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuariosExists(id))
+                if (!ProgramasHorariosExists(id))
                 {
                     return NotFound();
                 }
@@ -73,19 +73,19 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Usuarios
+        // POST: api/ProgramasHorarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
+        public async Task<ActionResult<ProgramasHorarios>> PostProgramasHorarios(ProgramasHorarios programasHorarios)
         {
-            _context.Usuarios.Add(usuarios);
+            _context.ProgramasHorarios.Add(programasHorarios);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UsuariosExists(usuarios.idusu))
+                if (ProgramasHorariosExists(programasHorarios.idpro))
                 {
                     return Conflict();
                 }
@@ -95,28 +95,28 @@ namespace API_AutomaG.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
+            return CreatedAtAction("GetProgramasHorarios", new { id = programasHorarios.idpro }, programasHorarios);
         }
 
-        // DELETE: api/Usuarios/5
+        // DELETE: api/ProgramasHorarios/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuarios(string id)
+        public async Task<IActionResult> DeleteProgramasHorarios(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
+            var programasHorarios = await _context.ProgramasHorarios.FindAsync(id);
+            if (programasHorarios == null)
             {
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuarios);
+            _context.ProgramasHorarios.Remove(programasHorarios);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuariosExists(string id)
+        private bool ProgramasHorariosExists(string id)
         {
-            return _context.Usuarios.Any(e => e.idusu == id);
+            return _context.ProgramasHorarios.Any(e => e.idpro == id);
         }
     }
 }
