@@ -13,6 +13,7 @@ namespace Modelos_AutomaG
     {
         [Key]
         [Column("idusu")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string idusu { get; set; }
 
 

@@ -78,22 +78,9 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
         {
+            usuarios.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
             _context.Usuarios.Add(usuarios);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UsuariosExists(usuarios.idusu))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
         }
