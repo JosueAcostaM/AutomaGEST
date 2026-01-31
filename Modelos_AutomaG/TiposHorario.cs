@@ -8,20 +8,19 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
-    [Table("modalidades")]
-    public class Modalidades
+    [Table("tipos_horario")]
+    public class TiposHorario
     {
-
         [Key]
-        [Column("idmod")]
-        public string idmod { get; set; }
+        [Column("idtipo")]
+        public string idtipo { get; set; }
 
 
         [Required]
-        [Column("nombremod")]
-        public string nombremod { get; set; }
+        [Column("nombretipo")]
+        public string nombretipo { get; set; }
 
-        public List<Programas>? Programas { get; set; } = new List<Programas>();
 
+        public  List<Horarios>? Horarios { get; set; } = new List<Horarios>();
     }
 }

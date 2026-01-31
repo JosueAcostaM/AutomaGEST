@@ -8,35 +8,55 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
+    [Table("programas")]
     public class Programas
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        [Column("idpro")]
+        public string idpro { get; set; }
+
 
         [Required]
-        public string NombrePrograma { get; set; }
+        [Column("nombrepro")]
+        public string nombrepro { get; set; }
 
 
-        [Required, ForeignKey("IdCamposConocimientos")]
-        public string IdCamposConocimientos { get; set; }
-        public  CamposConocimientos Campo { get; set; }
+        [Required]
+        [Column("idcam")]
+        public string idcam { get; set; }
 
 
-        [Required, ForeignKey("IdNiveles")]
-        public string IdNiveles { get; set; }
-        public  Niveles Nivel { get; set; }
+        [Required]
+        [Column("idniv")]
+        public string idniv { get; set; }
 
 
-        [Required, ForeignKey("IdModalidades")]
-         public string IdModalidades { get; set; }
-         public  Modalidades Modalidad { get; set; }
+        [Required]
+        [Column("idmod")]
+        public string idmod { get; set; }
 
 
-        public string DuracionPrograma { get; set; }
+        [Required]
+        [Column("idpre")]
+        public string idpre { get; set; }
 
-        public string DescripcionPrograma { get; set; }
 
-        public string EstadoPro { get; set; } = "activo";
+        [Column("duracionpro")]
+        public string? duracionpro { get; set; }
 
-        public  List<Precios>? Precios { get; set; }
+
+        [Column("descripcionpro")]
+        public string? descripcionpro { get; set; }
+
+
+        [Column("estadopro")]
+        public string estadopro { get; set; } = "activo";
+
+        [ForeignKey("idcam")] public  CamposConocimiento? Campo { get; set; }
+        [ForeignKey("idniv")] public  Niveles? Nivel { get; set; }
+        [ForeignKey("idmod")] public  Modalidades? Modalidad { get; set; }
+        [ForeignKey("idpre")] public  Precios? Precio { get; set; }
+
+        public  List<ProgramasHorarios>? ProgramasHorarios { get; set; } = new List<ProgramasHorarios>();
     }
 }

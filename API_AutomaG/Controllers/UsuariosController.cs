@@ -23,61 +23,36 @@ namespace API_AutomaG.Controllers
 
         // GET: api/Usuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuario()
+        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
-            var data = await _context.Usuario.ToListAsync();
-            return data;
+            return await _context.Usuarios.ToListAsync();
         }
 
         // GET: api/Usuarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
+            var usuarios = await _context.Usuarios.FindAsync(id);
 
-            if (usuario == null)
+            if (usuarios == null)
             {
                 return NotFound();
             }
 
-            return usuario;
+            return usuarios;
         }
 
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
+        public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
         {
-            if (id != usuario.Id)
+            if (id != usuarios.idusu)
             {
                 return BadRequest();
             }
 
-
-            //validar que el usuario si existe
-
-            var usuarioExistente = await _context.Usuario.FindAsync(id);
-            if (usuarioExistente == null)
-            {
-                return NotFound();
-            }
-
-
-            // Verificar si la contraseña proporcionada es diferente a la almacenada
-            // y si NO es un hash BCrypt válido (es decir, es texto plano)
-            if (usuario.Password != usuarioExistente.Password &&
-                !BCrypt.Net.BCrypt.Verify(usuario.Password, usuarioExistente.Password))
-            {
-                // Solo hashear si la contraseña es nueva (texto plano)
-                usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
-            }
-            else
-            {
-                // Si ya está hasheada, mantener el valor existente
-                usuario.Password = usuarioExistente.Password;
-            }
-
-            _context.Entry(usuario).State = EntityState.Modified;
+            _context.Entry(usuarios).State = EntityState.Modified;
 
             try
             {
@@ -85,7 +60,7 @@ namespace API_AutomaG.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(id))
+                if (!UsuariosExists(id))
                 {
                     return NotFound();
                 }
@@ -101,35 +76,34 @@ namespace API_AutomaG.Controllers
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+        public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
         {
-            //guardar al usuario con la contraseña encriptada
-            usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
-            _context.Usuario.Add(usuario);
+            usuarios.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
+            _context.Usuarios.Add(usuarios);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
+            return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
         }
 
         // DELETE: api/Usuarios/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuario(int id)
+        public async Task<IActionResult> DeleteUsuarios(string id)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
-            if (usuario == null)
+            var usuarios = await _context.Usuarios.FindAsync(id);
+            if (usuarios == null)
             {
                 return NotFound();
             }
 
-            _context.Usuario.Remove(usuario);
+            _context.Usuarios.Remove(usuarios);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UsuarioExists(int id)
+        private bool UsuariosExists(string id)
         {
-            return _context.Usuario.Any(e => e.Id == id);
+            return _context.Usuarios.Any(e => e.idusu == id);
         }
     }
 }

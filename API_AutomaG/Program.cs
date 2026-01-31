@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using API_AutomaG.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<API_AutomaGContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("API_AutomaG_Postgres") ?? throw new InvalidOperationException("Connection string 'API_AutomaGContext' not found.")));

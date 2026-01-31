@@ -8,27 +8,52 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
+    [Table("aspirantes")]
     public class Aspirantes
     {
-        [Key] public int Id { get; set; }
+        [Key]
+        [Column("idasp")]
+        public string idasp { get; set; }
 
 
-        [Required, ForeignKey("IdContactos")]
-        public string IdContactos { get; set; }
-        public Contactos Contactos { get; set; }
+        [Required]
+        [Column("idcon")]
+        public string idcon { get; set; }
 
-        public string NombreAspirante { get; set; }
 
-        public string EmailAspirante { get; set; }
+        [Column("nombreasp")]
+        public string? nombreasp { get; set; }
 
-        public string ProvinciaAspirante { get; set; }
 
-        public string CiudadAspirante { get; set; }
+        [Column("apellidoasp")]
+        public string? apellidoasp { get; set; }
 
-        public string NivelInteres { get; set; }
 
-        public string ProgramaInteres { get; set; }
+        [Column("emailasp")]
+        public string? emailasp { get; set; }
 
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
+
+        [Column("provinciaasp")]
+        public string? provinciaasp { get; set; }
+
+
+        [Column("ciudadasp")]
+        public string? ciudadasp { get; set; }
+
+
+        [Column("nivelinteres")]
+        public string? nivelinteres { get; set; }
+
+
+        [Column("programainteres")]
+        public string? programainteres { get; set; }
+
+
+        [Column("fecharegistro")]
+        public DateTime fecharegistro { get; set; } = DateTime.Now;
+
+
+        [ForeignKey("idcon")]
+        public  Contactos? Contacto { get; set; }
     }
 }

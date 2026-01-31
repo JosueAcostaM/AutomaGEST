@@ -29,7 +29,7 @@ namespace MVC_AutomaG.Controllers
         {
             if (await _authService.Login(email, password))
             {
-                
+
                 // Redirigir a la página principal o dashboard
                 return RedirectToAction("Index", "Home");
             }
@@ -52,8 +52,8 @@ namespace MVC_AutomaG.Controllers
         {
             email = email.Trim().ToLower();
 
-            var usuario = CRUD<Usuario>.GetAll()
-                .FirstOrDefault(u => u.Email.ToLower() == email);
+            var usuario = CRUD<Usuarios>.GetAll()
+                .FirstOrDefault(u => u.emailusu.ToLower() == email);
             if (usuario != null)
             {
                 ViewBag.ErrorMessage = "Esta cuenta ya está asociada a este correo";
@@ -73,11 +73,18 @@ namespace MVC_AutomaG.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult RecuperarPassword()
+        public async Task<IActionResult> Logout()
         {
-            return View();
+            // Elimina la cookie de autenticación
+            await HttpContext.SignOutAsync("Cookies");
+            return RedirectToAction("Index", "Home");
         }
+
+        //[HttpGet]
+        //public IActionResult RecuperarPassword()
+        //{
+        //    return View();
+        //}
 
 
         /*[HttpPost]
@@ -94,11 +101,5 @@ namespace MVC_AutomaG.Controllers
             ViewBag.SuccessMessage = "Se ha enviado un correo electrónico para recuperar la contraseña.";
             return RedirectToAction("Index", "Login");
         }*/
-
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync("Cookies");
-            return RedirectToAction("Index", "Login");
-        }
     }
 }

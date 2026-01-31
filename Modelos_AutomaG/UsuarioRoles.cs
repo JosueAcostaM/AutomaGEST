@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
 {
+    [Table("usuario_roles")]
     public class UsuarioRoles
     {
-        [Key ] public int Id { get; set; }
+        [Required]
+        [Column("idusu")]
+        public string idusu { get; set; }
 
 
-        [Required, ForeignKey("IdUsuarios")]
-        public string IdUsuarios { get; set; }
-        public Usuarios Usuarios { get; set; }
+        [Required]
+        [Column("idrol")]
+        public string idrol { get; set; }
 
 
-
-        [Required, ForeignKey("IdRoles")]
-        public string IdRoles { get; set; }
-
-        public Roles Roles { get; set; }
+        [ForeignKey("idusu")] public  Usuarios? Usuario { get; set; }
+        [ForeignKey("idrol")] public  Roles? Rol { get; set; }
     }
 }

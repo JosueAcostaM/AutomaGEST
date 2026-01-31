@@ -18,7 +18,7 @@ namespace Servicios_AutomaG
 {
     public class AuthService : IAuthService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor; // Para acceder al contexto HTTP y manejar la autenticación
+        private readonly IHttpContextAccessor _httpContextAccessor; 
         public AuthService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -27,19 +27,19 @@ namespace Servicios_AutomaG
         public async Task<bool> Login(string email, string password)
         {
 
-            var usuarios = CRUD<Usuario>.GetAll();
+            var usuarios = CRUD<Usuarios>.GetAll();
             foreach (var usuario in usuarios)
             {
-                if (usuario.Email == email)
+                if (usuario.emailusu == email)
                 {
 
-                    Console.WriteLine($"Comparando pas ingresado {password} con contraseña guardada {usuario.Password} ");
-                    if (BCrypt.Net.BCrypt.Verify(password, usuario.Password))
+                    Console.WriteLine($"Comparando contraseña ingresado {password} con contraseña guardada {usuario.passwordhash} ");
+                    if (BCrypt.Net.BCrypt.Verify(password, usuario.passwordhash))
                     {
                         var datosUsuario = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, usuario.Nombres),
-                            new Claim(ClaimTypes.Email, usuario.Email),
+                            new Claim(ClaimTypes.Name, usuario.nombreusu),
+                            new Claim(ClaimTypes.Email, usuario.emailusu),
                         };
                         var credencialDigital = new ClaimsIdentity(datosUsuario, "Cookies");
                         var usuarioAutenticado = new ClaimsPrincipal(credencialDigital);
@@ -49,15 +49,15 @@ namespace Servicios_AutomaG
                     }
                 }
             }
-            return false; // Usuario no encontrado o contraseña incorrecta
+            return false;
 
 
         }
 
-        public async Task<bool> Register(string email, string nombre, string apellido,string password)
+        public async Task<bool> Register(string email, string nombre, string apellido, string password)
         {
-            var usuarioExistente = CRUD<Usuario>.GetAll()
-                .FirstOrDefault(u => u.Email == email);
+            var usuarioExistente = CRUD<Usuarios>.GetAll()
+                .FirstOrDefault(u => u.emailusu == email);
             if (usuarioExistente != null)
             {
                 return false; // El usuario ya existe   
@@ -65,20 +65,21 @@ namespace Servicios_AutomaG
 
             try
             {
-                CRUD<Usuario>.Create(new Usuario
+                CRUD<Usuarios>.Create(new Usuarios
                 {
-                    Id = 0,
-                    Email = email,
-                    Password = password, // Aquí deberías aplicar un hash a la contraseña antes de guardarla
-                    Nombres = nombre,
-                    Apellidos= apellido
+                    //idusu = "", por corregir 
+                    nombreusu = nombre,
+                    passwordhash = password,
+                    emailusu = email,
+                    activousu= true,
+                    fechacreacion= DateTime.UtcNow,
                 });
-                return true; // Registro exitoso
+                return true; 
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al registrar usuario: {ex.Message}");
-                return false; // Error al registrar usuario
+                return false; 
 
             }
         }
