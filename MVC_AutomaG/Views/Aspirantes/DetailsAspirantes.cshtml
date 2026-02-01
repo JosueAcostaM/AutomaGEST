@@ -1,0 +1,74 @@
+﻿@model Modelos_AutomaG.Aspirantes
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 p-4 mb-4 bg-white rounded-4">
+                <h3 class="text-primary-emphasis mb-4">Información del Aspirante</h3>
+
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small fw-bold text-uppercase">Nombre Completo</label>
+                        <p class="fs-5">@Model.nombreasp @Model.apellidoasp</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small fw-bold text-uppercase">Correo Electrónico</label>
+                        <p class="fs-5">@Model.emailasp</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small fw-bold text-uppercase">Teléfono</label>
+                        <p class="fs-5">@(Model.Contacto?.telefonocon ?? "N/A")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small fw-bold text-uppercase">Ciudad</label>
+                        <p class="fs-5">@Model.ciudadasp</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small fw-bold text-uppercase">Programa</label>
+                        <p class="fs-5">@Model.programainteres</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small fw-bold text-uppercase">Estado</label>
+                        <p><span class="badge bg-info-subtle text-info-emphasis px-3 py-2 rounded-pill">En revisión</span></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <label class="text-muted small fw-bold text-uppercase">Notas</label>
+                        <p class="text-secondary">Interesado en la modalidad virtual y horarios flexibles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 mb-3 bg-white rounded-4">
+                <h5 class="text-secondary mb-3">Fecha de Registro</h5>
+                <p class="fs-3 fw-light">@Model.fecharegistro.ToString("dd 'de' MMMM 'de' yyyy")</p>
+            </div>
+
+            <div class="card shadow-sm border-0 p-4 bg-white rounded-4">
+                <h5 class="text-secondary mb-3">Info Adicional</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">ID:</span>
+                    <span class="fw-bold">@Model.idasp</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Fuente:</span>
+                    <span class="fw-bold">Web</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Prioridad:</span>
+                    <span class="badge bg-warning-subtle text-warning-emphasis">Media</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

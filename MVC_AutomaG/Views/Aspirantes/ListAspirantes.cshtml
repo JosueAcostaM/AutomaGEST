@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Modelos_AutomaG.Aspirantes>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Registro de Aspirantes</h3>
+    </div>
+
+    <table class="table table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre Completo</th>
+                <th class="text-center">Ciudad</th>
+                <th class="text-center">Programa de Interés</th>
+                <th class="text-center">Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.nombreasp @item.apellidoasp</td>
+                        <td>@item.ciudadasp</td>
+                        <td>@item.programainteres</td>
+
+                        <td class="text-center">
+                            <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp" class="btn btn-sm btn-danger">
+                                Ver Detalles
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -48,6 +48,20 @@ namespace API_Consumer
 
         }
 
+        public static T GetById(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = client.GetAsync($"{EndPoint}/{id}").Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<T>(json);
+                }
+                throw new Exception($"Error al obtener registro {id}: {response.StatusCode}");
+            }
+        }
+
 
         public static T Create(T item)
         {

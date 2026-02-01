@@ -5,7 +5,9 @@ using Servicios_AutomaG;
 using API_Consumer;
 
 
-CRUD<Usuarios>.EndPoint = "https://localhost:7166/api/Usuarios"; // Cambia la URL según tu configuración de API 
+CRUD<Usuarios>.EndPoint = "https://localhost:7166/api/Usuarios";
+CRUD<Aspirantes>.EndPoint = "https://localhost:7166/api/Aspirantes";
+
 
 var builder = WebApplication.CreateBuilder(args);
 
