@@ -18,14 +18,18 @@ namespace MVC_AutomaG.Controllers
             try
             {
                 var aspirantes = CRUD<Aspirantes>.GetAll();
+                var programas = CRUD<Programas>.GetAll(); // Traer todos los campos
+                ViewBag.Programas = programas; // Pasar al ViewBag para usar en el dropdown
                 return View(aspirantes);
             }
             catch (Exception ex)
             {
                 ViewBag.Error = "Error al conectar con la API: " + ex.Message;
+                ViewBag.CamposConocimiento = new List<Programas>();
                 return View(new List<Aspirantes>());
             }
         }
+
 
         public IActionResult DetailsAspirantes(string id)
         {

@@ -1,39 +1,96 @@
 ﻿@model IEnumerable<Modelos_AutomaG.Aspirantes>
+@using Modelos_AutomaG
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Registro de Aspirantes</h3>
     </div>
 
-    <table class="table table-hover shadow-sm">
+    <!-- FILTROS -->
+    <div class="row mb-3 g-2">
+        <!-- Filtro de texto (nombre, ciudad o programa) -->
+        <div class="col-md-6">
+            <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar por nombre, ciudad o programa">
+        </div>
+
+        <!-- Filtro por Programas de conocimiento -->
+        <div class="col-md-6">
+            <select id="filtroCampo" class="form-select">
+                <option value="">Todas las categorías</option>
+                @* Lista de Programas *@
+                @foreach (var campo in ViewBag.Programas as List<Programas>)
+                {
+                    <option value="@campo.nombrepro">@campo.nombrepro</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- TABLA DE ASPIRANTES -->
+    <table class="table table-hover shadow-sm" id="tablaAspirantes">
         <thead class="table-dark">
             <tr>
                 <th>Nombre Completo</th>
                 <th class="text-center">Ciudad</th>
                 <th class="text-center">Programa de Interés</th>
                 <th class="text-center">Acciones</th>
-
             </tr>
         </thead>
-        <tbody>
+        <tbody id="cuerpoAspirantes">
             @if (Model != null)
             {
                 @foreach (var item in Model)
                 {
                     <tr>
                         <td>@item.nombreasp @item.apellidoasp</td>
-                        <td>@item.ciudadasp</td>
-                        <td>@item.programainteres</td>
-
+                        <td class="text-center">@item.ciudadasp</td>
+                        <td class="text-center">@item.programainteres</td>
                         <td class="text-center">
                             <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp" class="btn btn-sm btn-danger">
                                 Ver Detalles
                             </a>
                         </td>
-
                     </tr>
                 }
             }
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filtroTexto = document.getElementById('filtroTexto');
+    const filtroCampo = document.getElementById('filtroCampo');
+    const tabla = document.getElementById('cuerpoAspirantes');
+
+    function aplicarFiltro() {
+        const texto = filtroTexto.value.toLowerCase();
+        const campoSeleccionado = filtroCampo.value.toLowerCase();
+
+        Array.from(tabla.querySelectorAll('tr')).forEach(row => {
+            const nombre = row.cells[0].textContent.toLowerCase();
+            const ciudad = row.cells[1].textContent.toLowerCase();
+            const programa = row.cells[2].textContent.toLowerCase();
+
+            let mostrar = true;
+
+            // Filtro de texto
+            if (texto) {
+                mostrar = nombre.includes(texto) || ciudad.includes(texto) || programa.includes(texto);
+            }
+
+            // Filtro por campo de conocimiento
+            if (campoSeleccionado) {
+                mostrar = mostrar && programa.includes(campoSeleccionado);
+            }
+
+            row.style.display = mostrar ? "" : "none";
+        });
+    }
+
+    filtroTexto.addEventListener('input', aplicarFiltro);
+    filtroCampo.addEventListener('change', aplicarFiltro);
+});
+</script>
+}
