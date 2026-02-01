@@ -1,21 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using API_AutomaG.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<API_AutomaGContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("API_AutomaG_Postgres") ?? throw new InvalidOperationException("Connection string 'API_AutomaGContext' not found.")));
 
-// Add services to the container.
+builder.Services.AddDbContext<API_AutomaGContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("API_AutomaG_Postgres")
+        ?? throw new InvalidOperationException("Connection string not found.")
+    )
+);
+
+// 🔹 CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMVC",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7002")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -23,6 +35,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// 🔹 CORS VA AQUÍ
+app.UseCors("AllowMVC");
 
 app.UseAuthorization();
 

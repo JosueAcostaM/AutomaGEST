@@ -83,7 +83,7 @@ namespace API_Consumer
             }
         }
 
-        public static bool Update(int id, T item)
+        public static bool Update(String id, T item)
         {
             using (var client = new HttpClient())
             {
@@ -103,7 +103,7 @@ namespace API_Consumer
             }
         }
 
-        public static bool Delete(int id)
+        public static bool Delete(string id)
         {
             using (var client = new HttpClient())
             {

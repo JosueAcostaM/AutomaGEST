@@ -7,7 +7,8 @@ using API_Consumer;
 
 CRUD<Usuarios>.EndPoint = "https://localhost:7166/api/Usuarios";
 CRUD<Aspirantes>.EndPoint = "https://localhost:7166/api/Aspirantes";
-
+CRUD<CamposConocimiento>.EndPoint = "https://localhost:7166/api/CamposConocimientos";
+CRUD<Programas>.EndPoint = "https://localhost:7166/api/Programas";
 
 var builder = WebApplication.CreateBuilder(args);
 

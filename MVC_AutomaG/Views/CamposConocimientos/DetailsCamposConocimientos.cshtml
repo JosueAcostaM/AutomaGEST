@@ -1,0 +1,48 @@
+﻿@model Modelos_AutomaG.CamposConocimiento
+
+<h2>Detalles del Campo de Conocimiento</h2>
+
+<div>
+    <h4>@Model.nombrecam (@Model.codigocam)</h4>
+    <p>Estado: @Model.estadocam</p>
+    <p>Descripción: @Model.descripcioncam</p>
+</div>
+
+<h3>Programas Asociados</h3>
+
+@if (Model.Programas != null && Model.Programas.Any())
+{
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre del Programa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var programa in Model.Programas)
+            {
+                <tr>
+                    <td>@programa.nombrepro</td>
+                    <td>
+                        <!-- Enlace a la lista de aspirantes de este programa -->
+                        <a asp-controller="Aspirantes"
+                           asp-action="ListByPrograma"
+                           asp-route-idPrograma="@programa.idpro"
+                           class="btn btn-sm btn-primary">
+                            Aspirantes del Programa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay programas asociados a este campo.</p>
+}
+
+<div>
+    <a asp-action="ListCamposConocimientos">Volver al listado</a>
+</div>

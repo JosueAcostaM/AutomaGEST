@@ -44,6 +44,9 @@ namespace API_AutomaG.Controllers
 
         // PUT: api/Aspirantes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // En tu archivo: API_AutomaG\Controllers\AspirantesController.cs
+
+        //Guardar informacion aspirante
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAspirantes(string id, Aspirantes aspirantes)
         {
@@ -52,7 +55,24 @@ namespace API_AutomaG.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(aspirantes).State = EntityState.Modified;
+            var existingAspirante = await _context.Aspirantes.FindAsync(id);
+            if (existingAspirante == null)
+            {
+                return NotFound();
+            }
+
+            // Marcar explícitamente que fecharegistro NO debe actualizarse
+            _context.Entry(existingAspirante).Property(x => x.fecharegistro).IsModified = false;
+
+            // Actualizar solo los campos necesarios
+            existingAspirante.nombreasp = aspirantes.nombreasp;
+            existingAspirante.apellidoasp = aspirantes.apellidoasp;
+            existingAspirante.emailasp = aspirantes.emailasp;
+            existingAspirante.provinciaasp = aspirantes.provinciaasp;
+            existingAspirante.ciudadasp = aspirantes.ciudadasp;
+            existingAspirante.programainteres = aspirantes.programainteres;
+            existingAspirante.nivelinteres = aspirantes.nivelinteres;
+            existingAspirante.idcon = aspirantes.idcon;
 
             try
             {

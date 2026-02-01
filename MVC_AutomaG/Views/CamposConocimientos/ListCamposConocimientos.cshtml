@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Modelos_AutomaG.CamposConocimiento>
+
+<div class="container mt-4">
+    <h3>Campos de Conocimiento</h3>
+
+    <table class="table table-hover shadow-sm" id="tablaCampos">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Código</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoCampos">
+            @if (Model != null)
+            {
+                @foreach (var item in Model)
+                {
+                    <tr data-id-row="@item.idcam">
+                        <td>@item.nombrecam</td>
+                        <td>@item.codigocam</td>
+                        <td>@item.estadocam</td>
+                        <td class="text-center d-flex justify-content-center gap-1">
+                            <!-- Botón Ver Detalles -->
+                            <a asp-action="DetailsCamposConocimientos"
+                               asp-route-id="@item.idcam"
+                               class="btn btn-sm btn-primary">
+                                Ver Detalles
+                            </a>
+
+                            <!-- Botón Eliminar -->
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    onclick="eliminarCampo('@item.idcam')">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        // Función eliminar con actualización
+        window.eliminarCampo = function(id) {
+            if(!confirm('¿Seguro que quieres eliminar este campo?')) return;
+
+            fetch(`https://localhost:7166/api/CamposConocimientos/${id}`, { method: 'DELETE' })
+                .then(r => {
+                    if (!r.ok) throw new Error('Error al eliminar');
+                    return r;
+                })
+                .then(() => {
+                    // Recargar la tabla desde la API
+                    fetch('https://localhost:7166/api/CamposConocimientos')
+                        .then(r => r.json())
+                        .then(data => {
+                            const cuerpo = document.getElementById('cuerpoCampos');
+                            cuerpo.innerHTML = '';
+                            data.forEach(item => {
+                                const row = document.createElement('tr');
+                                row.setAttribute('data-id-row', item.idcam);
+                                row.innerHTML = `
+                                    <td>${item.nombrecam}</td>
+                                    <td>${item.codigocam}</td>
+                                    <td>${item.estadocam}</td>
+                                    <td class="text-center d-flex justify-content-center gap-1">
+                                        <a href="/CamposConocimiento/DetailsCamposConocimientos/${item.idcam}" class="btn btn-sm btn-primary">
+                                            Ver Detalles
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarCampo('${item.idcam}')">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </td>
+                                `;
+                                cuerpo.appendChild(row);
+                            });
+                        });
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('No se pudo eliminar el campo');
+                });
+        }
+    </script>
+}

@@ -118,5 +118,28 @@ namespace API_AutomaG.Controllers
         {
             return _context.Programas.Any(e => e.idpro == id);
         }
+        //Cambiar estado
+        [HttpPatch("{id}/estado")]
+        public async Task<IActionResult> CambiarEstado(string id)
+        {
+            var programa = await _context.Programas.FindAsync(id);
+
+            if (programa == null)
+                return NotFound();
+
+            // Alternar estado
+            programa.estadopro = programa.estadopro == "activo"
+                ? "inactivo"
+                : "activo";
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                id = programa.idpro,
+                nuevoEstado = programa.estadopro
+            });
+        }
+
     }
 }

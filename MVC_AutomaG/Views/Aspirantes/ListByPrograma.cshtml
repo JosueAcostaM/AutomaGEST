@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Modelos_AutomaG.Aspirantes>
+
+<h2>Aspirantes del Programa</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nombre Completo</th>
+                <th>Ciudad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.nombreasp @item.apellidoasp</td>
+                    <td>@item.ciudadasp</td>
+                    <td>
+                        <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp" class="btn btn-sm btn-primary">
+                            Ver Detalles
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay aspirantes inscritos en este programa.</p>
+}
+
+<a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos">Volver a Campos</a>

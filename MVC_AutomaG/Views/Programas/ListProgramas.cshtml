@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Modelos_AutomaG.Programas>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Programas</h3>
+        <!-- Botón agregar programa -->
+        <a href="/Programas/Create" class="btn btn-success btn-sm">
+            <i class="bi bi-plus-circle"></i> Agregar Programa
+        </a>
+    </div>
+
+    <table class="table table-hover shadow-sm" id="tablaProgramas">
+        <thead class="table-dark">
+            <tr>
+                <th>Programa</th>
+                <th class="text-center">Estado / Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoProgramas">
+            @if (Model != null)
+            {
+                @foreach (var item in Model)
+                {
+                    <tr data-id-row="@item.idpro">
+                        <td>@item.nombrepro</td>
+                        <td class="text-center d-flex align-items-center justify-content-between">
+                            <!-- Switch de estado -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input estado-switch"
+                                       type="checkbox"
+                                       data-id="@item.idpro"
+                                       @(item.estadopro == "activo" ? "checked" : "")>
+                                <span class="ms-2 estado-texto" id="estado_@item.idpro">
+                                    @item.estadopro
+                                </span>
+                            </div>
+
+                            <!-- Botón eliminar -->
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    onclick="eliminarPrograma('@item.idpro')">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Función para cambiar estado
+            function initSwitches() {
+                document.querySelectorAll('.estado-switch').forEach(sw => {
+                    sw.addEventListener('change', function () {
+                        const id = this.dataset.id;
+                        const textoEstado = document.getElementById('estado_' + id);
+
+                        fetch(`https://localhost:7166/api/Programas/${id}/estado`, {
+                            method: 'PATCH'
+                        })
+                        .then(r => {
+                            if (!r.ok) throw new Error();
+                            return r.json();
+                        })
+                        .then(data => {
+                            textoEstado.textContent = data.nuevoEstado;
+                        })
+                        .catch(() => {
+                            this.checked = !this.checked;
+                            alert('Error al cambiar el estado');
+                        });
+                    });
+                });
+            }
+
+            // Inicializar switches al cargar la tabla
+            initSwitches();
+
+            // Función eliminar
+            window.eliminarPrograma = function(id) {
+                if(!confirm('¿Seguro que quieres eliminar este programa?')) return;
+
+                fetch(`https://localhost:7166/api/Programas/${id}`, { method: 'DELETE' })
+                    .then(r => {
+                        if (!r.ok) throw new Error('Error al eliminar');
+                        return r;
+                    })
+                    .then(() => {
+                        // Recargar la tabla desde la API
+                        fetch('https://localhost:7166/api/Programas')
+                            .then(r => r.json())
+                            .then(data => {
+                                const cuerpo = document.getElementById('cuerpoProgramas');
+                                cuerpo.innerHTML = '';
+                                data.forEach(item => {
+                                    const row = document.createElement('tr');
+                                    row.setAttribute('data-id-row', item.idpro);
+                                    row.innerHTML = `
+                                        <td>${item.nombrepro}</td>
+                                        <td class="text-center d-flex align-items-center justify-content-between">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input estado-switch" type="checkbox" data-id="${item.idpro}" ${item.estadopro === 'activo' ? 'checked' : ''}>
+                                                <span class="ms-2 estado-texto" id="estado_${item.idpro}">${item.estadopro}</span>
+                                            </div>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarPrograma('${item.idpro}')">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </td>
+                                    `;
+                                    cuerpo.appendChild(row);
+                                });
+
+                                // Re-inicializar los switches
+                                initSwitches();
+                            });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('No se pudo eliminar el programa');
+                    });
+            }
+
+        });
+    </script>
+}

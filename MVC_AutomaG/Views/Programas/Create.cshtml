@@ -1,0 +1,73 @@
+﻿@model Modelos_AutomaG.Programas
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Programas</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="idpro" class="control-label"></label>
+                <input asp-for="idpro" class="form-control" />
+                <span asp-validation-for="idpro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="nombrepro" class="control-label"></label>
+                <input asp-for="nombrepro" class="form-control" />
+                <span asp-validation-for="nombrepro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idcam" class="control-label"></label>
+                <input asp-for="idcam" class="form-control" />
+                <span asp-validation-for="idcam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idniv" class="control-label"></label>
+                <input asp-for="idniv" class="form-control" />
+                <span asp-validation-for="idniv" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idmod" class="control-label"></label>
+                <input asp-for="idmod" class="form-control" />
+                <span asp-validation-for="idmod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idpre" class="control-label"></label>
+                <input asp-for="idpre" class="form-control" />
+                <span asp-validation-for="idpre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="duracionpro" class="control-label"></label>
+                <input asp-for="duracionpro" class="form-control" />
+                <span asp-validation-for="duracionpro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="descripcionpro" class="control-label"></label>
+                <input asp-for="descripcionpro" class="form-control" />
+                <span asp-validation-for="descripcionpro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="estadopro" class="control-label"></label>
+                <input asp-for="estadopro" class="form-control" />
+                <span asp-validation-for="estadopro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="ListPrograma">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

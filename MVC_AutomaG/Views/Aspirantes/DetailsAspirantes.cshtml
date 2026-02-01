@@ -4,50 +4,139 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm border-0 p-4 mb-4 bg-white rounded-4">
-                <h3 class="text-primary-emphasis mb-4">Información del Aspirante</h3>
+                <!-- CABECERA CON BOTÓN EDITAR -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-primary-emphasis mb-0">Información del Aspirante</h3>
 
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <label class="text-muted small fw-bold text-uppercase">Nombre Completo</label>
-                        <p class="fs-5">@Model.nombreasp @Model.apellidoasp</p>
+                    <!-- Botón Editar (verde) -->
+                    <button type="button" class="btn btn-primary" id="btnEditar">
+                        <i class="fas fa-edit me-2"></i>Editar Información
+                    </button>
+                </div>
+
+                <!-- MODO VISUALIZACIÓN (igual que antes) -->
+                <div id="modoVisualizacion">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Nombre Completo</label>
+                            <p class="fs-5">@Model.nombreasp @Model.apellidoasp</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Correo Electrónico</label>
+                            <p class="fs-5">@Model.emailasp</p>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="text-muted small fw-bold text-uppercase">Correo Electrónico</label>
-                        <p class="fs-5">@Model.emailasp</p>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Teléfono</label>
+                            <p class="fs-5">@(Model.Contacto?.telefonocon ?? "N/A")</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Ciudad</label>
+                            <p class="fs-5">@Model.ciudadasp</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Programa</label>
+                            <p class="fs-5">@Model.programainteres</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Estado</label>
+                            <p><span class="badge bg-info-subtle text-info-emphasis px-3 py-2 rounded-pill">En revisión</span></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="text-muted small fw-bold text-uppercase">Notas</label>
+                            <p class="text-secondary">Interesado en la modalidad virtual y horarios flexibles.</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <label class="text-muted small fw-bold text-uppercase">Teléfono</label>
-                        <p class="fs-5">@(Model.Contacto?.telefonocon ?? "N/A")</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="text-muted small fw-bold text-uppercase">Ciudad</label>
-                        <p class="fs-5">@Model.ciudadasp</p>
-                    </div>
-                </div>
+                <!-- MODO EDICIÓN (oculto inicialmente) -->
+                <div id="modoEdicion" style="display: none;">
+                    <form id="formEdicion"
+                          data-action="@Url.Action("Update", "Aspirantes")"
+                          data-id="@Model.idasp">
+                        @Html.AntiForgeryToken()
 
-                <div class="row mb-3">
-                    <div class="col-md-6 mb-3">
-                        <label class="text-muted small fw-bold text-uppercase">Programa</label>
-                        <p class="fs-5">@Model.programainteres</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="text-muted small fw-bold text-uppercase">Estado</label>
-                        <p><span class="badge bg-info-subtle text-info-emphasis px-3 py-2 rounded-pill">En revisión</span></p>
-                    </div>
-                </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Nombre</label>
+                                <input type="text" class="form-control" name="nombreasp" value="@Model.nombreasp" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Apellido</label>
+                                <input type="text" class="form-control" name="apellidoasp" value="@Model.apellidoasp" />
+                            </div>
+                        </div>
 
-                <div class="row">
-                    <div class="col-12">
-                        <label class="text-muted small fw-bold text-uppercase">Notas</label>
-                        <p class="text-secondary">Interesado en la modalidad virtual y horarios flexibles.</p>
-                    </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Correo Electrónico</label>
+                                <input type="email" class="form-control" name="emailasp" value="@Model.emailasp" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Ciudad</label>
+                                <input type="text" class="form-control" name="ciudadasp" value="@Model.ciudadasp" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Programa</label>
+                                <!-- SELECT PARA PROGRAMAS -->
+                                <select class="form-select" name="programainteres" required>
+                                    <option value="">-- Seleccione un programa --</option>
+                                    @if (ViewBag.Programas != null)
+                                    {
+                                        foreach (var programa in ViewBag.Programas)
+                                        {
+                                            <option value="@programa.nombrepro"
+                                                    selected="@(Model.programainteres == programa.nombrepro)">
+                                                @programa.nombrepro
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Provincia</label>
+                                <input type="text" class="form-control" name="provinciaasp" value="@Model.provinciaasp" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Teléfono</label>
+                                <input type="text" class="form-control" name="telefonocon"
+                                       value="@(Model.Contacto?.telefonocon ?? "")"
+                                       placeholder="Ingrese el teléfono" />
+                            </div>
+                        </div>
+
+                        <!-- BOTONES DE EDICIÓN -->
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <!-- Botón Cancelar (rojo) -->
+                            <button type="button" class="btn btn-danger btn-lg px-4" id="btnCancelar">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </button>
+
+                            <!-- Botón Guardar (verde) -->
+                            <button type="button" class="btn btn-success btn-lg px-4" id="btnGuardar">
+                                <i class="fas fa-save me-2"></i>Guardar Información
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
+        <!-- COLUMNA DERECHA (igual que antes) -->
         <div class="col-md-4">
             <div class="card shadow-sm border-0 p-4 mb-3 bg-white rounded-4">
                 <h5 class="text-secondary mb-3">Fecha de Registro</h5>
@@ -72,3 +161,65 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos
+            const btnEditar = document.getElementById('btnEditar');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const btnGuardar = document.getElementById('btnGuardar');
+            const modoVisualizacion = document.getElementById('modoVisualizacion');
+            const modoEdicion = document.getElementById('modoEdicion');
+            const formulario = document.getElementById('formEdicion');
+
+            // 1. Click en "Editar Información"
+            btnEditar.addEventListener('click', function() {
+                modoVisualizacion.style.display = 'none';
+                modoEdicion.style.display = 'block';
+                btnEditar.style.display = 'none';
+            });
+
+            // 2. Click en "Cancelar"
+            btnCancelar.addEventListener('click', function() {
+                modoVisualizacion.style.display = 'block';
+                modoEdicion.style.display = 'none';
+                btnEditar.style.display = 'block';
+            });
+
+            // 3. Click en "Guardar Información"
+            btnGuardar.addEventListener('click', async function() {
+                // Mostrar cargando
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+                btnGuardar.disabled = true;
+
+                try {
+                    const formData = new FormData(formulario);
+                    formData.append('id', formulario.dataset.id);
+
+                    const response = await fetch(formulario.dataset.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('Información guardada correctamente');
+                        location.reload(); // Recargar página
+                    } else {
+                        const error = await response.text();
+                        alert('Error: ' + error);
+                    }
+                } catch (error) {
+                    alert('Error de conexión: ' + error.message);
+                } finally {
+                    // Restaurar botón
+                    btnGuardar.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Información';
+                    btnGuardar.disabled = false;
+                }
+            });
+        });
+    </script>
+}

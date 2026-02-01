@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
@@ -52,9 +53,13 @@ namespace Modelos_AutomaG
         [Column("estadopro")]
         public string estadopro { get; set; } = "activo";
 
+        [JsonIgnore]
         [ForeignKey("idcam")] public  CamposConocimiento? Campo { get; set; }
+        [JsonIgnore]
         [ForeignKey("idniv")] public  Niveles? Nivel { get; set; }
+        [JsonIgnore]
         [ForeignKey("idmod")] public  Modalidades? Modalidad { get; set; }
+        [JsonIgnore]
         [ForeignKey("idpre")] public  Precios? Precio { get; set; }
 
         public  List<ProgramasHorarios>? ProgramasHorarios { get; set; } = new List<ProgramasHorarios>();

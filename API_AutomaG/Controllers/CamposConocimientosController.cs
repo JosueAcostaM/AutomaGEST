@@ -25,25 +25,28 @@ namespace API_AutomaG.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CamposConocimiento>>> GetCamposConocimiento()
         {
-            return await _context.CamposConocimiento.ToListAsync();
+            return await _context.CamposConocimiento
+                .Include(c => c.Programas)
+                .ToListAsync();
         }
 
-        // GET: api/CamposConocimientos/5
+        // GET: api/CamposConocimientos/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<CamposConocimiento>> GetCamposConocimiento(string id)
         {
-            var camposConocimiento = await _context.CamposConocimiento.FindAsync(id);
+            var campo = await _context.CamposConocimiento
+                .Include(c => c.Programas)
+                .FirstOrDefaultAsync(c => c.idcam == id);
 
-            if (camposConocimiento == null)
+            if (campo == null)
             {
                 return NotFound();
             }
 
-            return camposConocimiento;
+            return campo;
         }
 
-        // PUT: api/CamposConocimientos/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/CamposConocimientos/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCamposConocimiento(string id, CamposConocimiento camposConocimiento)
         {
@@ -74,41 +77,31 @@ namespace API_AutomaG.Controllers
         }
 
         // POST: api/CamposConocimientos
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CamposConocimiento>> PostCamposConocimiento(CamposConocimiento camposConocimiento)
         {
             _context.CamposConocimiento.Add(camposConocimiento);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (CamposConocimientoExists(camposConocimiento.idcam))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCamposConocimiento", new { id = camposConocimiento.idcam }, camposConocimiento);
+            return CreatedAtAction(
+                "GetCamposConocimiento",
+                new { id = camposConocimiento.idcam },
+                camposConocimiento
+            );
         }
 
-        // DELETE: api/CamposConocimientos/5
+        // DELETE: api/CamposConocimientos/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCamposConocimiento(string id)
         {
-            var camposConocimiento = await _context.CamposConocimiento.FindAsync(id);
-            if (camposConocimiento == null)
+            var campo = await _context.CamposConocimiento.FindAsync(id);
+
+            if (campo == null)
             {
                 return NotFound();
             }
 
-            _context.CamposConocimiento.Remove(camposConocimiento);
+            _context.CamposConocimiento.Remove(campo);
             await _context.SaveChangesAsync();
 
             return NoContent();
