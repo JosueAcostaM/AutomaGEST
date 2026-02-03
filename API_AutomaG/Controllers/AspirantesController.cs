@@ -32,14 +32,16 @@ namespace API_AutomaG.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Aspirantes>> GetAspirantes(string id)
         {
-            var aspirantes = await _context.Aspirantes.FindAsync(id);
+            var aspirante = await _context.Aspirantes.
+                Include(a => a.Contacto).
+                FirstOrDefaultAsync();
+                
 
-            if (aspirantes == null)
-            {
+            if (aspirante == null)
                 return NotFound();
-            }
 
-            return aspirantes;
+           
+            return aspirante;
         }
 
         // PUT: api/Aspirantes/5

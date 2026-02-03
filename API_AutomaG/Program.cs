@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using API_AutomaG.Data;
+﻿using API_AutomaG.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddDbContext<API_AutomaGContext>(options =>
         ?? throw new InvalidOperationException("Connection string not found.")
     )
 );
+
+
 
 // 🔹 CORS
 builder.Services.AddCors(options =>
@@ -21,6 +24,12 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader();
         });
 });
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
