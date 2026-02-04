@@ -1,0 +1,242 @@
+﻿/* =================================================================
+   ASPIRANTES DETALLES - Sistema de Maestrías UTN
+   CSS personalizado para DetailsAspirantes.cshtml
+   ================================================================= */
+
+/* ─────────────────────────────────────────────────────────────
+   VARIABLES CSS INSTITUCIONALES UTN
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+    /* Colores Institucionales */
+    --color-utn-red: #D91016;
+    --color-utn-red-dark: #B00D12;
+    --color-utn-red-light: #FF3B3F;
+    /* Escala de Grises */
+    --color-white: #FFFFFF;
+    --color-gray-dark: #374151;
+    --color-gray-medium: #6B7280;
+    --color-gray-light: #F3F4F6;
+    --color-gray-border: #E5E7EB;
+    --color-gray-50: #FAFAFA;
+    /* Colores Semánticos */
+    --color-success: #059669;
+    --color-warning: #D97706;
+    --color-info: #2563EB;
+    /* Tipografías */
+    --font-heading-primary: 'Playfair Display', Georgia, serif;
+    --font-heading-secondary: 'Merriweather', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-data: 'Roboto', 'Courier New', monospace;
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    /* Border Radius */
+    --radius: 0.5rem;
+    --radius-lg: 1rem;
+    /* Espaciado */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ESTILOS PERSONALIZADOS PARA LA VISTA
+   ───────────────────────────────────────────────────────────── */
+
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+/* Cards con diseño UTN */
+.card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+}
+
+    .card:hover {
+        box-shadow: var(--shadow-lg);
+    }
+
+/* Títulos */
+h3, h5 {
+    font-family: var(--font-heading-secondary);
+    font-weight: 600;
+    color: var(--color-gray-dark);
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.125rem;
+}
+
+/* Labels */
+.text-muted.small.fw-bold.text-uppercase {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Valores de campos */
+.fs-5 {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--color-gray-dark);
+    margin: 0;
+}
+
+.fs-3.fw-light {
+    font-family: var(--font-data);
+    font-size: 1.875rem;
+    font-weight: 300;
+    color: var(--color-gray-dark);
+}
+
+/* Badges */
+.badge {
+    font-family: var(--font-body);
+    font-weight: 500;
+    border-radius: 9999px;
+}
+
+.bg-info-subtle.text-info-emphasis {
+    background-color: rgba(37, 99, 235, 0.1);
+    color: var(--color-info);
+}
+
+.bg-warning-subtle.text-warning-emphasis {
+    background-color: rgba(217, 119, 6, 0.1);
+    color: var(--color-warning);
+}
+
+/* Formulario de edición */
+.form-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-control, .form-select {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    border: 1px solid var(--color-gray-border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+    background-color: var(--color-white);
+}
+
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--color-utn-red);
+        box-shadow: 0 0 0 3px rgba(217, 16, 22, 0.1);
+    }
+
+/* Botones */
+.btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--color-utn-red);
+    color: var(--color-white);
+}
+
+    .btn-primary:hover {
+        background-color: var(--color-utn-red-dark);
+        color: var(--color-white);
+    }
+
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+    .btn-success:hover {
+        background-color: #047857;
+        color: var(--color-white);
+    }
+
+.btn-danger {
+    background-color: #DC2626;
+    color: var(--color-white);
+}
+
+    .btn-danger:hover {
+        background-color: #B91C1C;
+        color: var(--color-white);
+    }
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+}
+
+/* Info adicional */
+.d-flex.justify-content-between {
+    font-family: var(--font-body);
+}
+
+    .d-flex.justify-content-between .text-muted {
+        color: var(--color-gray-medium);
+        font-size: 0.875rem;
+    }
+
+    .d-flex.justify-content-between .fw-bold {
+        color: var(--color-gray-dark);
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+/* Bordes y separadores */
+.border-top {
+    border-top: 1px solid var(--color-gray-border) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+
+    .row {
+        margin: 0;
+    }
+
+    .col-md-8, .col-md-4 {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .btn-lg {
+        width: 100%;
+    }
+}

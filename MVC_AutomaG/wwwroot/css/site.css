@@ -1,22 +1,55 @@
-html {
-  font-size: 14px;
+/* =================================================================
+   SITE.CSS - Estilos Globales, Variables y Fuentes
+   ================================================================= */
+
+/* 1. IMPORTAR FUENTES DE GOOGLE FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Merriweather:wght@300;400;700&family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+/* 2. DEFINICIÓN DE VARIABLES (EL ADN DEL DISEÑO) */
+:root {
+    /* --- Colores Corporativos UTN --- */
+    --utn-red: #D91016;
+    --utn-red-dark: #B00D12;
+    --utn-red-light: #FF3B3F;
+    /* --- Escala de Grises y Fondos --- */
+    --white: #FFFFFF;
+    --utn-dark: #1F2937; /* Texto principal */
+    --utn-gray: #6B7280; /* Texto secundario */
+    --utn-light: #F3F4F6; /* Fondo general de la app */
+    --utn-border: #E5E7EB; /* Bordes suaves */
+    --gray-50: #FAFAFA;
+    /* --- Colores de Estado (Semánticos) --- */
+    --color-success: #059669; /* Verde éxito */
+    --color-warning: #D97706; /* Naranja advertencia */
+    --color-info: #2563EB; /* Azul información */
+    --color-error: #DC2626; /* Rojo error */
+    /* --- Tipografías --- */
+    --font-heading-serif: 'Playfair Display', Georgia, serif; /* Títulos elegantes */
+    --font-heading-sans: 'Merriweather', Georgia, serif; /* Subtítulos */
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif; /* Texto normal */
+    --font-data: 'Roboto', monospace; /* Números y tablas */
+    /* --- Efectos --- */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --radius: 8px; /* Redondeo estándar */
 }
 
-@media (min-width: 768px) {
-  html {
+/* 3. RESET BÁSICO */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--font-main); /* Fuente por defecto Inter */
     font-size: 16px;
-  }
+    line-height: 1.6;
+    color: var(--utn-dark);
+    background-color: var(--utn-light);
+    -webkit-font-smoothing: antialiased; /* Suavizado de fuente */
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
+/* 4. TIP

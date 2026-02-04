@@ -1,96 +1,112 @@
 ﻿@model IEnumerable<Modelos_AutomaG.Aspirantes>
-@using Modelos_AutomaG
+@{
+    ViewData["Title"] = "Registro de Aspirantes";
+}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Registro de Aspirantes</h3>
+<link rel="stylesheet" href="~/css/aspirantes-lista.css" asp-append-version="true" />
+
+<div class="container-fluid" style="padding: 2rem;">
+
+    <div class="page-heading">
+        <h1 class="page-title">Registro de Aspirantes</h1>
+        <p class="page-subtitle">Gestione y consulte la información de todos los aspirantes a programas de posgrado</p>
     </div>
 
-    <!-- FILTROS -->
-    <div class="row mb-3 g-2">
-        <!-- Filtro de texto (nombre, ciudad o programa) -->
-        <div class="col-md-6">
-            <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar por nombre, ciudad o programa">
-        </div>
+    <div class="filters-card">
+        <div class="filter-row">
 
-        <!-- Filtro por Programas de conocimiento -->
-        <div class="col-md-6">
-            <select id="filtroCampo" class="form-select">
-                <option value="">Todas las categorías</option>
-                @* Lista de Programas *@
-                @foreach (var campo in ViewBag.Programas as List<Programas>)
-                {
-                    <option value="@campo.nombrepro">@campo.nombrepro</option>
-                }
-            </select>
+            <div class="search-container">
+                <i data-lucide="search" class="input-icon"></i>
+                <input type="text" id="filtroTexto" class="custom-input" placeholder="Buscar por nombre, ciudad o programa...">
+            </div>
+
+            <div class="select-container">
+                <i data-lucide="filter" class="input-icon"></i>
+                <select id="filtroCampo" class="custom-select">
+                    <option value="">Todas las categorías</option>
+                    @if (ViewBag.Programas != null)
+                    {
+                        foreach (var prog in ViewBag.Programas)
+                        {
+                            <option value="@prog.nombrepro">@prog.nombrepro</option>
+                        }
+                    }
+                </select>
+            </div>
+
         </div>
     </div>
 
-    <!-- TABLA DE ASPIRANTES -->
-    <table class="table table-hover shadow-sm" id="tablaAspirantes">
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre Completo</th>
-                <th class="text-center">Ciudad</th>
-                <th class="text-center">Programa de Interés</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="cuerpoAspirantes">
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
-                {
+    <div class="table-card">
+        <h3 class="table-header-title">Listado Completo (@(Model != null ? Model.Count() : 0) registros)</h3>
+
+        <div class="table-responsive">
+            <table class="table mb-0" id="tablaAspirantes">
+                <thead style="background-color: #F9FAFB;">
                     <tr>
-                        <td>@item.nombreasp @item.apellidoasp</td>
-                        <td class="text-center">@item.ciudadasp</td>
-                        <td class="text-center">@item.programainteres</td>
-                        <td class="text-center">
-                            <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp" class="btn btn-sm btn-danger">
-                                Ver Detalles
-                            </a>
-                        </td>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">NOMBRE COMPLETO</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">CIUDAD</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">PROGRAMA DE INTERÉS</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700; text-align:right;">ACCIONES</th>
                     </tr>
-                }
-            }
-        </tbody>
-    </table>
+                </thead>
+                <tbody id="cuerpoAspirantes">
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr style="border-bottom: 1px solid #F3F4F6;">
+                                <td style="padding:1rem; vertical-align:middle; font-weight:500;">@item.nombreasp @item.apellidoasp</td>
+                                <td style="padding:1rem; vertical-align:middle;">@item.ciudadasp</td>
+                                <td style="padding:1rem; vertical-align:middle;">@item.programainteres</td>
+                                <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                    <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp"
+                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                        Ver Detalles
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const filtroTexto = document.getElementById('filtroTexto');
-    const filtroCampo = document.getElementById('filtroCampo');
-    const tabla = document.getElementById('cuerpoAspirantes');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
 
-    function aplicarFiltro() {
-        const texto = filtroTexto.value.toLowerCase();
-        const campoSeleccionado = filtroCampo.value.toLowerCase();
+            const filtroTexto = document.getElementById('filtroTexto');
+            const filtroCampo = document.getElementById('filtroCampo');
+            const tabla = document.getElementById('cuerpoAspirantes');
 
-        Array.from(tabla.querySelectorAll('tr')).forEach(row => {
-            const nombre = row.cells[0].textContent.toLowerCase();
-            const ciudad = row.cells[1].textContent.toLowerCase();
-            const programa = row.cells[2].textContent.toLowerCase();
+            function aplicarFiltro() {
+                const texto = filtroTexto.value.toLowerCase();
+                const campo = filtroCampo.value.toLowerCase();
+                const filas = tabla.getElementsByTagName('tr');
 
-            let mostrar = true;
+                for (let fila of filas) {
+                    // Aseguramos que tenga celdas (evitar errores)
+                    if (fila.cells.length > 2) {
+                        const tNombre = fila.cells[0].textContent.toLowerCase();
+                        const tCiudad = fila.cells[1].textContent.toLowerCase();
+                        const tProg = fila.cells[2].textContent.toLowerCase();
 
-            // Filtro de texto
-            if (texto) {
-                mostrar = nombre.includes(texto) || ciudad.includes(texto) || programa.includes(texto);
+                        let mostrar = true;
+
+                        if (texto && !tNombre.includes(texto) && !tCiudad.includes(texto) && !tProg.includes(texto)) mostrar = false;
+                        if (campo && !tProg.includes(campo)) mostrar = false;
+
+                        fila.style.display = mostrar ? '' : 'none';
+                    }
+                }
             }
 
-            // Filtro por campo de conocimiento
-            if (campoSeleccionado) {
-                mostrar = mostrar && programa.includes(campoSeleccionado);
-            }
-
-            row.style.display = mostrar ? "" : "none";
+            filtroTexto.addEventListener('keyup', aplicarFiltro);
+            filtroCampo.addEventListener('change', aplicarFiltro);
         });
-    }
-
-    filtroTexto.addEventListener('input', aplicarFiltro);
-    filtroCampo.addEventListener('change', aplicarFiltro);
-});
-</script>
+    </script>
 }

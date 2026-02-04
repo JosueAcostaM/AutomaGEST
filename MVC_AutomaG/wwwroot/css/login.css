@@ -1,0 +1,231 @@
+﻿/* =================================================================
+   LOGIN.CSS - Estilos exclusivos para la pantalla de Acceso
+   ================================================================= */
+
+/* Variables locales (por si site.css no carga, esto asegura que se vea bien) */
+:root {
+    --utn-red: #D91016;
+    --utn-red-dark: #B00D12;
+    --utn-dark: #1F2937;
+    --utn-gray: #6B7280;
+    --utn-light: #F3F4F6;
+    --utn-border: #E5E7EB;
+    --white: #FFFFFF;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body.login-page {
+    background-color: var(--utn-light);
+    font-family: var(--font-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+/* --- ENCABEZADO (LOGO) --- */
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.login-logo-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--utn-red);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(217, 16, 22, 0.2);
+}
+
+    .login-logo-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+.login-main-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--utn-dark);
+    margin: 0 0 0.5rem 0;
+    /* Fuente elegante para el título */
+    font-family: 'Playfair Display', serif;
+}
+
+.login-institution {
+    font-size: 0.85rem;
+    color: var(--utn-gray);
+    margin: 0;
+}
+
+/* --- TARJETA BLANCA --- */
+.login-card {
+    background: var(--white);
+    border: 1px solid var(--utn-border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+}
+
+.login-card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--utn-dark);
+    margin: 0 0 0.25rem 0;
+}
+
+.login-card-description {
+    font-size: 0.875rem;
+    color: var(--utn-gray);
+    margin: 0;
+}
+
+/* --- FORMULARIO --- */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--utn-dark);
+    margin-bottom: 0.5rem;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--utn-gray);
+}
+
+.form-input {
+    width: 100%;
+    box-sizing: border-box; /* Evita que el padding rompa el ancho */
+    padding: 0.75rem 1rem 0.75rem 2.5rem; /* Espacio a la izq para el icono */
+    border: 1px solid var(--utn-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background-color: #FAFAFA;
+}
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--utn-red);
+        background-color: var(--white);
+        box-shadow: 0 0 0 3px rgba(217, 16, 22, 0.1);
+    }
+
+/* --- BOTÓN --- */
+.btn-primary {
+    background-color: var(--utn-red);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+    .btn-primary:hover {
+        background-color: var(--utn-red-dark);
+    }
+
+/* --- MENSAJES Y PIE --- */
+.error-message-box {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    color: #991B1B;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .error-message-box svg {
+        width: 16px;
+        height: 16px;
+    }
+
+.login-footer-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--utn-gray);
+}
+
+.register-link {
+    color: var(--utn-red);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .register-link:hover {
+        text-decoration: underline;
+    }
+
+.login-copyright {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #9CA3AF;
+}
+
+
+/* --- AGREGAR ESTO AL FINAL DE LOGIN.CSS --- */
+
+/* Estilo para mensajes de éxito (Verde) */
+.success-message-box {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #ECFDF5; /* Verde muy claro */
+    border: 1px solid #6EE7B7; /* Borde verde */
+    color: #065F46; /* Texto verde oscuro */
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .success-message-box svg {
+        width: 16px;
+        height: 16px;
+    }

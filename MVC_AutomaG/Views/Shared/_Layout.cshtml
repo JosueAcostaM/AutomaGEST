@@ -4,87 +4,249 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MVC_AutomaG</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC_AutomaG.styles.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Reset básico */
+        body {
+            background-color: #F3F4F6;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Contenedor Principal Flexbox */
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR (IZQUIERDA) --- */
+        .sidebar {
+            width: 260px;
+            background-color: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            flex-shrink: 0;
+            position: fixed; /* Fijo al hacer scroll */
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Logo */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background-color: #D91016; /* Rojo UTN */
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .logo-text h3 {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.2;
+        }
+
+        /* Navegación */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4B5563;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+            .nav-item:hover {
+                background-color: #F9FAFB;
+                color: #111827;
+            }
+
+            /* Clase para el link activo (puedes usar lógica de Razor para activarlo) */
+            .nav-item.active {
+                background-color: #D91016;
+                color: #FFFFFF;
+                box-shadow: 0 4px 6px rgba(217, 16, 22, 0.2);
+            }
+
+        /* --- CONTENIDO PRINCIPAL (DERECHA) --- */
+        .main-content {
+            flex: 1;
+            margin-left: 260px; /* Espacio para el sidebar */
+            padding: 2rem;
+            width: calc(100% - 260px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Superior (Usuario) */
+        .top-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 15px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: #D91016;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Ajustes Responsive */
+        (max-width: 900px) {
+            .sidebar
+
+        {
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">MVC_AutomaG</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 
-                    @* LADO IZQUIERDO: Navegación general *@
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Aspirantes" asp-action="ListAspirantes">Aspirantes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos">CamposConocimientos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Programas" asp-action="ListProgramas">
-                                Programas
-                            </a>
-                        </li>
-                    </ul>
+    <div class="dashboard-wrapper">
 
-                    @* LADO DERECHO: Acceso al sistema *@
-                    <ul class="navbar-nav ms-auto">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle"></i> @User.Identity.Name
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Login" asp-action="Logout">Cerrar Sesión</a></li>
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-primary fw-bold" asp-area="" asp-controller="Login" asp-action="Index">
-                                    <i class="bi bi-box-arrow-in-right"></i> LOGIN
-                                </a>
-                            </li>
-                        }
-                    </ul>
-
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <i data-lucide="graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <h3>
+                        Sistema de Maestrías
+                        Universidad Técnica del Norte
+                    </h3>
+                    <p style="margin:0; font-size:0.75rem; color:#6B7280;">Gestión Académica</p>
                 </div>
             </div>
-        </nav>
-    </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
+            <nav class="nav-links">
+                <a asp-controller="Home" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i data-lucide="layout-grid"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a asp-controller="Aspirantes" asp-action="ListAspirantes" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Aspirantes" ? "active" : "")">
+                    <i data-lucide="users"></i>
+                    <span>Aspirantes</span>
+                </a>
+
+                <a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CamposConocimientos" ? "active" : "")">
+                    <i data-lucide="book-open"></i>
+                    <span>Campos Conoc.</span>
+                </a>
+
+                <a asp-controller="Programas" asp-action="ListProgramas" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programas" ? "active" : "")">
+                    <i data-lucide="graduation-cap"></i>
+                    <span>Programas</span>
+                </a>
+
+                <a asp-controller="Home" asp-action="Privacy" class="nav-item">
+                    <i data-lucide="shield"></i>
+                    <span>Privacidad</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="top-header">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="user-profile">
+                        <span style="font-weight:600; color:#374151;">@User.Identity.Name</span>
+                        <div class="user-avatar">
+                            @User.Identity.Name.Substring(0, 1).ToUpper()
+                        </div>
+                        <a asp-controller="Login" asp-action="Logout" class="btn btn-outline-secondary btn-sm ms-2">
+                            <i data-lucide="log-out" style="width:14px;"></i> Salir
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index" class="btn btn-danger btn-sm">
+                        <i data-lucide="log-in" style="width:14px;"></i> Iniciar Sesión
+                    </a>
+                }
+            </header>
+
+            <div class="container-fluid p-0">
+                @RenderBody()
+            </div>
+
+            <footer style="margin-top:auto; padding-top:2rem; text-align:center; color:#9CA3AF; font-size:0.8rem;">
+                &copy; 2026 - MVC_AutomaG
+            </footer>
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container text-center">
-            &copy; 2026 - MVC_AutomaG - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

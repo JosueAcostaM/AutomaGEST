@@ -1,51 +1,72 @@
 ﻿@model IEnumerable<Modelos_AutomaG.CamposConocimiento>
 
-<div class="container mt-4">
-    <h3>Campos de Conocimiento</h3>
+@{
+    ViewData["Title"] = "Campos de Conocimiento";
+}
 
-    <table class="table table-hover shadow-sm" id="tablaCampos">
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre</th>
-                <th>Código</th>
-                <th>Estado</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="cuerpoCampos">
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
-                {
-                    <tr data-id-row="@item.idcam">
-                        <td>@item.nombrecam</td>
-                        <td>@item.codigocam</td>
-                        <td>@item.estadocam</td>
-                        <td class="text-center d-flex justify-content-center gap-1">
-                            <!-- Botón Ver Detalles -->
-                            <a asp-action="DetailsCamposConocimientos"
-                               asp-route-id="@item.idcam"
-                               class="btn btn-sm btn-primary">
-                                Ver Detalles
-                            </a>
+<link rel="stylesheet" href="~/css/campos-lista.css" asp-append-version="true" />
 
-                            <!-- Botón Eliminar -->
-                            <button type="button"
-                                    class="btn btn-outline-danger btn-sm"
-                                    onclick="eliminarCampo('@item.idcam')">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                        </td>
+<div class="aspirantes-page" style="margin-top: 20px; padding: 2rem;">
+    <div class="page-heading">
+        <h1 class="page-title">Campos de Conocimiento</h1>
+        <p class="page-subtitle">Gestión de áreas académicas y códigos</p>
+    </div>
+
+    <div class="table-card">
+        <div class="card-header-bar">
+            <h3 class="card-title">Listado Actual (@(Model != null ? Model.Count() : 0))</h3>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="campos-table" id="tablaCampos">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">NOMBRE</th>
+                        <th style="width: 20%;">CÓDIGO</th>
+                        <th style="width: 20%;">ESTADO</th>
+                        <th style="width: 20%; text-align: center;">ACCIONES</th>
                     </tr>
-                }
-            }
-        </tbody>
-    </table>
+                </thead>
+                <tbody id="cuerpoCampos">
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr data-id-row="@item.idcam">
+                                <td style="font-weight: 500;">@item.nombrecam</td>
+                                <td style="color: #6B7280;">@item.codigocam</td>
+                                <td>
+                                    <span style="background:#EFF6FF; color:#1D4ED8; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">
+                                        @item.estadocam
+                                    </span>
+                                </td>
+                                <td style="text-align: center;">
+                                    <div style="display:flex; justify-content:center; gap:8px;">
+                                        <a asp-action="DetailsCamposConocimientos" asp-route-id="@item.idcam" class="btn-action">
+                                            Ver Detalles
+                                        </a>
+                                        <button type="button" class="btn-action" style="color:#DC2626; border-color:#FECACA; background:#FEF2F2;" onclick="eliminarCampo('@item.idcam')">
+                                            <i data-lucide="trash-2" style="width:14px; margin-right:4px;"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        // Función eliminar con actualización
+        // Inicializar iconos al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+
+        // Función eliminar
         window.eliminarCampo = function(id) {
             if(!confirm('¿Seguro que quieres eliminar este campo?')) return;
 
@@ -55,30 +76,45 @@
                     return r;
                 })
                 .then(() => {
-                    // Recargar la tabla desde la API
+                    // Recargar la tabla
                     fetch('https://localhost:7166/api/CamposConocimientos')
                         .then(r => r.json())
                         .then(data => {
                             const cuerpo = document.getElementById('cuerpoCampos');
                             cuerpo.innerHTML = '';
+
                             data.forEach(item => {
                                 const row = document.createElement('tr');
                                 row.setAttribute('data-id-row', item.idcam);
+
+                                // HTML generado dinámicamente con estilos
                                 row.innerHTML = `
-                                    <td>${item.nombrecam}</td>
-                                    <td>${item.codigocam}</td>
-                                    <td>${item.estadocam}</td>
-                                    <td class="text-center d-flex justify-content-center gap-1">
-                                        <a href="/CamposConocimiento/DetailsCamposConocimientos/${item.idcam}" class="btn btn-sm btn-primary">
-                                            Ver Detalles
-                                        </a>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarCampo('${item.idcam}')">
-                                            <i class="bi bi-trash"></i> Eliminar
-                                        </button>
+                                    <td style="font-weight: 500; padding: 1rem 1.5rem; border-bottom: 1px solid #F3F4F6; vertical-align: middle;">${item.nombrecam}</td>
+                                    <td style="color: #6B7280; padding: 1rem 1.5rem; border-bottom: 1px solid #F3F4F6; vertical-align: middle;">${item.codigocam}</td>
+                                    <td style="padding: 1rem 1.5rem; border-bottom: 1px solid #F3F4F6; vertical-align: middle;">
+                                        <span style="background:#EFF6FF; color:#1D4ED8; padding:2px 8px; border-radius:12px; font-size:0.8rem; font-weight:600;">
+                                            ${item.estadocam}
+                                        </span>
+                                    </td>
+                                    <td style="text-align: center; padding: 1rem 1.5rem; border-bottom: 1px solid #F3F4F6; vertical-align: middle;">
+                                        <div style="display:flex; justify-content:center; gap:8px;">
+                                            <a href="/CamposConocimientos/DetailsCamposConocimientos/${item.idcam}" class="btn-action">
+                                                Ver Detalles
+                                            </a>
+                                            <button type="button"
+                                                    class="btn-action"
+                                                    style="color:#DC2626; border-color:#FECACA; background:#FEF2F2;"
+                                                    onclick="eliminarCampo('${item.idcam}')">
+                                                <i data-lucide="trash-2" style="width:14px; margin-right:4px;"></i> Eliminar
+                                            </button>
+                                        </div>
                                     </td>
                                 `;
                                 cuerpo.appendChild(row);
                             });
+
+                            // Reactivar iconos
+                            lucide.createIcons();
                         });
                 })
                 .catch(err => {
