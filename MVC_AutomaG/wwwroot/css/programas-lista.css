@@ -1,0 +1,151 @@
+﻿/* =================================================================
+   ESTILO LISTA DE PROGRAMAS - UTN
+   ================================================================= */
+
+/* --- 1. ENCABEZADO Y BOTÓN AGREGAR --- */
+.page-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+}
+
+.page-subtitle {
+    font-family: 'Inter', sans-serif;
+    color: #6B7280;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Botón "Nueva Maestría" Rojo */
+.btn-add-program {
+    background-color: #D91016;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(217, 16, 22, 0.3);
+    transition: all 0.2s;
+    border: none;
+}
+
+    .btn-add-program:hover {
+        background-color: #B91C1C;
+        transform: translateY(-1px);
+        color: white;
+    }
+
+/* --- 2. TARJETA CONTENEDORA --- */
+.table-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.card-header-bar {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #E5E7EB;
+    background-color: #fff;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1F2937;
+}
+
+/* --- 3. TABLA MODERNA --- */
+.prog-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    /* Las filas de programas suelen ser más altas y espaciadas */
+    .prog-table td {
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid #F3F4F6;
+        color: #374151;
+        font-size: 1rem;
+        font-weight: 500;
+        vertical-align: middle;
+    }
+
+/* La primera columna (Nombre) */
+.prog-name {
+    color: #1F2937;
+    font-weight: 600;
+}
+
+.prog-table tr:hover {
+    background-color: #F9FAFB;
+}
+
+.prog-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- 4. SWITCH PERSONALIZADO (ROJO) --- */
+/* Sobreescribimos el estilo de Bootstrap para que sea rojo */
+.form-check-input:checked {
+    background-color: #D91016;
+    border-color: #D91016;
+}
+
+.form-check-input:focus {
+    border-color: #D91016;
+    box-shadow: 0 0 0 0.25rem rgba(217, 16, 22, 0.25);
+}
+
+.switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.estado-texto {
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-width: 60px; /* Para que no salte al cambiar texto */
+    text-transform: capitalize;
+}
+
+/* Colores del texto según estado */
+.estado-activo {
+    color: #D91016;
+}
+
+.estado-inactivo {
+    color: #9CA3AF;
+}
+
+/* Botón Eliminar Sutil */
+.btn-delete-ghost {
+    background: none;
+    border: 1px solid transparent;
+    color: #9CA3AF;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+    .btn-delete-ghost:hover {
+        color: #DC2626;
+        background-color: #FEF2F2;
+        border-color: #FECACA;
+    }

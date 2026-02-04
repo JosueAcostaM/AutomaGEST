@@ -1,48 +1,103 @@
 ﻿@model Modelos_AutomaG.CamposConocimiento
 
-<h2>Detalles del Campo de Conocimiento</h2>
-
-<div>
-    <h4>@Model.nombrecam (@Model.codigocam)</h4>
-    <p>Estado: @Model.estadocam</p>
-    <p>Descripción: @Model.descripcioncam</p>
-</div>
-
-<h3>Programas Asociados</h3>
-
-@if (Model.Programas != null && Model.Programas.Any())
-{
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre del Programa</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var programa in Model.Programas)
-            {
-                <tr>
-                    <td>@programa.nombrepro</td>
-                    <td>
-                        <!-- Enlace a la lista de aspirantes de este programa -->
-                        <a asp-controller="Aspirantes"
-                           asp-action="ListByPrograma"
-                           asp-route-idPrograma="@programa.nombrepro"
-                           class="btn btn-sm btn-primary">
-                            Aspirantes del Programa
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No hay programas asociados a este campo.</p>
+@{
+    ViewData["Title"] = "Detalles del Campo";
 }
 
-<div>
-    <a asp-action="ListCamposConocimientos">Volver al listado</a>
+<link rel="stylesheet" href="~/css/campos-lista.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/campos-details.css" asp-append-version="true" />
+
+<div class="details-container">
+
+    <a asp-action="ListCamposConocimientos" class="btn-back-link">
+        <i data-lucide="arrow-left" style="width: 18px;"></i> Volver al listado
+    </a>
+
+    <div class="details-header">
+        <div>
+            <h1 class="details-title">@Model.nombrecam</h1>
+            <p class="details-meta">
+                Código Identificador: <span class="code-badge">@Model.codigocam</span>
+            </p>
+        </div>
+
+        <div class="status-pill">
+            Estado: @Model.estadocam
+        </div>
+    </div>
+
+    <div class="description-card">
+        <span class="desc-label">Descripción del Campo</span>
+        <p class="desc-text">
+            @(string.IsNullOrEmpty(Model.descripcioncam) ? "No se ha proporcionado una descripción detallada para este campo de conocimiento." : Model.descripcioncam)
+        </p>
+    </div>
+
+    <div class="section-header">
+        <div class="section-icon-box">
+            <i data-lucide="graduation-cap"></i>
+        </div>
+        <h2 class="section-title">Programas Académicos Asociados</h2>
+    </div>
+
+    <div class="table-card">
+        <div class="card-header-bar">
+            <h3 class="card-title">Listado de Programas (@(Model.Programas != null ? Model.Programas.Count() : 0))</h3>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="campos-table">
+                <thead>
+                    <tr>
+                        <th style="width: 70%;">NOMBRE DEL PROGRAMA</th>
+                        <th style="width: 30%; text-align: center;">ACCIONES RÁPIDAS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Programas != null && Model.Programas.Any())
+                    {
+                        @foreach (var programa in Model.Programas)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="program-name-wrapper">
+                                        <i data-lucide="book-open" style="width: 18px; color:#9CA3AF;"></i>
+                                        @programa.nombrepro
+                                    </div>
+                                </td>
+                                <td style="text-align: center;">
+                                    <a asp-controller="Aspirantes"
+                                       asp-action="ListByPrograma"
+                                       asp-route-idPrograma="@programa.nombrepro"
+                                       class="btn-action">
+                                        <i data-lucide="users" style="width: 16px; margin-right: 8px;"></i>
+                                        Ver Aspirantes
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2">
+                                <div class="empty-state-container">
+                                    <i data-lucide="book-x" style="width: 48px; height: 48px; opacity: 0.5;"></i>
+                                    <p style="margin: 0;">No hay programas académicos vinculados a este campo actualmente.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+}
