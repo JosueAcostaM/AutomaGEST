@@ -32,28 +32,72 @@
                 </div>
 
                 <div class="utn-form-item">
-                    <label asp-for="idcam" class="utn-label">Campo de Conocimiento (ID)</label>
-                    <input asp-for="idcam" class="utn-field" />
+                    <label asp-for="idcam" class="utn-label">Campo de Conocimiento</label>
+                    <select asp-for="idcam" class="utn-field" required>
+                        <option value="">-- Seleccione un Campo --</option>
+                        @foreach (var c in (IEnumerable<Modelos_AutomaG.CamposConocimiento>)ViewBag.CamposConocimientos)
+                        {
+                            <option value="@c.idcam">@c.nombrecam</option>
+                        }
+                    </select>
                     <span asp-validation-for="idcam" class="text-danger"></span>
                 </div>
 
                 <div class="utn-form-item">
-                    <label asp-for="idniv" class="utn-label">Nivel Académico (ID)</label>
-                    <input asp-for="idniv" class="utn-field" />
+                    <label asp-for="idniv" class="utn-label">Nivel</label>
+                    <select asp-for="idniv" class="utn-field" required>
+                        <option value="">-- Seleccione un Nivel --</option>
+                        @foreach (var n in (IEnumerable<Modelos_AutomaG.Niveles>)ViewBag.Nivel)
+                        {
+                            <option value="@n.idniv">@n.nombreniv</option>
+                        }
+                    </select>
                     <span asp-validation-for="idniv" class="text-danger"></span>
                 </div>
 
                 <div class="utn-form-item">
-                    <label asp-for="idmod" class="utn-label">Modalidad (ID)</label>
-                    <input asp-for="idmod" class="utn-field" />
+                    <label asp-for="idmod" class="utn-label">Modalidad</label>
+                    <select asp-for="idmod" class="utn-field" required>
+                        <option value="">-- Seleccione una Modalidad --</option>
+                        @foreach (var m in (IEnumerable<Modelos_AutomaG.Modalidades>)ViewBag.Modalidad)
+                        {
+                            <option value="@m.idmod">@m.nombremod</option>
+                        }
+                    </select>
                     <span asp-validation-for="idmod" class="text-danger"></span>
                 </div>
 
                 <div class="utn-form-item">
-                    <label asp-for="idpre" class="utn-label">Presencialidad (ID)</label>
-                    <input asp-for="idpre" class="utn-field" />
+                    <label asp-for="idpre" class="utn-label">Precio / Inscripcion</label>
+                    <select asp-for="idpre" class="utn-field" required>
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var p in (IEnumerable<Modelos_AutomaG.Precios>)ViewBag.Precio)
+                        {
+                            <option value="@p.idpre">@p.inscripcionpre @p.monedapre</option>
+                        }
+                    </select>
                     <span asp-validation-for="idpre" class="text-danger"></span>
                 </div>
+                <div class="utn-form-item">
+                    <label asp-for="idpre" class="utn-label">Precio / Matricula</label>
+                    <select asp-for="idpre" class="utn-field" required>
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var p in (IEnumerable<Modelos_AutomaG.Precios>)ViewBag.Precio)
+                        {
+                            <option value="@p.idpre">@p.matriculapre @p.monedapre</option>
+                        }
+                    </select>
+                    <span asp-validation-for="idpre" class="text-danger"></span>
+                </div>
+                <div class="utn-form-item">
+                    <label asp-for="idpre" class="utn-label">Precio / Arancel</label>
+                    <select asp-for="idpre" class="utn-field" required>
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var p in (IEnumerable<Modelos_AutomaG.Precios>)ViewBag.Precio)
+                        {
+                            <option value="@p.idpre">@p.arancelpre @p.monedapre</option>
+                        }
+                    </select>
 
                 <div class="utn-form-item">
                     <label asp-for="duracionpro" class="utn-label">Duración (Semestres)</label>
@@ -74,7 +118,7 @@
                 </div>
 
                 <div class="utn-footer">
-                    <a asp-action="ListPrograma" class="utn-btn-cancel">
+                    <a asp-action="ListProgramas" class="utn-btn-cancel">
                         <i data-lucide="x" style="width:18px;"></i> Cancelar
                     </a>
                     <button type="submit" class="utn-btn-save">

@@ -131,6 +131,21 @@ public IActionResult Update(string id, IFormCollection form)
     {
         return StatusCode(500, "Error: " + ex.Message);
     }
-}
     }
+        //Cambiar Estado Aspirante
+        [HttpPost]
+        public IActionResult CambiarEstado(string id)
+        { 
+            var ok = CRUD<Aspirantes>.CambiarEstado(id);
+
+            if (!ok)
+            {
+                return BadRequest("Error al Marcar revisado");
+            }
+
+            return Ok("Revisado");
+        }
+
+    }
+
 }

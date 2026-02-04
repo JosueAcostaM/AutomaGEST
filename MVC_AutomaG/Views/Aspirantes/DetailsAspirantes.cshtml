@@ -49,7 +49,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="text-muted small fw-bold text-uppercase">Estado</label>
-                            <p><span class="badge bg-info-subtle text-info-emphasis px-3 py-2 rounded-pill">En revisión</span></p>
+                            <p><span class="badge bg-info-subtle text-info-emphasis px-3 py-2 rounded-pill">@Model.estadoasp</span></p>
                         </div>
                     </div>
 
@@ -140,7 +140,7 @@
             </div>
         </div>
 
-        <!-- COLUMNA DERECHA (igual que antes) -->
+        <!-- COLUMNA DERECHA -->
         <div class="col-md-4">
             <div class="card shadow-sm border-0 p-4 mb-3 bg-white rounded-4">
                 <h5 class="text-secondary mb-3">Fecha de Registro</h5>
@@ -162,10 +162,24 @@
                     <span class="badge bg-warning-subtle text-warning-emphasis">Media</span>
                 </div>
             </div>
+            @if (Model.estadoasp != "Revisado"){
+            <button type="button"
+                    class="btn btn-danger"
+                    id="btnCambiarEstado">
+                <i class="fas fa-sync-alt me-2"></i>Marcar como revisado
+            </button>
+             }
+            @if (Model.estadoasp == "Revisado"){
+             <button type="button"
+                  class="btn btn-danger"
+                 id="btnCambiarEstado">
+                <i class="fas fa-sync-alt me-2"></i>Marcar como no Revisado
+             </button>
+            }
         </div>
     </div>
 </div>
-
+            <!--Edicion de datos aspirante eventos botones-->
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -227,3 +241,24 @@
         });
     </script>
 }
+<!--Boton Marcar como revisado-->
+<script>
+    document.getElementById('btnCambiarEstado')
+        .addEventListener('click', async function () {
+        try {
+            const response = await fetch(
+                `/Aspirantes/CambiarEstado/${'@Model.idasp'}`,
+                { method: 'POST' }
+            );
+
+            if (response.ok) {
+                alert('Estado actualizado');
+                location.reload();
+            } else {
+                alert('Error al cambiar estado');
+            }
+        } catch (e) {
+            alert('Error de conexión');
+        }
+    });
+</script>

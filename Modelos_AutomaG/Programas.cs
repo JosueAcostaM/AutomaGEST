@@ -53,13 +53,10 @@ namespace Modelos_AutomaG
         [Column("estadopro")]
         public string estadopro { get; set; } = "activo";
 
-        [JsonIgnore]
+
         [ForeignKey("idcam")] public  CamposConocimiento? Campo { get; set; }
-        [JsonIgnore]
         [ForeignKey("idniv")] public  Niveles? Nivel { get; set; }
-        [JsonIgnore]
         [ForeignKey("idmod")] public  Modalidades? Modalidad { get; set; }
-        [JsonIgnore]
         [ForeignKey("idpre")] public  Precios? Precio { get; set; }
 
         public  List<ProgramasHorarios>? ProgramasHorarios { get; set; } = new List<ProgramasHorarios>();

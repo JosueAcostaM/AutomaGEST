@@ -118,5 +118,15 @@ namespace API_Consumer
                 }
             }
         }
+        //Metodo para cambiar estado asp
+        public static bool CambiarEstado(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = client.PutAsync($"{EndPoint}/cambiar-estado/{id}", null).Result;
+                return response.IsSuccessStatusCode;
+            }
+        }
+
     }
 }

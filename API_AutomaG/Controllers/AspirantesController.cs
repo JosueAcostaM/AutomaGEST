@@ -94,12 +94,32 @@ namespace API_AutomaG.Controllers
 
             return NoContent();
         }
+        //Cambiar Estado del Aspirante
+        // PUT: api/Aspirantes/cambiar-estado/5
+        [HttpPut("cambiar-estado/{id}")]
+        public async Task<IActionResult> CambiarEstado(string id)
+        {
+            var aspirante = await _context.Aspirantes.FindAsync(id);
+
+            if (aspirante == null)
+                return NotFound();
+
+            // Toggle simple
+            aspirante.estadoasp = aspirante.estadoasp == "En revisión"
+                ? "Revisado"
+                : "En revisión";
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
 
         // POST: api/Aspirantes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Aspirantes>> PostAspirantes(Aspirantes aspirantes)
         {
+            aspirantes.estadoasp= "En revisión";
             _context.Aspirantes.Add(aspirantes);
             try
             {

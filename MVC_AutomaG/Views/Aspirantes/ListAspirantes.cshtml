@@ -33,6 +33,14 @@
                     }
                 </select>
             </div>
+            <div class="select-container">
+                <i data-lucide="check-circle" class="input-icon"></i>
+                <select id="filtroEstado" class="custom-select">
+                    <option value="">Todos los estados</option>
+                    <option value="en revisión">En revisión</option>
+                    <option value="revisado">Revisado</option>
+                </select>
+            </div>
 
         </div>
     </div>
@@ -47,6 +55,7 @@
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">NOMBRE COMPLETO</th>
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">CIUDAD</th>
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">PROGRAMA DE INTERÉS</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">ESTADO</th>
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700; text-align:right;">ACCIONES</th>
                     </tr>
                 </thead>
@@ -59,6 +68,7 @@
                                 <td style="padding:1rem; vertical-align:middle; font-weight:500;">@item.nombreasp @item.apellidoasp</td>
                                 <td style="padding:1rem; vertical-align:middle;">@item.ciudadasp</td>
                                 <td style="padding:1rem; vertical-align:middle;">@item.programainteres</td>
+                                <td style="padding:1rem; vertical-align:middle;">@item.estadoasp</td>
                                 <td style="padding:1rem; vertical-align:middle; text-align:right;">
                                     <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp"
                                        style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
@@ -73,40 +83,53 @@
         </div>
     </div>
 </div>
-
+<!--Filtro de busqueda-->
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             lucide.createIcons();
 
             const filtroTexto = document.getElementById('filtroTexto');
             const filtroCampo = document.getElementById('filtroCampo');
+            const filtroEstado = document.getElementById('filtroEstado');
             const tabla = document.getElementById('cuerpoAspirantes');
 
             function aplicarFiltro() {
-                const texto = filtroTexto.value.toLowerCase();
-                const campo = filtroCampo.value.toLowerCase();
+                const texto = (filtroTexto.value || '').toLowerCase().trim();
+                const programa = (filtroCampo.value || '').toLowerCase().trim();
+                const estado = (filtroEstado.value || '').toLowerCase().trim();
+
                 const filas = tabla.getElementsByTagName('tr');
 
-                for (let fila of filas) {
-                    // Aseguramos que tenga celdas (evitar errores)
-                    if (fila.cells.length > 2) {
+                for (const fila of filas) {
+                    if (fila.cells.length >= 4) {
                         const tNombre = fila.cells[0].textContent.toLowerCase();
                         const tCiudad = fila.cells[1].textContent.toLowerCase();
                         const tProg = fila.cells[2].textContent.toLowerCase();
+                        const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
 
-                        let mostrar = true;
+                        // 1) Filtro texto (busca en nombre/ciudad/programa/estado)
+                        const cumpleTexto = !texto || (
+                            tNombre.includes(texto) ||
+                            tCiudad.includes(texto) ||
+                            tProg.includes(texto) ||
+                            tEstadoAsp.includes(texto)
+                        );
 
-                        if (texto && !tNombre.includes(texto) && !tCiudad.includes(texto) && !tProg.includes(texto)) mostrar = false;
-                        if (campo && !tProg.includes(campo)) mostrar = false;
+                        // 2) Filtro programa
+                        const cumplePrograma = !programa || tProg.includes(programa);
 
-                        fila.style.display = mostrar ? '' : 'none';
+                        // 3) Filtro estado
+                        const cumpleEstado = !estado || tEstadoAsp.includes(estado);
+
+                        fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado) ? '' : 'none';
                     }
                 }
             }
 
             filtroTexto.addEventListener('keyup', aplicarFiltro);
             filtroCampo.addEventListener('change', aplicarFiltro);
+            filtroEstado.addEventListener('change', aplicarFiltro);
         });
     </script>
 }

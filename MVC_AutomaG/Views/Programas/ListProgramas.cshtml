@@ -53,7 +53,12 @@
                                                 @(item.estadopro == "activo" ? "checked" : "")>
                                             </div>
                                         </div>
-
+                                <div style="padding:1rem; vertical-align:middle; text-align:right;">
+                                    <a asp-action="DetailsProgramas" asp-route-id="@item.idpro"
+                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                        Ver Detalles
+                                    </a>
+                                </div>
                                         <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
 
                                         <button type="button"

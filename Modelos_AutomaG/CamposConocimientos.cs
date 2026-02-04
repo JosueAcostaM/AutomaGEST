@@ -32,8 +32,6 @@ namespace Modelos_AutomaG
 
         [Column("estadocam")]
         public string estadocam { get; set; } = "activo";
-
-
         public List<Programas>? Programas { get; set; } = new List<Programas>();
 
     }

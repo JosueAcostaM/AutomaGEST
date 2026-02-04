@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_AutomaG.Migrations
 {
     [DbContext(typeof(API_AutomaGContext))]
-    [Migration("20260131031029_v01")]
-    partial class v01
+    [Migration("20260204141632_automagest_bdd")]
+    partial class automagest_bdd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,8 +43,12 @@ namespace API_AutomaG.Migrations
                         .HasColumnType("text")
                         .HasColumnName("emailasp");
 
+                    b.Property<string>("estadoasp")
+                        .HasColumnType("text")
+                        .HasColumnName("estadoasp");
+
                     b.Property<DateTime>("fecharegistro")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecharegistro");
 
                     b.Property<string>("idcon")
@@ -112,7 +116,7 @@ namespace API_AutomaG.Migrations
                         .HasColumnName("idcon");
 
                     b.Property<DateTime>("fechacontacto")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("fechacontacto");
 
                     b.Property<string>("telefonocon")
@@ -370,7 +374,7 @@ namespace API_AutomaG.Migrations
                         .HasColumnName("emailusu");
 
                     b.Property<DateTime>("fechacreacion")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("fechacreacion");
 
                     b.Property<string>("nombreusu")

@@ -44,6 +44,8 @@ namespace Modelos_AutomaG
         [Column("nivelinteres")]
         public string? nivelinteres { get; set; }
 
+        [Column("estadoasp")]
+        public string? estadoasp { get; set; } ="En revisión";
 
         [Column("programainteres")]
         public string? programainteres { get; set; }

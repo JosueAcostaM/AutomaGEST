@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API_AutomaG.Migrations
 {
     /// <inheritdoc />
-    public partial class v01 : Migration
+    public partial class automagest_bdd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace API_AutomaG.Migrations
                 {
                     idcon = table.Column<string>(type: "text", nullable: false),
                     telefonocon = table.Column<string>(type: "text", nullable: false),
-                    fechacontacto = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fechacontacto = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,7 +114,7 @@ namespace API_AutomaG.Migrations
                     emailusu = table.Column<string>(type: "text", nullable: false),
                     passwordhash = table.Column<string>(type: "text", nullable: false),
                     activousu = table.Column<bool>(type: "boolean", nullable: false),
-                    fechacreacion = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fechacreacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,8 +133,9 @@ namespace API_AutomaG.Migrations
                     provinciaasp = table.Column<string>(type: "text", nullable: true),
                     ciudadasp = table.Column<string>(type: "text", nullable: true),
                     nivelinteres = table.Column<string>(type: "text", nullable: true),
+                    estadoasp = table.Column<string>(type: "text", nullable: true),
                     programainteres = table.Column<string>(type: "text", nullable: true),
-                    fecharegistro = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    fecharegistro = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
