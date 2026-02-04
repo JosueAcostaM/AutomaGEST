@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Modelos_AutomaG
@@ -13,8 +14,9 @@ namespace Modelos_AutomaG
     {
         [Key]
         [Column("idusu")]
+        [JsonIgnore]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string idusu { get; set; }
+        public string? idusu { get; set; }
 
 
         [Required]

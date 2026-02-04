@@ -78,12 +78,31 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
         {
+            // 🔹 Generar ID tipo USU1, USU2...
+            var ultimoId = await _context.Usuarios
+                .OrderByDescending(u => u.idusu)
+                .Select(u => u.idusu)
+                .FirstOrDefaultAsync();
+
+            int nuevoNumero = 1;
+
+            if (!string.IsNullOrEmpty(ultimoId))
+            {
+                // USU15 -> 15
+                nuevoNumero = int.Parse(ultimoId.Replace("USU", "")) + 1;
+            }
+
+            usuarios.idusu = $"USU{nuevoNumero}";
+
+            // 🔹 Hash de password
             usuarios.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
+
             _context.Usuarios.Add(usuarios);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUsuarios", new { id = usuarios.idusu }, usuarios);
         }
+
 
         // DELETE: api/Usuarios/5
         [HttpDelete("{id}")]

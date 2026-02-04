@@ -58,30 +58,30 @@ namespace Servicios_AutomaG
         {
             var usuarioExistente = CRUD<Usuarios>.GetAll()
                 .FirstOrDefault(u => u.emailusu == email);
+
             if (usuarioExistente != null)
-            {
-                return false; // El usuario ya existe   
-            }
+                return false;
 
             try
             {
                 CRUD<Usuarios>.Create(new Usuarios
                 {
-                    //idusu = "", por corregir 
+                    
                     nombreusu = nombre,
                     passwordhash = password,
                     emailusu = email,
-                    activousu= true,
-                    fechacreacion= DateTime.UtcNow,
+                    activousu = true,
+                    fechacreacion = DateTime.UtcNow
                 });
-                return true; 
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al registrar usuario: {ex.Message}");
-                return false; 
-
+                return false;
             }
         }
+
     }
 }
