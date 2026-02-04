@@ -77,8 +77,8 @@ namespace MVC_AutomaG.Controllers
         {
             // Elimina la cookie de autenticación
             await HttpContext.SignOutAsync("Cookies");
-            return RedirectToAction("Index", "Home");
-           //return RedirectToAction("Index", "Login");
+            //return RedirectToAction("Index", "Home");
+           return RedirectToAction("Index", "Login");
         }
 
         //[HttpGet]

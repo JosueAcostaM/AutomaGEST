@@ -1,64 +1,97 @@
 ﻿@model IEnumerable<Modelos_AutomaG.Programas>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Programas de Maestría</h3>
-        <!-- Boton agregar programa -->
-        <a href="/Programas/Create" class="btn btn-success btn-sm">
-            <i class="bi bi-plus-circle"></i> Agregar Programa
+@{
+    ViewData["Title"] = "Programas de Maestría";
+}
+
+<link rel="stylesheet" href="~/css/programas-lista.css" asp-append-version="true" />
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+
+    <div class="page-heading-row">
+        <div>
+            <h1 class="page-title">Programas de Maestría</h1>
+            <p class="page-subtitle">Gestiona los programas disponibles</p>
+        </div>
+
+        <a href="/Programas/Create" class="btn-add-program">
+            <i data-lucide="plus" style="width: 18px;"></i> Nueva Maestría
         </a>
     </div>
 
-    <table class="table table-hover shadow-sm" id="tablaProgramas">
-        <thead class="table-dark">
-            <tr>
-                <th>Programa</th>
-                <th class="text-center">Estado / Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="cuerpoProgramas">
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
-                {
-                    <tr data-id-row="@item.idpro">
-                        <td>@item.nombrepro</td>
-                        <td class="text-center d-flex align-items-center justify-content-between">
-                            <!-- Switch de estado -->
-                            <div class="form-check form-switch">
-                                <input class="form-check-input estado-switch"
-                                       type="checkbox"
-                                       data-id="@item.idpro"
-                                       @(item.estadopro == "activo" ? "checked" : "")>
-                                <span class="ms-2 estado-texto" id="estado_@item.idpro">
-                                    @item.estadopro
-                                </span>
-                            </div>
+    <div class="table-card">
+        <div class="card-header-bar">
+            <h3 class="card-title">Programas Activos y Disponibles</h3>
+        </div>
 
-                            <!-- Botón eliminar -->
-                            <button type="button"
-                                    class="btn btn-outline-danger btn-sm"
-                                    onclick="eliminarPrograma('@item.idpro')">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+        <div style="overflow-x: auto;">
+            <table class="prog-table" id="tablaProgramas">
+                <tbody id="cuerpoProgramas">
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr data-id-row="@item.idpro">
+                                <td width="60%" class="prog-name">
+                                    @item.nombrepro
+                                </td>
+
+                                <td width="40%">
+                                    <div class="d-flex align-items-center justify-content-end gap-4">
+
+                                        <div class="switch-wrapper">
+                                            <span class="estado-texto @(item.estadopro == "activo" ? "estado-activo" : "estado-inactivo")"
+                                                  id="texto_@item.idpro">
+                                                @item.estadopro
+                                            </span>
+
+                                            <div class="form-check form-switch m-0">
+                                                <input class="form-check-input estado-switch"
+                                                       type="checkbox"
+                                                       style="cursor: pointer; width: 40px; height: 20px;"
+                                                       data-id="@item.idpro"
+                                                @(item.estadopro == "activo" ? "checked" : "")>
+                                            </div>
+                                        </div>
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+
+                                        <button type="button"
+                                                class="btn-delete-ghost"
+                                                onclick="eliminarPrograma('@item.idpro')"
+                                                title="Eliminar Programa">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
 
-            // Función para cambiar estado
+            // Función para inicializar los switches (Lógica Original + Cambio de Color Texto)
             function initSwitches() {
                 document.querySelectorAll('.estado-switch').forEach(sw => {
+                    // Evitamos agregar listeners duplicados si se llama varias veces
+                    if(sw.getAttribute('data-init') === 'true') return;
+                    sw.setAttribute('data-init', 'true');
+
                     sw.addEventListener('change', function () {
                         const id = this.dataset.id;
-                        const textoEstado = document.getElementById('estado_' + id);
+                        const textoLabel = document.getElementById('texto_' + id);
+
+                        // Optimismo UI: Cambiar visualmente antes de que responda la API
+                        const nuevoEstadoVisual = this.checked ? "activo" : "inactivo";
+                        actualizarTextoEstado(textoLabel, nuevoEstadoVisual);
 
                         fetch(`https://localhost:7166/api/Programas/${id}/estado`, {
                             method: 'PATCH'
@@ -68,20 +101,37 @@
                             return r.json();
                         })
                         .then(data => {
-                            textoEstado.textContent = data.nuevoEstado;
+                            // Confirmar con dato real de la API
+                            actualizarTextoEstado(textoLabel, data.nuevoEstado);
+                            // Sincronizar switch si la API devolvió algo diferente (raro)
+                            this.checked = (data.nuevoEstado.toLowerCase() === 'activo');
                         })
                         .catch(() => {
+                            // Revertir si falla
                             this.checked = !this.checked;
-                            alert('Error al cambiar el estado');
+                            const estadoRevertido = this.checked ? "activo" : "inactivo";
+                            actualizarTextoEstado(textoLabel, estadoRevertido);
+                            alert('Error de conexión al cambiar estado');
                         });
                     });
                 });
             }
 
-            // Inicializar switches al cargar la tabla
+            // Helper para cambiar color del texto (Rojo/Gris)
+            function actualizarTextoEstado(elemento, estado) {
+                elemento.textContent = estado;
+                if(estado.toLowerCase() === 'activo') {
+                    elemento.classList.remove('estado-inactivo');
+                    elemento.classList.add('estado-activo');
+                } else {
+                    elemento.classList.remove('estado-activo');
+                    elemento.classList.add('estado-inactivo');
+                }
+            }
+
             initSwitches();
 
-            // Función eliminar
+            // Lógica de Eliminación (HTML Actualizado)
             window.eliminarPrograma = function(id) {
                 if(!confirm('¿Seguro que quieres eliminar este programa?')) return;
 
@@ -91,32 +141,49 @@
                         return r;
                     })
                     .then(() => {
-                        // Recargar la tabla desde la API
+                        // Recargar tabla
                         fetch('https://localhost:7166/api/Programas')
                             .then(r => r.json())
                             .then(data => {
                                 const cuerpo = document.getElementById('cuerpoProgramas');
                                 cuerpo.innerHTML = '';
+
                                 data.forEach(item => {
                                     const row = document.createElement('tr');
                                     row.setAttribute('data-id-row', item.idpro);
+
+                                    // HTML GENERADO DINÁMICAMENTE (ESTILO NUEVO)
                                     row.innerHTML = `
-                                        <td>${item.nombrepro}</td>
-                                        <td class="text-center d-flex align-items-center justify-content-between">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input estado-switch" type="checkbox" data-id="${item.idpro}" ${item.estadopro === 'activo' ? 'checked' : ''}>
-                                                <span class="ms-2 estado-texto" id="estado_${item.idpro}">${item.estadopro}</span>
+                                        <td width="60%" class="prog-name">
+                                            ${item.nombrepro}
+                                        </td>
+                                        <td width="40%">
+                                            <div class="d-flex align-items-center justify-content-end gap-4">
+                                                <div class="switch-wrapper">
+                                                    <span class="estado-texto ${item.estadopro === 'activo' ? 'estado-activo' : 'estado-inactivo'}"
+                                                          id="texto_${item.idpro}">
+                                                        ${item.estadopro}
+                                                    </span>
+                                                    <div class="form-check form-switch m-0">
+                                                        <input class="form-check-input estado-switch"
+                                                               type="checkbox"
+                                                               style="cursor: pointer; width: 40px; height: 20px;"
+                                                               data-id="${item.idpro}"
+                                                               ${item.estadopro === 'activo' ? 'checked' : ''}>
+                                                    </div>
+                                                </div>
+                                                <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                                <button type="button" class="btn-delete-ghost" onclick="eliminarPrograma('${item.idpro}')" title="Eliminar">
+                                                    <i data-lucide="trash-2" style="width: 18px;"></i>
+                                                </button>
                                             </div>
-                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarPrograma('${item.idpro}')">
-                                                <i class="bi bi-trash"></i> Eliminar
-                                            </button>
                                         </td>
                                     `;
                                     cuerpo.appendChild(row);
                                 });
 
-                                // Re-inicializar los switches
                                 initSwitches();
+                                lucide.createIcons();
                             });
                     })
                     .catch(err => {
@@ -124,7 +191,6 @@
                         alert('No se pudo eliminar el programa');
                     });
             }
-
         });
     </script>
 }

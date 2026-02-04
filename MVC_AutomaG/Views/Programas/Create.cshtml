@@ -1,73 +1,99 @@
 ﻿@model Modelos_AutomaG.Programas
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Registrar Programa";
 }
 
-<h1>Create</h1>
+<link rel="stylesheet" href="~/css/programa-form.css" asp-append-version="true" />
 
-<h4>Programas</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="utn-form-container">
+
+    <div class="utn-form-header">
+        <h1 class="utn-title">Nuevo Programa Académico</h1>
+        <p class="utn-subtitle">Complete la información para añadir una nueva oferta académica</p>
+    </div>
+
+    <div class="utn-card">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="idpro" class="control-label"></label>
-                <input asp-for="idpro" class="form-control" />
-                <span asp-validation-for="idpro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="nombrepro" class="control-label"></label>
-                <input asp-for="nombrepro" class="form-control" />
-                <span asp-validation-for="nombrepro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idcam" class="control-label"></label>
-                <input asp-for="idcam" class="form-control" />
-                <span asp-validation-for="idcam" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idniv" class="control-label"></label>
-                <input asp-for="idniv" class="form-control" />
-                <span asp-validation-for="idniv" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idmod" class="control-label"></label>
-                <input asp-for="idmod" class="form-control" />
-                <span asp-validation-for="idmod" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idpre" class="control-label"></label>
-                <input asp-for="idpre" class="form-control" />
-                <span asp-validation-for="idpre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="duracionpro" class="control-label"></label>
-                <input asp-for="duracionpro" class="form-control" />
-                <span asp-validation-for="duracionpro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="descripcionpro" class="control-label"></label>
-                <input asp-for="descripcionpro" class="form-control" />
-                <span asp-validation-for="descripcionpro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="estadopro" class="control-label"></label>
-                <input asp-for="estadopro" class="form-control" />
-                <span asp-validation-for="estadopro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:1rem;"></div>
+
+            <div class="utn-grid">
+
+                <div class="utn-form-item">
+                    <label asp-for="idpro" class="utn-label">Código del Programa</label>
+                    <input asp-for="idpro" class="utn-field" placeholder="Ej. MST-01" />
+                    <span asp-validation-for="idpro" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="nombrepro" class="utn-label">Nombre Oficial</label>
+                    <input asp-for="nombrepro" class="utn-field" placeholder="Ej. Maestría en Software" />
+                    <span asp-validation-for="nombrepro" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="idcam" class="utn-label">Campo de Conocimiento (ID)</label>
+                    <input asp-for="idcam" class="utn-field" />
+                    <span asp-validation-for="idcam" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="idniv" class="utn-label">Nivel Académico (ID)</label>
+                    <input asp-for="idniv" class="utn-field" />
+                    <span asp-validation-for="idniv" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="idmod" class="utn-label">Modalidad (ID)</label>
+                    <input asp-for="idmod" class="utn-field" />
+                    <span asp-validation-for="idmod" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="idpre" class="utn-label">Presencialidad (ID)</label>
+                    <input asp-for="idpre" class="utn-field" />
+                    <span asp-validation-for="idpre" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="duracionpro" class="utn-label">Duración (Semestres)</label>
+                    <input asp-for="duracionpro" class="utn-field" type="number" />
+                    <span asp-validation-for="duracionpro" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="estadopro" class="utn-label">Estado Inicial</label>
+                    <input asp-for="estadopro" class="utn-field" placeholder="Activo" />
+                    <span asp-validation-for="estadopro" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item utn-full-width">
+                    <label asp-for="descripcionpro" class="utn-label">Descripción del Programa</label>
+                    <textarea asp-for="descripcionpro" class="utn-field" rows="4"></textarea>
+                    <span asp-validation-for="descripcionpro" class="text-danger"></span>
+                </div>
+
+                <div class="utn-footer">
+                    <a asp-action="ListPrograma" class="utn-btn-cancel">
+                        <i data-lucide="x" style="width:18px;"></i> Cancelar
+                    </a>
+                    <button type="submit" class="utn-btn-save">
+                        <i data-lucide="save" style="width:18px;"></i> Guardar Programa
+                    </button>
+                </div>
+
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="ListPrograma">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
 }

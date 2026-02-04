@@ -1,0 +1,161 @@
+﻿/* =================================================================
+   ESTILO DETALLES - FICHA TÉCNICA (CAMPO DE CONOCIMIENTO)
+   ================================================================= */
+
+.details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- 1. NAVEGACIÓN Y ENCABEZADO --- */
+.btn-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6B7280; /* Gris medio */
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+}
+
+    .btn-back-link:hover {
+        color: #D91016; /* Rojo al pasar el mouse */
+        transform: translateX(-3px); /* Pequeño movimiento a la izquierda */
+    }
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid #E5E7EB;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.details-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.details-meta {
+    margin-top: 0.5rem;
+    color: #6B7280;
+    font-size: 1rem;
+}
+
+/* Badge del Código (Estilo "Código de programación") */
+.code-badge {
+    font-family: monospace;
+    background: #F3F4F6;
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #374151;
+    border: 1px solid #E5E7EB;
+    font-weight: 600;
+}
+
+/* Badge de Estado (Píldora Azul) */
+.status-pill {
+    background-color: #EFF6FF;
+    color: #1D4ED8;
+    padding: 0.5rem 1.2rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid #BFDBFE;
+    display: inline-block;
+}
+
+/* --- 2. TARJETA DE DESCRIPCIÓN --- */
+.description-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Sombra flotante */
+    position: relative;
+    overflow: hidden;
+}
+
+    /* Adorno: Borde izquierdo rojo */
+    .description-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: #D91016;
+    }
+
+.desc-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.desc-text {
+    font-size: 1.15rem;
+    color: #374151;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* --- 3. SECCIÓN DE PROGRAMAS --- */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon-box {
+    width: 40px;
+    height: 40px;
+    background-color: #FEF2F2;
+    color: #D91016;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+}
+
+/* Estilos extra para la tabla dentro de detalles */
+.program-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+/* Estado vacío elegante */
+.empty-state-container {
+    padding: 3rem;
+    text-align: center;
+    color: #9CA3AF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
