@@ -6,6 +6,15 @@
 
 <link rel="stylesheet" href="~/css/programas-lista.css" asp-append-version="true" />
 
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Programas
+    </li>
+}
+
 <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
 
     <div class="page-heading-row">

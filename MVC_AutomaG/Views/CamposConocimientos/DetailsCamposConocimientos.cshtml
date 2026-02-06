@@ -4,6 +4,20 @@
     ViewData["Title"] = "Detalles del Campo";
 }
 
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos">
+            Campos de conocimiento
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Detalles
+    </li>
+}
+
 <link rel="stylesheet" href="~/css/campos-lista.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/campos-details.css" asp-append-version="true" />
 

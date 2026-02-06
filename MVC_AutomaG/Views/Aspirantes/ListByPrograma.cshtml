@@ -1,5 +1,19 @@
 ﻿@model IEnumerable<Modelos_AutomaG.Aspirantes>
 
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos">
+            Campos de conocimiento
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Aspirantes Programa
+    </li>
+}
+
 <h2>Aspirantes del Programa</h2>
 
 @if (Model != null && Model.Any())

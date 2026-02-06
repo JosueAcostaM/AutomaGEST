@@ -3,60 +3,60 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MVC_AutomaG</title>
+    <title>@ViewData["Title"] - Sistema de Maestrías</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/MVC_AutomaG.styles.css" asp-append-version="true" />
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Reset básico */
         body {
-            background-color: #F3F4F6;
             margin: 0;
+            background-color: #F3F4F6;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Contenedor Principal Flexbox */
         .dashboard-wrapper {
             display: flex;
             min-height: 100vh;
         }
 
-        /* --- SIDEBAR (IZQUIERDA) --- */
+        /* ========== SIDEBAR MEJORADO ========== */
         .sidebar {
             width: 260px;
-            background-color: #FFFFFF;
+            background: #fff;
             border-right: 1px solid #E5E7EB;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: transform .3s ease;
             display: flex;
             flex-direction: column;
-            padding: 1.5rem;
-            flex-shrink: 0;
-            position: fixed; /* Fijo al hacer scroll */
-            height: 100vh;
-            left: 0;
-            top: 0;
-            z-index: 100;
         }
 
-        /* Logo */
+            .sidebar.hidden {
+                transform: translateX(-100%);
+            }
+
+        /* Contenedor del Logo con línea inferior */
+        .sidebar-header-container {
+            padding: 1.5rem;
+            border-bottom: 1px solid #F3F4F6; /* Línea sutil debajo del logo */
+            margin-bottom: 1rem;
+        }
+
         .sidebar-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 2.5rem;
         }
 
         .logo-box {
             width: 40px;
             height: 40px;
-            background-color: #D91016; /* Rojo UTN */
+            background: #D91016;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -65,91 +65,179 @@
             flex-shrink: 0;
         }
 
-        .logo-text h3 {
+        .logo-text h5 {
             margin: 0;
-            font-size: 0.9rem;
             font-weight: 700;
-            color: #111827;
+            font-size: 0.85rem;
             line-height: 1.2;
+            color: #111827;
         }
 
-        /* Navegación */
+        .logo-text small {
+            color: #6B7280;
+            font-size: 0.75rem;
+            display: block;
+        }
+
+        /* Enlaces del Menú */
         .nav-links {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 4px;
+            padding: 0 1rem;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
             text-decoration: none;
             color: #4B5563;
             font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            transition: all .2s;
         }
 
+            .nav-item i, .nav-item svg {
+                width: 20px;
+                height: 20px;
+                stroke-width: 2;
+            }
+
             .nav-item:hover {
-                background-color: #F9FAFB;
-                color: #111827;
+                background: #F9FAFB;
+                color: #D91016;
             }
 
-            /* Clase para el link activo (puedes usar lógica de Razor para activarlo) */
+            /* Estado Activo igual a la imagen */
             .nav-item.active {
-                background-color: #D91016;
-                color: #FFFFFF;
-                box-shadow: 0 4px 6px rgba(217, 16, 22, 0.2);
+                background: #D91016;
+                color: #fff;
+                box-shadow: 0 4px 12px rgba(217, 16, 22, 0.2);
             }
 
-        /* --- CONTENIDO PRINCIPAL (DERECHA) --- */
+        /* ========== MAIN CONTENT ========== */
         .main-content {
-            flex: 1;
-            margin-left: 260px; /* Espacio para el sidebar */
-            padding: 2rem;
+            margin-left: 260px;
             width: calc(100% - 260px);
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
+            transition: all .3s ease;
         }
 
-        /* Header Superior (Usuario) */
-        .top-header {
+            .main-content.full {
+                margin-left: 0;
+                width: 100%;
+            }
+
+        /* ========== TOP BAR CON LÍNEA ROJA SUPERIOR ========== */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: #fff;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0.8rem 2rem;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            height: 70px;
+        }
+
+            /* La línea roja de 3px que mencionas */
+            .top-bar::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background-color: #D91016;
+            }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
             gap: 15px;
         }
 
-        .user-profile {
+            .top-bar-left h4 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 1.1rem;
+                color: #111827;
+            }
+
+            .top-bar-left small {
+                color: #6B7280;
+                font-size: 0.85rem;
+            }
+
+        .top-bar-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #F9FAFB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid #F3F4F6;
+            color: #4B5563;
         }
 
         .user-avatar {
-            width: 35px;
-            height: 35px;
+            width: 38px;
+            height: 38px;
             background: #D91016;
-            color: white;
+            color: #fff;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
 
-        /* Ajustes Responsive */
-        (max-width: 900px) {
+        .btn-logout-figma {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            background: #fff;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+            .btn-logout-figma:hover {
+                background: #F9FAFB;
+                border-color: #D1D5DB;
+            }
+
+        .main-container {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        @@media (max-width: 900px) {
             .sidebar
 
         {
             transform: translateX(-100%);
-            transition: transform 0.3s;
         }
 
         .main-content {
@@ -161,92 +249,108 @@
     </style>
 </head>
 <body>
-
     <div class="dashboard-wrapper">
-
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-box">
-                    <i data-lucide="graduation-cap"></i>
-                </div>
-                <div class="logo-text">
-                    <h3>
-                        Sistema de Maestrías
-                        Universidad Técnica del Norte
-                    </h3>
-                    <p style="margin:0; font-size:0.75rem; color:#6B7280;">Gestión Académica</p>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header-container">
+                <div class="sidebar-header">
+                    <div class="logo-box">
+                        <i data-lucide="graduation-cap"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h5>Sistema de Maestrías UTN</h5>
+                        <small>Gestión Académica</small>
+                    </div>
                 </div>
             </div>
 
             <nav class="nav-links">
-                <a asp-controller="Home" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
-                    <i data-lucide="layout-grid"></i>
-                    <span>Dashboard</span>
+                <a asp-controller="Home" asp-action="Index"
+                   class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i data-lucide="layout-grid"></i> Dashboard
                 </a>
-
-                <a asp-controller="Aspirantes" asp-action="ListAspirantes" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Aspirantes" ? "active" : "")">
-                    <i data-lucide="users"></i>
-                    <span>Aspirantes</span>
+                <a asp-controller="Aspirantes" asp-action="ListAspirantes"
+                   class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Aspirantes" ? "active" : "")">
+                    <i data-lucide="users"></i> Aspirantes
                 </a>
-
-                <a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CamposConocimientos" ? "active" : "")">
-                    <i data-lucide="book-open"></i>
-                    <span>Campos Conoc.</span>
+                <a href="#" class="nav-item">
+                    <i data-lucide="bar-chart-3"></i> Métricas
                 </a>
-
-                <a asp-controller="Programas" asp-action="ListProgramas" class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programas" ? "active" : "")">
-                    <i data-lucide="graduation-cap"></i>
-                    <span>Programas</span>
+                <a asp-controller="Programas" asp-action="ListProgramas"
+                   class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programas" ? "active" : "")">
+                    <i data-lucide="graduation-cap"></i> Programas
                 </a>
-
-                <a asp-controller="Home" asp-action="Privacy" class="nav-item">
-                    <i data-lucide="shield"></i>
-                    <span>Privacidad</span>
+                <a asp-controller="Home" asp-action="Privacy"
+                   class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Privacy" ? "active" : "")">
+                    <i data-lucide="shield"></i> Privacidad
                 </a>
             </nav>
         </aside>
 
-        <main class="main-content">
-
-            <header class="top-header">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <div class="user-profile">
-                        <span style="font-weight:600; color:#374151;">@User.Identity.Name</span>
-                        <div class="user-avatar">
-                            @User.Identity.Name.Substring(0, 1).ToUpper()
-                        </div>
-                        <a asp-controller="Login" asp-action="Logout" class="btn btn-outline-secondary btn-sm ms-2">
-                            <i data-lucide="log-out" style="width:14px;"></i> Salir
-                        </a>
+        <main class="main-content" id="mainContent">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="icon-btn" id="btnToggleSidebar" style="border:none;">
+                        <span id="iconContainer"><i data-lucide="menu"></i></span>
+                    </button>
+                    <div class="d-none d-md-block">
+                        <h4>Panel Administrativo</h4>
+                        <small>Gestión de Aspirantes a Programas de Posgrado</small>
                     </div>
-                }
-                else
-                {
-                    <a asp-controller="Login" asp-action="Index" class="btn btn-danger btn-sm">
-                        <i data-lucide="log-in" style="width:14px;"></i> Iniciar Sesión
+                </div>
+
+                <div class="top-bar-right">
+                    <div class="icon-btn">
+                        <i data-lucide="bell"></i>
+                    </div>
+                    <div class="user-avatar">
+                        @(User.Identity.IsAuthenticated? User.Identity.Name.Substring(0, 1).ToUpper() : "AD")
+                    </div>
+                    <a asp-controller="Login" asp-action="Logout" class="btn-logout-figma">
+                        <i data-lucide="log-out"></i>
+                        <span>Cerrar Sesión</span>
                     </a>
-                }
+                </div>
             </header>
 
-            <div class="container-fluid p-0">
+            <div class="px-4 pt-3">
+                @if (IsSectionDefined("Breadcrumb"))
+                {
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb" style="background: transparent; padding: 0;">
+                            @RenderSection("Breadcrumb", required: false)
+                        </ol>
+                    </nav>
+                }
+            </div>
+
+            <div class="main-container">
                 @RenderBody()
             </div>
 
-            <footer style="margin-top:auto; padding-top:2rem; text-align:center; color:#9CA3AF; font-size:0.8rem;">
-                2026 - Universidad Técnica del Norte
+            <footer class="py-4 text-center border-top bg-white mt-auto">
+                <small class="text-muted">&copy; 2026 Universidad Técnica del Norte - Facultad de Posgrado</small>
             </footer>
         </main>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
     <script>
         lucide.createIcons();
-    </script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+        const btn = document.getElementById("btnToggleSidebar");
+        const sidebar = document.getElementById("sidebar");
+        const main = document.getElementById("mainContent");
+        const iconContainer = document.getElementById("iconContainer");
+
+        btn.addEventListener("click", () => {
+            sidebar.classList.toggle("hidden");
+            main.classList.toggle("full");
+
+            const isHidden = sidebar.classList.contains("hidden");
+            iconContainer.innerHTML = `<i data-lucide="${isHidden ? 'menu' : 'x'}"></i>`;
+            lucide.createIcons();
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

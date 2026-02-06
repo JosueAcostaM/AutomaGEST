@@ -6,6 +6,15 @@
 
 <link rel="stylesheet" href="~/css/campos-lista.css" asp-append-version="true" />
 
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Campos de conocimientos
+    </li>
+}
+
 <div class="aspirantes-page" style="margin-top: 20px; padding: 2rem;">
     <div class="page-heading">
         <h1 class="page-title">Campos de Conocimiento</h1>

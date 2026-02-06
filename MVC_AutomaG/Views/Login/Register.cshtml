@@ -11,27 +11,191 @@
     <title>@ViewData["Title"] - Sistema Maestrías</title>
 
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body.login-page {
+            margin: 0;
+            padding: 0;
+            background-color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Permite que el contenido fluya hacia abajo y tenga scroll */
+            min-height: 100vh;
+            padding-top: 60px; /* Espacio extra para que no se tape el logo arriba */
+            padding-bottom: 60px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Estilo del Header/Logo */
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo-icon {
+            width: 50px;
+            height: 50px;
+            background: #D91016;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 4px 12px rgba(217, 16, 22, 0.2);
+        }
+
+        .login-main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .login-institution {
+            color: #6B7280;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        /* Card de Registro */
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #E5E7EB;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            color: #9CA3AF;
+            width: 18px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 11px 12px 11px 40px;
+            background-color: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+            .form-input:focus {
+                outline: none;
+                border-color: #D91016;
+                background-color: #fff;
+                box-shadow: 0 0 0 3px rgba(217, 16, 22, 0.1);
+            }
+
+        /* Botón estilo Figma */
+        .btn-primary {
+            background-color: #D91016;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+            .btn-primary:hover {
+                background-color: #b30d12;
+            }
+
+        .login-footer-text {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4B5563;
+        }
+
+        .register-link {
+            color: #D91016;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-copyright {
+            margin-top: 30px;
+            color: #9CA3AF;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Mensajes de Alerta */
+        .error-message-box, .success-message-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message-box {
+            color: #D91016;
+            background: #FEF2F2;
+        }
+
+        .success-message-box {
+            color: #059669;
+            background: #ECFDF5;
+        }
+    </style>
 </head>
 <body class="login-page">
 
     <div class="login-container">
         <div class="login-header">
-            <div class="login-logo">
-                <div class="login-logo-icon">
-                    <i data-lucide="graduation-cap"></i>
-                </div>
+            <div class="login-logo-icon">
+                <i data-lucide="graduation-cap"></i>
             </div>
             <h1 class="login-main-title">Crear Cuenta</h1>
             <p class="login-institution">Complete el formulario para registrarse</p>
         </div>
 
         <div class="login-card">
-
             <form method="post" class="login-form">
-
                 <div class="form-group">
                     <label for="nombre" class="form-label">Nombres</label>
                     <div class="input-with-icon">
@@ -72,14 +236,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary btn-block">
+                <button type="submit" class="btn-primary">
                     Registrar
                 </button>
 
                 @if (ViewBag.ErrorMessage != null)
                 {
                     <div class="error-message-box">
-                        <i data-lucide="alert-circle"></i>
+                        <i data-lucide="alert-circle" size="18"></i>
                         <span>@ViewBag.ErrorMessage</span>
                     </div>
                 }
@@ -87,11 +251,10 @@
                 @if (ViewBag.SuccessMessage != null)
                 {
                     <div class="success-message-box">
-                        <i data-lucide="check-circle"></i>
+                        <i data-lucide="check-circle" size="18"></i>
                         <span>@ViewBag.SuccessMessage</span>
                     </div>
                 }
-
             </form>
 
             <div class="login-footer-text">

@@ -1,5 +1,20 @@
 ﻿@model Modelos_AutomaG.Aspirantes
 
+
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Aspirantes" asp-action="ListAspirantes">
+            Aspirantes
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Detalles
+    </li>
+}
+
 <div class="container mt-4">
     <link rel="stylesheet" href="~/css/aspirantes-detalles.css" asp-append-version="true" />
     <div class="row">
