@@ -32,12 +32,14 @@ namespace API_AutomaG.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Programas>> GetProgramas(string id)
         {
-            var programas = await _context.Programas.Include(p => p.Campo)
-                    .Include(p => p.Nivel)
-                    .Include(p => p.Modalidad)
-                    .Include(p => p.Precio)
-                    .Include(p => p.ProgramasHorarios)
-                    .FirstOrDefaultAsync(p => p.idpro == id);
+            var programas = await _context.Programas
+                .Include(p => p.Campo)
+                .Include(p => p.Nivel)
+                .Include(p => p.Modalidad)
+                .Include(p => p.Precio)
+                .Include(p => p.ProgramasHorarios)       
+                    .ThenInclude(ph => ph.Horario)   
+                .FirstOrDefaultAsync(m => m.idpro == id);
 
             if (programas == null)
             {
