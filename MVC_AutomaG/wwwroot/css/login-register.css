@@ -1,0 +1,176 @@
+﻿/* login-register.css - Estilos para Registro y Acceso AutomaGest */
+:root {
+    --utn-red: #D91016;
+    --utn-red-dark: #B00D12;
+    --utn-blue-dark: #111827;
+    --utn-dark: #1F2937;
+    --utn-gray: #6B7280;
+    --utn-light: #F3F4F6;
+    --utn-border: #E5E7EB;
+    --white: #FFFFFF;
+    --green-cian: #059669;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Contenedor cuando la vista NO usa Layout (Login externo) */
+body.login-page {
+    margin: 0;
+    padding: 0;
+    background-color: var(--utn-light);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-logo-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--utn-red);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    margin: 0 auto 15px auto;
+    box-shadow: 0 4px 12px rgba(217, 16, 22, 0.2);
+}
+
+.login-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--utn-blue-dark);
+    margin: 0;
+}
+
+.login-institution {
+    color: var(--utn-gray);
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+.login-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 16px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid var(--utn-border);
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    color: #9CA3AF;
+    width: 18px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 11px 12px 11px 40px;
+    background-color: #F9FAFB;
+    border: 1px solid var(--utn-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--utn-red);
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(217, 16, 22, 0.1);
+    }
+
+.btn-primary {
+    background-color: var(--utn-red);
+    color: var(--white);
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+    .btn-primary:hover {
+        background-color: var(--utn-red-dark);
+    }
+
+.login-footer-text {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #4B5563;
+}
+
+.register-link {
+    color: var(--utn-red);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-copyright {
+    margin-top: 30px;
+    color: #9CA3AF;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.error-message-box, .success-message-box {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-message-box {
+    color: var(--utn-red);
+    background: #FEF2F2;
+}
+
+.success-message-box {
+    color: var(--green-cian);
+    background: #ECFDF5;
+}
