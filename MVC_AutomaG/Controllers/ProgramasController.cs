@@ -13,24 +13,21 @@ namespace MVC_AutomaG.Controllers
             try
             {
                 var programas = CRUD<Programas>.GetAll();
-                var camposconocimiento= CRUD<CamposConocimiento>.GetAll();
-                ViewBag.CamposConocimientos = camposconocimiento;
-                var nivel = CRUD<Niveles>.GetAll();
-                ViewBag.Nivel = nivel;
-                var modalidad = CRUD<Modalidades>.GetAll();
-                ViewBag.Modalidad = modalidad;
-                var precio = CRUD<Precios>.GetAll();
-                ViewBag.Precio = precio;
+
+                ViewBag.CamposConocimientos = CRUD<CamposConocimiento>.GetAll();
+                ViewBag.Nivel = CRUD<Niveles>.GetAll();
+                ViewBag.Modalidad = CRUD<Modalidades>.GetAll();
+                ViewBag.Precio = CRUD<Precios>.GetAll();
+
                 return View(programas);
             }
             catch (Exception ex)
             {
                 ViewBag.Error = "Error al conectar con la API: " + ex.Message;
-
                 return View(new List<Programas>());
             }
         }
-        // GET: ProgramasController/Details/5
+
         // GET: ProgramasController/DetailsProgramas/MST-01
         public IActionResult DetailsProgramas(string id)
         {
@@ -39,25 +36,13 @@ namespace MVC_AutomaG.Controllers
             var programa = CRUD<Programas>.GetById(id);
             if (programa == null) return NotFound();
 
-            var campos = CRUD<CamposConocimiento>.GetAll();
-            var niveles = CRUD<Niveles>.GetAll();
-            var modalidades = CRUD<Modalidades>.GetAll();
-            var precios = CRUD<Precios>.GetAll();
-            //Edicion viewbag para multiple opcion
-            ViewBag.CamposConocimientos = campos ?? new List<CamposConocimiento>();
-            ViewBag.Nivel = niveles ?? new List<Niveles>();
-            ViewBag.Modalidad = modalidades ?? new List<Modalidades>();
-            ViewBag.Precio = precios ?? new List<Precios>();
-            //viewbag para traer los datos asociados por programa
-            ViewBag.CampoNombre = campos?.FirstOrDefault(c => c.idcam == programa.idcam)?.nombrecam;
-            ViewBag.NivelNombre = niveles?.FirstOrDefault(n => n.idniv == programa.idniv)?.nombreniv;
-            ViewBag.ModalidadNombre = modalidades?.FirstOrDefault(m => m.idmod == programa.idmod)?.nombremod;
-            ViewBag.PrecioMatricula = precios?.FirstOrDefault(p => p.idpre == programa.idpre)?.matriculapre;
+            ViewBag.CamposConocimientos = CRUD<CamposConocimiento>.GetAll() ?? new List<CamposConocimiento>();
+            ViewBag.Nivel = CRUD<Niveles>.GetAll() ?? new List<Niveles>();
+            ViewBag.Modalidad = CRUD<Modalidades>.GetAll() ?? new List<Modalidades>();
+            ViewBag.Precio = CRUD<Precios>.GetAll() ?? new List<Precios>();
 
             return View(programa);
         }
-
-
 
         // GET: ProgramasController/Create
         public ActionResult Create()
@@ -67,7 +52,6 @@ namespace MVC_AutomaG.Controllers
                 ViewBag.CamposConocimientos = CRUD<CamposConocimiento>.GetAll();
                 ViewBag.Nivel = CRUD<Niveles>.GetAll();
                 ViewBag.Modalidad = CRUD<Modalidades>.GetAll();
-                ViewBag.Precio = CRUD<Precios>.GetAll();
                 return View(new Programas());
             }
             catch (Exception ex)
@@ -77,93 +61,116 @@ namespace MVC_AutomaG.Controllers
             }
         }
 
-        // POST: ProgramasController/Create
+        /// POST: ProgramasController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Programas Programa)
-        {
-            CRUD<Programas>.Create(Programa);
-            try
-            {
-                return RedirectToAction(nameof(ListProgramas));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProgramasController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ProgramasController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Create(Programas programa, IFormCollection form)
         {
             try
             {
+                ViewBag.CamposConocimientos = CRUD<CamposConocimiento>.GetAll();
+                ViewBag.Nivel = CRUD<Niveles>.GetAll();
+                ViewBag.Modalidad = CRUD<Modalidades>.GetAll();
+
+                programa.estadopro = "activo";
+
+                // Validación precios
+                if (string.IsNullOrWhiteSpace(form["matriculapre"]) ||
+                    string.IsNullOrWhiteSpace(form["arancelpre"]) ||
+                    string.IsNullOrWhiteSpace(form["inscripcionpre"]) ||
+                    string.IsNullOrWhiteSpace(form["monedapre"]))
+                {
+                    throw new Exception("Debe llenar Matrícula, Arancel, Inscripción y Moneda.");
+                }
+
+                // 1) Crear precio (API genera PRE#)
+                var precioNuevo = new Precios
+                {
+                    matriculapre = decimal.Parse(form["matriculapre"]),
+                    arancelpre = decimal.Parse(form["arancelpre"]),
+                    inscripcionpre = decimal.Parse(form["inscripcionpre"]),
+                    monedapre = form["monedapre"]
+                };
+
+                var precioCreado = CRUD<Precios>.Create(precioNuevo);
+
+                if (precioCreado == null || string.IsNullOrWhiteSpace(precioCreado.idpre))
+                    throw new Exception("No se pudo crear el precio (idpre vacío).");
+
+                // 2) Asignar idpre al programa
+                programa.idpre = precioCreado.idpre;
+
+                // 3) Crear programa (NO enviar idpro - la API lo genera)
+                // IMPORTANTE: Asegurar que el idpro sea null para que la API lo genere
+                programa.idpro = null;
+
+                var progCreado = CRUD<Programas>.Create(programa);
+
+                if (progCreado == null || string.IsNullOrWhiteSpace(progCreado.idpro))
+                    throw new Exception("La API no generó el idpro. Verifique la API.");
+
                 return RedirectToAction(nameof(ListProgramas));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Error = ex.Message;
+                return View(programa);
             }
         }
 
-        // GET: ProgramasController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ProgramasController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(ListProgramas));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        //editar programa
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateProgramas(string id, IFormCollection form)
         {
             try
             {
-
                 var programa = CRUD<Programas>.GetById(id);
-                if (programa == null) return NotFound();
+                if (programa == null) return NotFound("Programa no encontrado");
 
+                if (string.IsNullOrWhiteSpace(form["matriculapre"]) ||
+                    string.IsNullOrWhiteSpace(form["arancelpre"]) ||
+                    string.IsNullOrWhiteSpace(form["inscripcionpre"]) ||
+                    string.IsNullOrWhiteSpace(form["monedapre"]))
+                {
+                    return StatusCode(500, "Debe llenar Matrícula, Arancel, Inscripción y Moneda.");
+                }
+
+                // 1) ACTUALIZAR EL MISMO PRECIO DEL PROGRAMA
+                var precioActual = CRUD<Precios>.GetById(programa.idpre);
+                if (precioActual == null)
+                    return StatusCode(500, "No se encontró el precio del programa.");
+
+                precioActual.matriculapre = decimal.Parse(form["matriculapre"]);
+                precioActual.arancelpre = decimal.Parse(form["arancelpre"]);
+                precioActual.inscripcionpre = decimal.Parse(form["inscripcionpre"]);
+                precioActual.monedapre = form["monedapre"];
+
+                // ⚠️ Importante: aquí usamos UPDATE, NO CREATE
+                bool okPrecio = CRUD<Precios>.Update(precioActual.idpre, precioActual);
+                if (!okPrecio)
+                    return StatusCode(500, "No se pudo actualizar el precio.");
+
+                // 2) Actualizar datos del programa
                 programa.nombrepro = form["nombrepro"];
                 programa.duracionpro = form["duracionpro"];
                 programa.descripcionpro = form["descripcionpro"];
-
                 programa.idcam = form["idcam"];
                 programa.idniv = form["idniv"];
                 programa.idmod = form["idmod"];
-                programa.idpre = form["idpre"];
 
-                bool ok = CRUD<Programas>.Update(id, programa);
+                if (string.IsNullOrWhiteSpace(programa.estadopro))
+                    programa.estadopro = "activo";
 
-                if (ok) return Ok("Programa actualizado correctamente");
-                return StatusCode(500, "Error al guardar los cambios");
+                // 3) OJO: NO CAMBIAMOS idpre (se queda el mismo)
+                bool okPrograma = CRUD<Programas>.Update(id, programa);
+
+                if (okPrograma) return Ok("Programa actualizado correctamente");
+                return StatusCode(500, "Error al guardar los cambios del programa.");
             }
             catch (Exception ex)
             {
                 return StatusCode(500, "Error: " + ex.Message);
             }
         }
-
     }
 }

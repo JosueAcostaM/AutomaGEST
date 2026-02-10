@@ -34,7 +34,7 @@ namespace API_AutomaG.Controllers
         {
             var aspirante = await _context.Aspirantes.
                 Include(a => a.Contacto).
-                FirstOrDefaultAsync();
+                FirstOrDefaultAsync(a=> a.idasp==id);
                 
 
             if (aspirante == null)

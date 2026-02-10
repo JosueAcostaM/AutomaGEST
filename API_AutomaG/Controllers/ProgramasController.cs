@@ -81,11 +81,32 @@ namespace API_AutomaG.Controllers
         }
 
         // POST: api/Programas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Programas>> PostProgramas(Programas programas)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Generar ID secuencial PRO1, PRO2, etc.
+            var maxId = await _context.Programas
+                .Where(p => p.idpro.StartsWith("PRO"))
+                .Select(p => p.idpro)
+                .ToListAsync();
+
+            int maxNum = 0;
+            foreach (var id in maxId)
+            {
+                if (int.TryParse(id.Replace("PRO", ""), out int num) && num > maxNum)
+                    maxNum = num;
+            }
+
+            programas.idpro = $"PRO{maxNum + 1}";
+
+            if (string.IsNullOrWhiteSpace(programas.estadopro))
+                programas.estadopro = "activo";
+
             _context.Programas.Add(programas);
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -93,17 +114,13 @@ namespace API_AutomaG.Controllers
             catch (DbUpdateException)
             {
                 if (ProgramasExists(programas.idpro))
-                {
                     return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return CreatedAtAction("GetProgramas", new { id = programas.idpro }, programas);
         }
+
 
         // DELETE: api/Programas/5
         [HttpDelete("{id}")]

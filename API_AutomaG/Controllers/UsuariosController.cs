@@ -41,37 +41,37 @@ namespace API_AutomaG.Controllers
 
             return usuarios;
         }
-
-        // PUT: api/Usuarios/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
         {
             if (id != usuarios.idusu)
+                return BadRequest("Id no coincide.");
+
+            var existente = await _context.Usuarios.FindAsync(id);
+            if (existente == null)
+                return NotFound();
+
+            // Actualizar SOLO campos editables
+            existente.nombreusu = usuarios.nombreusu;
+            existente.emailusu = usuarios.emailusu;
+            existente.activousu = usuarios.activousu;
+
+            // Contraseña:
+            // si llega "" => no cambiar
+            // si llega texto => hashear y cambiar
+            if (!string.IsNullOrWhiteSpace(usuarios.passwordhash))
             {
-                return BadRequest();
+                existente.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
+            // NO tocar fechacreacion
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UsuariosExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _context.SaveChangesAsync();
             return NoContent();
         }
+
+
+
 
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

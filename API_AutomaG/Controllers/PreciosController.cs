@@ -78,24 +78,25 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<Precios>> PostPrecios(Precios precios)
         {
-            _context.Precios.Add(precios);
-            try
+            var ultimo = await _context.Precios
+                .OrderByDescending(p => p.idpre)
+                .FirstOrDefaultAsync();
+
+            int numero = 1;
+
+            if (ultimo != null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (PreciosExists(precios.idpre))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                var numStr = ultimo.idpre.Replace("PRE", "");
+                int.TryParse(numStr, out numero);
+                numero++;
             }
 
-            return CreatedAtAction("GetPrecios", new { id = precios.idpre }, precios);
+            precios.idpre = $"PRE{numero}";
+
+            _context.Precios.Add(precios);
+            await _context.SaveChangesAsync();
+
+            return precios;
         }
 
         // DELETE: api/Precios/5
