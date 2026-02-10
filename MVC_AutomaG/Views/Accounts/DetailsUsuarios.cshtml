@@ -1,0 +1,215 @@
+﻿@model Modelos_AutomaG.Usuarios
+
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Accounts" asp-action="ListUsuarios">Usuarios</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Detalles de Usuario</li>
+}
+
+<div class="container mt-4">
+    <link rel="stylesheet" href="~/css/aspirantes-detalles.css" asp-append-version="true" />
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 p-4 mb-4 bg-white rounded-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-primary-emphasis mb-0">Gestión de Cuenta</h3>
+                    <button type="button" class="btn btn-primary" id="btnEditar">
+                        <i class="fas fa-user-edit me-2"></i>Editar Perfil
+                    </button>
+                </div>
+
+                <div id="modoVisualizacion">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Nombre de Usuario</label>
+                            <p class="fs-5">@Model.nombreusu</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Correo Electrónico</label>
+                            <p class="fs-5">@Model.emailusu</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Estado de Cuenta</label>
+                            <p>
+                                @if (Model.activousu)
+                                {
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Suspendido</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Roles Asignados</label>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                @if (Model.UsuarioRoles != null && Model.UsuarioRoles.Any())
+                                {
+                                    foreach (var ur in Model.UsuarioRoles)
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                            @ur.Rol?.nombrerol
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted small italic">Sin roles asignados</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="text-muted small fw-bold text-uppercase">Seguridad</label>
+                            <p class="text-secondary small">La contraseña está cifrada con tecnología BCrypt. Por seguridad, no se muestra el hash en esta vista.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modoEdicion" style="display: none;">
+                    <form id="formEdicion"
+                          data-action="@Url.Action("UpdateUsuarios", "Usuarios")"
+                          data-id="@Model.idusu">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Nombre</label>
+                                <input type="text" class="form-control" name="nombreusu" value="@Model.nombreusu" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Email</label>
+                                <input type="email" class="form-control" name="emailusu" value="@Model.emailusu" required />
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Estado</label>
+                                <select class="form-select" name="activousu">
+                                    <option value="true" selected="@(Model.activousu == true)">Activo</option>
+                                    <option value="false" selected="@(Model.activousu == false)">Inactivo / Suspendido</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Nueva Contraseña (Opcional)</label>
+                                <input type="password" class="form-control" name="nuevapassword" placeholder="Dejar en blanco para no cambiar" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-danger px-4" id="btnCancelar">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-success px-4" id="btnGuardar">
+                                <i class="fas fa-save me-2"></i>Actualizar Usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 mb-3 bg-white rounded-4 text-center">
+                <h5 class="text-secondary mb-3">Miembro desde</h5>
+                <i class="fas fa-calendar-alt fa-3x text-light mb-3"></i>
+                <p class="fs-4 fw-light">@Model.fechacreacion.ToString("dd 'de' MMMM, yyyy")</p>
+            </div>
+
+            <div class="card shadow-sm border-0 p-4 bg-white rounded-4">
+                <h5 class="text-secondary mb-3">Detalles Técnicos</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">ID Sistema:</span>
+                    <span class="fw-bold small text-truncate" style="max-width: 150px;">@Model.idusu</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Tipo:</span>
+                    <span class="fw-bold">Gestor UTN</span>
+                </div>
+                <hr />
+                <button type="button" class="btn @(Model.activousu ? "btn-outline-danger" : "btn-outline-success") w-100" id="btnToggleEstado">
+                    <i class="fas @(Model.activousu ? "fa-user-slash" : "fa-user-check") me-2"></i>
+                    @(Model.activousu ? "Suspender Usuario" : "Activar Usuario")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnEditar = document.getElementById('btnEditar');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const btnGuardar = document.getElementById('btnGuardar');
+            const modoVisualizacion = document.getElementById('modoVisualizacion');
+            const modoEdicion = document.getElementById('modoEdicion');
+            const formulario = document.getElementById('formEdicion');
+
+            // Toggle Edición
+            btnEditar.addEventListener('click', () => {
+                modoVisualizacion.style.display = 'none';
+                modoEdicion.style.display = 'block';
+                btnEditar.style.display = 'none';
+            });
+
+            btnCancelar.addEventListener('click', () => {
+                modoVisualizacion.style.display = 'block';
+                modoEdicion.style.display = 'none';
+                btnEditar.style.display = 'block';
+            });
+
+            // Guardar Cambios
+            btnGuardar.addEventListener('click', async function() {
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Actualizando...';
+                btnGuardar.disabled = true;
+
+                try {
+                    const formData = new FormData(formulario);
+                    const response = await fetch(formulario.dataset.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('Usuario actualizado correctamente');
+                        location.reload();
+                    } else {
+                        alert('Error al actualizar: ' + await response.text());
+                    }
+                } catch (error) {
+                    alert('Error de conexión');
+                } finally {
+                    btnGuardar.innerHTML = '<i class="fas fa-save me-2"></i>Actualizar Usuario';
+                    btnGuardar.disabled = false;
+                }
+            });
+
+            // Toggle rápido de estado (Activar/Suspender)
+            document.getElementById('btnToggleEstado').addEventListener('click', async function() {
+                if(!confirm('¿Desea cambiar el estado de acceso de este usuario?')) return;
+
+                try {
+                    const response = await fetch(`/Usuarios/ToggleStatus/${'@Model.idusu'}`, { method: 'POST' });
+                    if (response.ok) location.reload();
+                    else alert('Error al cambiar estado');
+                } catch (e) { alert('Error de conexión'); }
+            });
+        });
+    </script>
+}

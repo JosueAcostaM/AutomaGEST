@@ -14,7 +14,6 @@ namespace Modelos_AutomaG
     {
         [Key]
         [Column("idusu")]
-        [JsonIgnore]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? idusu { get; set; }
 

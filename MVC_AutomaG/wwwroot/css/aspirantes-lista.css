@@ -23,6 +23,8 @@
     margin-top: 0.5rem;
 }
 
+
+
 /* --- 2. TARJETAS CON FUERZA VISUAL --- */
 .filters-card, .table-card {
     background-color: #FFFFFF;
@@ -33,6 +35,22 @@
     margin-bottom: 2rem;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Botón "Nueva Maestría" Rojo */
+.btn-add-program {
+    background-color: #D91016;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(217, 16, 22, 0.3);
+    transition: all 0.2s;
+    border: none;
 }
 
     .filters-card:hover, .table-card:hover {

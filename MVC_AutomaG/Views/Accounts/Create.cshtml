@@ -1,0 +1,57 @@
+﻿@model Modelos_AutomaG.Usuarios
+
+@{
+    ViewData["Title"] = "Registrar Usuarios";
+}
+
+<link rel="stylesheet" href="~/css/programa-form.css" asp-append-version="true" />
+
+<div class="utn-form-container">
+
+    <div class="utn-form-header">
+        <h1 class="utn-title">Nuevo Usuario Administrativo</h1>
+        <p class="utn-subtitle">Complete la información para añadir un nuevo usuario</p>
+    </div>
+
+    <div class="utn-card">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:1rem;"></div>
+
+            <div class="utn-grid">
+
+                <div class="utn-form-item">
+                    <label asp-for="nombreusu" class="utn-label">Nombre Oficial</label>
+                    <input asp-for="nombreusu" class="utn-field" placeholder="Ej. Josué" />
+                    <span asp-validation-for="nombreusu" class="text-danger"></span>
+                </div>
+
+                <div class="utn-form-item">
+                    <label asp-for="emailusu" class="utn-label">Correo Electronico</label>
+                    <input asp-for="emailusu" class="utn-field" placeholder="Ej. correo@gmail.com />
+                    <span asp-validation-for="emailusu" class="text-danger"></span>
+                </div>
+
+                    <div class="utn-footer">
+                        <a asp-action="ListProgramas" class="utn-btn-cancel">
+                            <i data-lucide="x" style="width:18px;"></i> Cancelar
+                        </a>
+                        <button type="submit" class="utn-btn-save">
+                            <i data-lucide="save" style="width:18px;"></i> Guardar Programa
+                        </button>
+                    </div>
+
+                </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+}

@@ -273,10 +273,11 @@
                     <i data-lucide="graduation-cap"></i> Programas
                 </a>
 
-                <a asp-controller="Home" asp-action="Privacy"
-                             class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Privacy" ? "active" : "")">
-                    <i data-lucide="shield"></i> Privacidad
+                <a asp-controller="Accounts" asp-action="ListUsuarios"
+                   class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Accounts" ? "active" : "")">
+                    <i data-lucide="shield"></i> Personal Administrativo
                 </a>
+
             </nav>
         </aside>
 
