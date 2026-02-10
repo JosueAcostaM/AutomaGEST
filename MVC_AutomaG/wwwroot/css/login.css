@@ -20,21 +20,26 @@ body.login-page {
     font-family: var(--font-main);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
     margin: 0;
+    padding: 0;
+    padding-top: 40px; /* Espacio extra arriba para que no se tape el logo */
+    padding-bottom: 40px;
 }
 
 .login-container {
     width: 100%;
     max-width: 420px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* --- ENCABEZADO (LOGO) --- */
 .login-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 30px;
 }
 
 .login-logo {
@@ -44,14 +49,15 @@ body.login-page {
 }
 
 .login-logo-icon {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     background-color: var(--utn-red);
     color: white;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto 15px auto;
     box-shadow: 0 4px 6px rgba(217, 16, 22, 0.2);
 }
 
@@ -61,26 +67,26 @@ body.login-page {
     }
 
 .login-main-title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--utn-dark);
-    margin: 0 0 0.5rem 0;
+    margin-bottom: 5px;
     /* Fuente elegante para el título */
     font-family: 'Playfair Display', serif;
 }
 
 .login-institution {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--utn-gray);
-    margin: 0;
 }
 
 /* --- TARJETA BLANCA --- */
 .login-card {
     background: var(--white);
     border: 1px solid var(--utn-border);
-    border-radius: 12px;
-    padding: 2.5rem;
+    border-radius: 16px;
+    width: 100%;
+    padding: 40px;
     box-shadow: var(--shadow);
 }
 
@@ -90,16 +96,18 @@ body.login-page {
 }
 
 .login-card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--utn-dark);
-    margin: 0 0 0.25rem 0;
+    margin-bottom: 8px;
+    text-align: center;
 }
 
 .login-card-description {
-    font-size: 0.875rem;
     color: var(--utn-gray);
-    margin: 0;
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    text-align: center;
 }
 
 /* --- FORMULARIO --- */
@@ -109,35 +117,33 @@ body.login-page {
 
 .form-label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--utn-dark);
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
 
 .input-with-icon {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .input-icon {
     position: absolute;
     left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
     width: 18px;
-    height: 18px;
     color: var(--utn-gray);
 }
 
 .form-input {
     width: 100%;
-    box-sizing: border-box; /* Evita que el padding rompa el ancho */
-    padding: 0.75rem 1rem 0.75rem 2.5rem; /* Espacio a la izq para el icono */
+    padding: 12px 12px 12px 40px;
     border: 1px solid var(--utn-border);
     border-radius: 8px;
     font-size: 0.95rem;
     transition: all 0.2s;
-    background-color: #FAFAFA;
+    background-color: #F9FAFB;
 }
 
     .form-input:focus {
@@ -152,11 +158,11 @@ body.login-page {
     background-color: var(--utn-red);
     color: white;
     font-weight: 600;
-    padding: 0.75rem;
+    padding: 12px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
+    margin-top: 10px;
     width: 100%;
     transition: background-color 0.2s;
 }
@@ -186,8 +192,8 @@ body.login-page {
 
 .login-footer-text {
     text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
+    margin-top: 25px;
+    font-size: 0.9rem;
     color: var(--utn-gray);
 }
 
@@ -203,8 +209,8 @@ body.login-page {
 
 .login-copyright {
     text-align: center;
-    margin-top: 2rem;
-    font-size: 0.75rem;
+    margin-top: 30px;
+    font-size: 0.8rem;
     color: #9CA3AF;
 }
 
