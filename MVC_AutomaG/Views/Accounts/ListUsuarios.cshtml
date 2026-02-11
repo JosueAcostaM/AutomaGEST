@@ -56,6 +56,7 @@
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">EMAIL</th>
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">ESTADO</th>
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">FECHA CREACIÓN</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">ROL</th>
                         <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700; text-align:right;">ACCIONES</th>
                     </tr>
                 </thead>
@@ -85,6 +86,22 @@
                                 </td>
                                 <td style="padding:1rem; vertical-align:middle; color: #6B7280;">
                                     @item.fechacreacion.ToString("dd/MM/yyyy")
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle;">
+                                    @if (item.UsuarioRoles != null && item.UsuarioRoles.Any())
+                                    {
+                                        foreach (var ur in item.UsuarioRoles)
+                                        {
+                                            var claseRol = ur.Rol?.codigorol == "ADMIN" ? "bg-info-subtle text-info" : "bg-warning-subtle text-warning";
+                                            <span class="badge @claseRol border px-2">
+                                                @ur.Rol?.nombrerol
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Sin rol</span>
+                                    }
                                 </td>
                                 <td style="padding:1rem; vertical-align:middle; text-align:right;">
                                     <a asp-action="DetailsUsuarios" asp-route-id="@item.idusu"

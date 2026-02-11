@@ -12,6 +12,7 @@ CRUD<Programas>.EndPoint = "https://localhost:7166/api/Programas";
 CRUD<Niveles>.EndPoint = "https://localhost:7166/api/Niveles";
 CRUD<Modalidades>.EndPoint = "https://localhost:7166/api/Modalidades";
 CRUD<Precios>.EndPoint = "https://localhost:7166/api/Precios";
+CRUD<Roles>.EndPoint = "https://localhost:7166/api/Roles";
 
 var builder = WebApplication.CreateBuilder(args);
 

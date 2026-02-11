@@ -25,14 +25,20 @@ namespace API_AutomaG.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Usuarios
+            .Include(u => u.UsuarioRoles)
+            .ThenInclude(ur => ur.Rol)
+            .ToListAsync();
         }
 
         // GET: api/Usuarios/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var usuarios = await _context.Usuarios
+            .Include(u => u.UsuarioRoles)
+                .ThenInclude(ur => ur.Rol)
+            .FirstOrDefaultAsync(u => u.idusu == id);
 
             if (usuarios == null)
             {
@@ -51,22 +57,23 @@ namespace API_AutomaG.Controllers
             if (existente == null)
                 return NotFound();
 
-            // Actualizar SOLO campos editables
+            // Actualizar campos básicos
             existente.nombreusu = usuarios.nombreusu;
             existente.emailusu = usuarios.emailusu;
             existente.activousu = usuarios.activousu;
 
-            // Contraseña:
-            // si llega "" => no cambiar
-            // si llega texto => hashear y cambiar
+            if(usuarios.passwordhash==null)
+            {
+                _context.Entry(existente).Property(x => x.passwordhash).IsModified = false;
+                usuarios.passwordhash = existente.passwordhash;
+            }
+            // Gestión de contraseña
             if (!string.IsNullOrWhiteSpace(usuarios.passwordhash))
             {
                 existente.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
             }
 
-            // NO tocar fechacreacion
-
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,17 +85,14 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
         {
-            // 🔹 Generar ID tipo USU1, USU2...
             var ultimoId = await _context.Usuarios
                 .OrderByDescending(u => u.idusu)
                 .Select(u => u.idusu)
                 .FirstOrDefaultAsync();
 
             int nuevoNumero = 1;
-
             if (!string.IsNullOrEmpty(ultimoId))
             {
-                // USU15 -> 15
                 nuevoNumero = int.Parse(ultimoId.Replace("USU", "")) + 1;
             }
 
@@ -96,6 +100,9 @@ namespace API_AutomaG.Controllers
 
             // 🔹 Hash de password
             usuarios.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
+
+            // 🔹 FIX POSTGRES: Aseguramos que la fecha sea UTC para evitar el error 500
+            usuarios.fechacreacion = DateTime.UtcNow;
 
             _context.Usuarios.Add(usuarios);
             await _context.SaveChangesAsync();

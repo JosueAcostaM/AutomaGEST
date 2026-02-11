@@ -19,4 +19,9 @@
     <ProjectReference Include="..\Servicios_AutomaG\Servicios_AutomaG.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Roles\" />
+    <Folder Include="Views\Niveles\" />
+  </ItemGroup>
+
 </Project>

@@ -46,7 +46,19 @@
                         <input type="email" class="form-input" id="email" name="email" required placeholder="nombre@utn.edu.ec">
                     </div>
                 </div>
-
+                <div class="utn-form-item">
+                    <label class="utn-label">Rol del Sistema</label>
+                    <select name="idrol" class="utn-field" required>
+                        <option value="">-- Seleccione un Rol --</option>
+                        @if (ViewBag.Roles != null)
+                        {
+                            foreach (var rol in (IEnumerable<Modelos_AutomaG.Roles>)ViewBag.Roles)
+                            {
+                                <option value="@rol.idrol">@rol.nombrerol</option>
+                            }
+                        }
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Contraseña</label>
                     <div class="input-with-icon">

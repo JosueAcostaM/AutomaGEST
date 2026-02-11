@@ -7,62 +7,38 @@ namespace MVC_AutomaG.Controllers
 {
     public class AccountsController : Controller
     {
-        // GET: AccountsController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
+        public ActionResult Index() => View();
 
         public IActionResult ListUsuarios()
         {
             try
             {
-                var usuarios= CRUD <Usuarios>.GetAll();
+                // La API ya trae los roles incluidos gracias al .Include() que pusimos antes
+                var usuarios = CRUD<Usuarios>.GetAll();
                 return View(usuarios);
             }
             catch (Exception ex)
             {
                 ViewBag.Error = "Error al conectar con la API: " + ex.Message;
-
                 return View(new List<Usuarios>());
             }
         }
 
-
-        // POST: ProgramasController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Usuarios usuarios)
-        {
-            CRUD<Usuarios>.Create(usuarios);
-            try
-            {
-                return RedirectToAction(nameof(ListUsuarios));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
+        // GET: Vista de Detalles y Edición
         public IActionResult DetailsUsuarios(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
             try
             {
-                var usuarios = CRUD<Usuarios>.GetById(id);
+                // Traemos el usuario (la API ya debe tener el .Include para roles)
+                var usuario = CRUD<Usuarios>.GetById(id);
+                if (usuario == null) return NotFound();
 
-                if (usuarios == null)
-                {
-                    return NotFound();
-                }
+                // PASO CLAVE: Cargar roles para el select de edición
+                ViewBag.RolesDisponibles = CRUD<Roles>.GetAll();
 
-                return View(usuarios);
+                return View(usuario);
             }
             catch (Exception ex)
             {
@@ -70,36 +46,55 @@ namespace MVC_AutomaG.Controllers
                 return RedirectToAction(nameof(ListUsuarios));
             }
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateUsuarios(string id, IFormCollection form)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
-                    return BadRequest("ID de usuario vacío.");
-
                 var usuario = CRUD<Usuarios>.GetById(id);
-                if (usuario == null)
-                    return NotFound("Usuario no encontrado.");
+                if (usuario == null) return NotFound();
 
+                // 1. Actualizar datos del usuario
                 usuario.nombreusu = form["nombreusu"];
                 usuario.emailusu = form["emailusu"];
                 usuario.activousu = form["activousu"] == "true";
 
-                var nueva = form["nuevapassword"].ToString();
-
-                //SOLO si escribió algo, tocamos passwordhash
-                if (!string.IsNullOrWhiteSpace(nueva))
+                if (!string.IsNullOrWhiteSpace(form["nuevapassword"]))
                 {
-                    usuario.passwordhash = nueva; // texto plano (API lo hashea)
+                    usuario.passwordhash = form["nuevapassword"];
                 }
-                // else: NO tocar usuario.passwordhash (se queda con el hash actual)
+                else
+                {
+
+                }
+
+                    // LIMPIEZA: Evita que la API de Usuarios falle por relaciones circulares
+                    usuario.UsuarioRoles = null;
 
                 bool ok = CRUD<Usuarios>.Update(id, usuario);
-                if (ok) return Ok("Usuario actualizado correctamente");
 
-                return StatusCode(500, "No se pudo actualizar el usuario.");
+                // 2. GUARDAR EL ROL (Aquí es donde estaba fallando)
+                string nuevoRolId = form["idrol"];
+                if (ok && !string.IsNullOrEmpty(nuevoRolId))
+                {
+                    // Configuramos el EndPoint por si acaso
+                    CRUD<UsuarioRoles>.EndPoint = "https://localhost:7166/api/UsuarioRoles";
+
+                    var relacion = new UsuarioRoles
+                    {
+                        idusu = id,
+                        idrol = nuevoRolId,
+                        Usuario = null, // IMPORTANTE: Debe ser null para PostgreSQL
+                        Rol = null      // IMPORTANTE: Debe ser null para PostgreSQL
+                    };
+
+                    // Intentamos crear la relación
+                    CRUD<UsuarioRoles>.Create(relacion);
+                }
+
+                return Ok("Usuario actualizado correctamente");
             }
             catch (Exception ex)
             {
@@ -107,20 +102,18 @@ namespace MVC_AutomaG.Controllers
             }
         }
 
-        //suspendido o no suspendido
         [HttpPost]
         public IActionResult CambiarEstado(string id)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(id))
-                    return BadRequest("ID vacío.");
+                if (string.IsNullOrWhiteSpace(id)) return BadRequest("ID vacío.");
 
                 var usuario = CRUD<Usuarios>.GetById(id);
-                if (usuario == null)
-                    return NotFound("Usuario no encontrado.");
+                if (usuario == null) return NotFound("Usuario no encontrado.");
 
                 usuario.activousu = !usuario.activousu;
+                usuario.UsuarioRoles = null; // Limpieza
 
                 bool ok = CRUD<Usuarios>.Update(id, usuario);
                 if (ok) return Ok("OK");
@@ -132,8 +125,5 @@ namespace MVC_AutomaG.Controllers
                 return StatusCode(500, "Error: " + ex.Message);
             }
         }
-
-
-
     }
 }

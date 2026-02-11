@@ -78,22 +78,23 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<UsuarioRoles>> PostUsuarioRoles(UsuarioRoles usuarioRoles)
         {
-            _context.UsuarioRoles.Add(usuarioRoles);
-            try
+            // 1. Limpiar navegaciones
+            usuarioRoles.Usuario = null;
+            usuarioRoles.Rol = null;
+
+            // 2. Verificar si ya existe para este usuario
+            var existente = await _context.UsuarioRoles
+                .FirstOrDefaultAsync(ur => ur.idusu == usuarioRoles.idusu);
+
+            if (existente != null)
             {
+                // Si ya tiene un rol, lo borramos para poner el nuevo
+                _context.UsuarioRoles.Remove(existente);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
-            {
-                if (UsuarioRolesExists(usuarioRoles.idusu))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            _context.UsuarioRoles.Add(usuarioRoles);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUsuarioRoles", new { id = usuarioRoles.idusu }, usuarioRoles);
         }
