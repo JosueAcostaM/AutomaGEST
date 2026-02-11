@@ -4,6 +4,14 @@
     ViewData["Title"] = "Registrar Programa";
 }
 
+@if (ViewBag.debug != null)
+{
+    <div class="alert alert-info" style="margin-bottom:1rem;">
+        <strong>Debug - ID Precio:</strong> @ViewBag.debug
+    </div>
+}
+
+
 <link rel="stylesheet" href="~/css/programa-form.css" asp-append-version="true" />
 
 <div class="utn-form-container">

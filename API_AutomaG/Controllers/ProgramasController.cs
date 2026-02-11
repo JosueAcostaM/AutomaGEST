@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API_AutomaG.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace API_AutomaG.Controllers
 {
@@ -80,46 +81,56 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Programas
         [HttpPost]
         public async Task<ActionResult<Programas>> PostProgramas(Programas programas)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            // Generar ID secuencial PRO1, PRO2, etc.
-            var maxId = await _context.Programas
-                .Where(p => p.idpro.StartsWith("PRO"))
-                .Select(p => p.idpro)
-                .ToListAsync();
-
-            int maxNum = 0;
-            foreach (var id in maxId)
-            {
-                if (int.TryParse(id.Replace("PRO", ""), out int num) && num > maxNum)
-                    maxNum = num;
-            }
-
-            programas.idpro = $"PRO{maxNum + 1}";
-
+            // (Opcional) estado por defecto
             if (string.IsNullOrWhiteSpace(programas.estadopro))
                 programas.estadopro = "activo";
 
-            _context.Programas.Add(programas);
-
-            try
+            // ✅ Reintento por si 2 personas crean a la vez y choca el ID (23505)
+            for (int intento = 1; intento <= 5; intento++)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProgramasExists(programas.idpro))
-                    return Conflict();
-                throw;
+                // Traer solo ids a memoria (evita el error de traducción)
+                var ids = await _context.Programas
+                    .AsNoTracking()
+                    .Where(p => p.idpro.StartsWith("PRO"))
+                    .Select(p => p.idpro)
+                    .ToListAsync();
+
+                int maxNum = 0;
+                foreach (var id in ids)
+                {
+                    if (id != null && id.StartsWith("PRO"))
+                    {
+                        var numStr = id.Substring(3); // "1", "10", "100"
+                        if (int.TryParse(numStr, out int n) && n > maxNum)
+                            maxNum = n;
+                    }
+                }
+
+                programas.idpro = $"PRO{maxNum + 1}";
+
+                _context.Programas.Add(programas);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return CreatedAtAction("GetProgramas", new { id = programas.idpro }, programas);
+                }
+                catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg && pg.SqlState == "23505")
+                {
+                    // ID duplicado por concurrencia, reintentar
+                    _context.ChangeTracker.Clear();
+                    if (intento == 5) throw; // ya reintentamos suficiente
+                }
             }
 
-            return CreatedAtAction("GetProgramas", new { id = programas.idpro }, programas);
+            return StatusCode(500, "No se pudo crear el programa.");
         }
+
+
+
 
 
         // DELETE: api/Programas/5

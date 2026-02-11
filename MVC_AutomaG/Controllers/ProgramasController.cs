@@ -61,59 +61,75 @@ namespace MVC_AutomaG.Controllers
             }
         }
 
-        /// POST: ProgramasController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Programas programa, IFormCollection form)
         {
+            // Recarga de catálogos para no perder los selects en la vista
+            ViewBag.CamposConocimientos = CRUD<CamposConocimiento>.GetAll();
+            ViewBag.Nivel = CRUD<Niveles>.GetAll();
+            ViewBag.Modalidad = CRUD<Modalidades>.GetAll();
+
             try
             {
-                ViewBag.CamposConocimientos = CRUD<CamposConocimiento>.GetAll();
-                ViewBag.Nivel = CRUD<Niveles>.GetAll();
-                ViewBag.Modalidad = CRUD<Modalidades>.GetAll();
-
-                programa.estadopro = "activo";
-
-                // Validación precios
-                if (string.IsNullOrWhiteSpace(form["matriculapre"]) ||
-                    string.IsNullOrWhiteSpace(form["arancelpre"]) ||
-                    string.IsNullOrWhiteSpace(form["inscripcionpre"]) ||
-                    string.IsNullOrWhiteSpace(form["monedapre"]))
+                // --- DEPUREMOS LOS DATOS DEL FORMULARIO ---
+                // Si el sistema usa comas y tú mandas puntos (o viceversa), el decimal.Parse falla
+                if (!decimal.TryParse(form["matriculapre"], out decimal matricula) ||
+                    !decimal.TryParse(form["arancelpre"], out decimal arancel) ||
+                    !decimal.TryParse(form["inscripcionpre"], out decimal inscripcion))
                 {
-                    throw new Exception("Debe llenar Matrícula, Arancel, Inscripción y Moneda.");
+                    ViewBag.Error = "Error de formato: Los precios deben ser números válidos (revisa el uso de puntos o comas).";
+                    return View(programa);
                 }
 
-                // 1) Crear precio (API genera PRE#)
+                // 1. Crear el objeto Precio (Paso 1)
                 var precioNuevo = new Precios
                 {
-                    matriculapre = decimal.Parse(form["matriculapre"]),
-                    arancelpre = decimal.Parse(form["arancelpre"]),
-                    inscripcionpre = decimal.Parse(form["inscripcionpre"]),
-                    monedapre = form["monedapre"]
+                    idpre = "TEMP", // Enviamos un temporal porque la API lo reemplaza
+                    matriculapre = matricula,
+                    arancelpre = arancel,
+                    inscripcionpre = inscripcion,
+                    monedapre = form["monedapre"],
+                    vigente = true,
+                    Programas = null
                 };
 
+                // Intentar crear el Precio
                 var precioCreado = CRUD<Precios>.Create(precioNuevo);
 
-                if (precioCreado == null || string.IsNullOrWhiteSpace(precioCreado.idpre))
-                    throw new Exception("No se pudo crear el precio (idpre vacío).");
+                if (precioCreado == null || string.IsNullOrEmpty(precioCreado.idpre))
+                {
+                    ViewBag.Error = "La API rechazó la creación del PRECIO (BadRequest). Verifica que todos los campos del precio estén llegando a la DB.";
+                    return View(programa);
+                }
 
-                // 2) Asignar idpre al programa
                 programa.idpre = precioCreado.idpre;
+                programa.idpro = "TEMP"; 
+                programa.estadopro = "activo";
 
-                // 3) Crear programa (NO enviar idpro - la API lo genera)
-                // IMPORTANTE: Asegurar que el idpro sea null para que la API lo genere
-                programa.idpro = null;
+                // Limpieza de objetos de navegación (Crucial)
+                programa.Campo = null;
+                programa.Nivel = null;
+                programa.Modalidad = null;
+                programa.Precio = null;
+                programa.ProgramasHorarios = null;
 
+                // Intentar crear el Programa
                 var progCreado = CRUD<Programas>.Create(programa);
 
-                if (progCreado == null || string.IsNullOrWhiteSpace(progCreado.idpro))
-                    throw new Exception("La API no generó el idpro. Verifique la API.");
+                if (progCreado == null)
+                {
+                    ViewBag.Error = $"Se creó el precio {precioCreado.idpre}, pero falló el PROGRAMA. Posible causa: ID de Nivel o Modalidad no existen en la DB.";
+                    return View(programa);
+                }
 
                 return RedirectToAction(nameof(ListProgramas));
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
+                // Aquí capturamos el error exacto que pasaste
+                ViewBag.Error = "PASO DONDE FALLÓ: " + (programa.idpre == null ? "Creando Precio" : "Creando Programa") +
+                                " | DETALLE: " + ex.Message;
                 return View(programa);
             }
         }
@@ -161,7 +177,7 @@ namespace MVC_AutomaG.Controllers
                 if (string.IsNullOrWhiteSpace(programa.estadopro))
                     programa.estadopro = "activo";
 
-                // 3) OJO: NO CAMBIAMOS idpre (se queda el mismo)
+                // 3) NO CAMBIAMOS idpre (se queda el mismo)
                 bool okPrograma = CRUD<Programas>.Update(id, programa);
 
                 if (okPrograma) return Ok("Programa actualizado correctamente");

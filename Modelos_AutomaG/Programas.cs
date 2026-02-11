@@ -53,7 +53,7 @@ namespace Modelos_AutomaG
         [Column("estadopro")]
         public string estadopro { get; set; } = "activo";
 
-
+        
         [ForeignKey("idcam")] public  CamposConocimiento? Campo { get; set; }
         [ForeignKey("idniv")] public  Niveles? Nivel { get; set; }
         [ForeignKey("idmod")] public  Modalidades? Modalidad { get; set; }
