@@ -1,4 +1,5 @@
 ﻿using API_Consumer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modelos_AutomaG;
@@ -46,7 +47,7 @@ namespace MVC_AutomaG.Controllers
                 return RedirectToAction(nameof(ListUsuarios));
             }
         }
-
+        [Authorize(Roles = "Super Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateUsuarios(string id, IFormCollection form)
@@ -64,10 +65,11 @@ namespace MVC_AutomaG.Controllers
                 if (!string.IsNullOrWhiteSpace(form["nuevapassword"]))
                 {
                     usuario.passwordhash = form["nuevapassword"];
+                    Console.WriteLine("Contraseña actualizada para el usuario " + id + usuario.passwordhash);
                 }
                 else
                 {
-
+                    usuario.passwordhash = "vacio";
                 }
 
                     // LIMPIEZA: Evita que la API de Usuarios falle por relaciones circulares
@@ -101,7 +103,7 @@ namespace MVC_AutomaG.Controllers
                 return StatusCode(500, "Error: " + ex.Message);
             }
         }
-
+        [Authorize(Roles = "Super Administrador")]
         [HttpPost]
         public IActionResult CambiarEstado(string id)
         {

@@ -10,9 +10,12 @@
                 <!-- CABECERA -->
                 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h3 class="text-primary-emphasis mb-0">Gestión de Programa</h3>
-                    <button type="button" class="btn btn-primary rounded-pill px-4" id="btnEditar">
-                        <i class="fas fa-edit me-2"></i>Editar
-                    </button>
+                    @if (User.IsInRole("Super Administrador"))
+                    {
+                        <button type="button" class="btn btn-primary rounded-pill px-4" id="btnEditar">
+                            <i class="fas fa-edit me-2"></i>Editar
+                        </button>
+                    }
                 </div>
 
                 <!-- ================= VISUAL ================= -->
@@ -72,8 +75,42 @@
                         </div>
                     </div>
 
-                </div>
+                    <hr class="my-4" />
 
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="text-muted small fw-bold text-uppercase">Horarios</label>
+
+                            @if (Model.ProgramasHorarios != null && Model.ProgramasHorarios.Any()
+                                                        && Model.ProgramasHorarios.Any(ph => ph.Horario != null))
+                            {
+                                <ul class="list-group mt-2">
+                                    @foreach (var ph in Model.ProgramasHorarios.Where(x => x.Horario != null))
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <b>@ph.Horario.dia</b>
+                                                <span class="text-muted ms-2">
+                                                    (@(ph.Horario.TipoHorario?.nombretipo ?? "Sin tipo"))
+                                                </span>
+                                            </div>
+
+                                            <span class="badge bg-secondary">
+                                                @ph.Horario.horainicio.ToString(@"hh\:mm") - @ph.Horario.horafin.ToString(@"hh\:mm")
+                                            </span>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted mt-2">Este programa no tiene horarios asignados.</p>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                @if (User.IsInRole("Super Administrador")){
                 <!-- ================= EDICIÓN ================= -->
                 <div id="modoEdicion" style="display:none;">
 
@@ -218,7 +255,7 @@
                     </form>
 
                 </div>
-
+                }
             </div>
         </div>
 

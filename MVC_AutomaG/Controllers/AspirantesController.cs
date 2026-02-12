@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API_Consumer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using API_Consumer;
 using Modelos_AutomaG;
 
 namespace MVC_AutomaG.Controllers
@@ -87,6 +88,7 @@ namespace MVC_AutomaG.Controllers
         }
         //Editar Informacion Aspirante
         // Agrega este método a tu controlador MVC AspirantesController
+        [Authorize(Roles = "Super Administrador")]
 [HttpPost]
 [ValidateAntiForgeryToken]
 public IActionResult Update(string id, IFormCollection form)

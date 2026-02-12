@@ -9,7 +9,7 @@
     </li>
     <li class="breadcrumb-item active">Detalles de Usuario</li>
 }
-
+@if(User.IsInRole("Super Administrador")){
 <div class="container mt-4">
     <link rel="stylesheet" href="~/css/aspirantes-detalles.css" asp-append-version="true" />
 
@@ -140,7 +140,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12 mb-3">
                                 <label class="form-label small fw-bold"> Nueva Contraseña (Opcional) </label>
-                                <input type="password" class="form-control" name="nuevapassword" placeholder="Dejar vacío para no cambiar" />
+                                <input type="password" class="form-control" name="nuevapassword"/>
                             </div>
                         </div>
 
@@ -230,4 +230,5 @@
             }
         });
     </script>
+}
 }

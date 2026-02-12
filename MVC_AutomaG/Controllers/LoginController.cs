@@ -66,7 +66,7 @@ namespace MVC_AutomaG.Controllers
             }
             if (await _authService.Register(email, nombre, apellido, password))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("ListUsuarios", "Accounts");
             }
 
             ViewBag.ErrorMessage = "Error al crear el usuario";

@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API_AutomaG.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace API_AutomaG.Controllers
 {
@@ -78,41 +81,67 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<Roles>> PostRoles(Roles roles)
         {
-            _context.Roles.Add(roles);
-            try
+            for (int intento = 1; intento <= 5; intento++)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (RolesExists(roles.idrol))
+                var ids = await _context.Roles
+                    .AsNoTracking()
+                    .Where(p => p.idrol.StartsWith("ROL"))
+                    .Select(p => p.idrol)
+                    .ToListAsync();
+
+                int maxNum = 0;
+                foreach (var id in ids)
                 {
-                    return Conflict();
+                    if (id != null && id.StartsWith("ROL"))
+                    {
+                        var numStr = id.Substring(3);
+                        if (int.TryParse(numStr, out int n) && n > maxNum)
+                            maxNum = n;
+                    }
                 }
-                else
+
+                roles.idrol = $"ROL{maxNum + 1}";
+
+                _context.Roles.Add(roles);
+
+                try
                 {
-                    throw;
+                    await _context.SaveChangesAsync();
+                    return CreatedAtAction("GetRoles", new { id = roles.idrol }, roles);
+                }
+                catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg && pg.SqlState == "23505")
+                {
+                    _context.ChangeTracker.Clear();
+                    if (intento == 5) throw;
                 }
             }
 
-            return CreatedAtAction("GetRoles", new { id = roles.idrol }, roles);
+            return StatusCode(500, "No se pudo crear el precio.");
         }
 
-        // DELETE: api/Roles/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoles(string id)
-        {
-            var roles = await _context.Roles.FindAsync(id);
-            if (roles == null)
+            // DELETE: api/Roles/ROL1
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeleteRoles(string id)
             {
+            var rol = await _context.Roles.FindAsync(id);
+            if (rol == null)
                 return NotFound();
+
+            // 1) Borrar relaciones en usuario_roles
+                var rels = await _context.Set<UsuarioRoles>()
+                    .Where(x => x.idrol == id)
+                    .ToListAsync();
+
+                if (rels.Count > 0)
+                    _context.Set<UsuarioRoles>().RemoveRange(rels);
+
+                // 2) Borrar el rol
+                _context.Roles.Remove(rol);
+
+             await _context.SaveChangesAsync();
+                return NoContent();
             }
 
-            _context.Roles.Remove(roles);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
 
         private bool RolesExists(string id)
         {

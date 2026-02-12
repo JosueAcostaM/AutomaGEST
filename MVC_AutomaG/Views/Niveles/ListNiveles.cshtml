@@ -1,0 +1,136 @@
+﻿@model IEnumerable<Modelos_AutomaG.Niveles>
+
+@{
+    ViewData["Title"] = "Niveles";
+}
+
+<link rel="stylesheet" href="~/css/programas-lista.css" asp-append-version="true" />
+
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Niveles
+    </li>
+}
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+
+    <div class="page-heading-row">
+        <div>
+            <h1 class="page-title">Niveles</h1>
+            <p class="page-subtitle">Gestiona los niveles disponibles</p>
+        </div>
+        @if (User.IsInRole("Super Administrador"))
+        {
+            <a asp-controller="Niveles" asp-action="Create" class="btn-add-program">
+                <i data-lucide="plus" style="width: 18px;"></i> Nuevo Nivel
+            </a>
+
+        }
+    </div>
+
+    <div class="table-card">
+        <div class="card-header-bar">
+            <h3 class="card-title">Listado de Niveles</h3>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table class="prog-table" id="tablaNiveles">
+                <tbody id="cuerpoNiveles">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr data-id-row="@item.idniv">
+                                <td width="60%" class="prog-name">
+                                    @item.nombreniv
+                                    <div class="text-muted" style="font-size:.85rem;">
+                                        Código: @item.codigoniv
+                                    </div>
+                                </td>
+
+                                <td width="40%">
+                                    <div class="d-flex align-items-center justify-content-end gap-4">
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                @if (User.IsInRole("Super Administrador"))
+                                        {
+                                        <button type="button"
+                                                class="btn-delete-ghost"
+                                                onclick="eliminarNivel('@item.idniv')"
+                                                title="Eliminar Nivel">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                            }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+
+            window.eliminarNivel = function (id) {
+                if (!confirm('¿Seguro que quieres eliminar este nivel?')) return;
+
+                fetch(`https://localhost:7166/api/Niveles/${id}`, { method: 'DELETE' })
+                    .then(r => {
+                        if (!r.ok) throw new Error('Error al eliminar');
+                        return r;
+                    })
+                    .then(() => {
+                        // Recargar tabla
+                        fetch('https://localhost:7166/api/Niveles')
+                            .then(r => r.json())
+                            .then(data => {
+                                const cuerpo = document.getElementById('cuerpoNiveles');
+                                cuerpo.innerHTML = '';
+
+                                data.forEach(item => {
+                                    const row = document.createElement('tr');
+                                    row.setAttribute('data-id-row', item.idniv);
+
+                                    row.innerHTML = `
+                                        <td width="60%" class="prog-name">
+                                            ${item.nombreniv}
+                                            <div class="text-muted" style="font-size:.85rem;">
+                                                Código: ${item.codigoniv}
+                                            </div>
+                                        </td>
+                                        <td width="40%">
+                                            <div class="d-flex align-items-center justify-content-end gap-4">
+                                                <a href="/Niveles/DetailsNiveles/${item.idniv}"
+                                                   style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                                    Ver Detalles
+                                                </a>
+                                                <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                                <button type="button" class="btn-delete-ghost" onclick="eliminarNivel('${item.idniv}')" title="Eliminar">
+                                                    <i data-lucide="trash-2" style="width: 18px;"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    `;
+                                    cuerpo.appendChild(row);
+                                });
+
+                                lucide.createIcons();
+                            });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('No se pudo eliminar el nivel');
+                    });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,137 @@
+﻿@model IEnumerable<Modelos_AutomaG.Roles>
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<link rel="stylesheet" href="~/css/programas-lista.css" asp-append-version="true" />
+@if (User.IsInRole("Super Administrador")){
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Roles
+    </li>
+}
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+
+    <div class="page-heading-row">
+        <div>
+            <h1 class="page-title">Roles</h1>
+            <p class="page-subtitle">Gestiona los roles disponibles</p>
+        </div>
+
+        <a asp-controller="Roles" asp-action="Create" class="btn-add-program">
+            <i data-lucide="plus" style="width: 18px;"></i> Nuevo Rol
+        </a>
+    </div>
+
+    <div class="table-card">
+        <div class="card-header-bar">
+            <h3 class="card-title">Listado de Roles</h3>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table class="prog-table" id="tablaRoles">
+                <tbody id="cuerpoRoles">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr data-id-row="@item.idrol">
+                                <td width="60%" class="prog-name">
+                                    @item.nombrerol
+                                    <div class="text-muted" style="font-size:.85rem;">
+                                        Código: @item.codigorol
+                                    </div>
+                                </td>
+
+                                <td width="40%">
+                                    <div class="d-flex align-items-center justify-content-end gap-4">
+
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+
+                                        <button type="button"
+                                                class="btn-delete-ghost"
+                                                onclick="eliminarRol('@item.idrol')"
+                                                title="Eliminar Rol">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+
+            window.eliminarRol = function (id) {
+                if (!confirm('¿Seguro que quieres eliminar este rol?')) return;
+
+                fetch(`https://localhost:7166/api/Roles/${id}`, { method: 'DELETE' })
+                    .then(r => {
+                        if (!r.ok) throw new Error('Error al eliminar');
+                        return r;
+                    })
+                    .then(() => {
+                        // Recargar tabla
+                        fetch('https://localhost:7166/api/Roles')
+                            .then(r => r.json())
+                            .then(data => {
+                                const cuerpo = document.getElementById('cuerpoRoles');
+                                cuerpo.innerHTML = '';
+
+                                data.forEach(item => {
+                                    const row = document.createElement('tr');
+                                    row.setAttribute('data-id-row', item.idrol);
+
+                                    row.innerHTML = `
+                                        <td width="60%" class="prog-name">
+                                            ${item.nombrerol}
+                                            <div class="text-muted" style="font-size:.85rem;">
+                                                Código: ${item.codigorol}
+                                            </div>
+                                        </td>
+                                        <td width="40%">
+                                            <div class="d-flex align-items-center justify-content-end gap-4">
+                                                <a href="/Roles/DetailsRoles/${item.idrol}"
+                                                   style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                                    Ver Detalles
+                                                </a>
+                                                <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                                <button type="button" class="btn-delete-ghost" onclick="eliminarRol('${item.idrol}')" title="Eliminar">
+                                                    <i data-lucide="trash-2" style="width: 18px;"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    `;
+                                    cuerpo.appendChild(row);
+                                });
+
+                                lucide.createIcons();
+                            });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('No se pudo eliminar el rol');
+                    });
+            }
+        });
+    </script>
+}
+}else{
+    <div class="alert alert-danger" style="margin: 2rem;">
+        No tienes permisos para acceder a esta sección.
+    </div>
+}

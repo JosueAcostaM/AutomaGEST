@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_AutomaG.Controllers
 {
@@ -62,15 +64,16 @@ namespace API_AutomaG.Controllers
             existente.emailusu = usuarios.emailusu;
             existente.activousu = usuarios.activousu;
 
-            if(usuarios.passwordhash==null)
+            if (usuarios.passwordhash == "vacio")
             {
                 _context.Entry(existente).Property(x => x.passwordhash).IsModified = false;
-                usuarios.passwordhash = existente.passwordhash;
+                Console.WriteLine("contraseña nulla entro en la condicion");
             }
             // Gestión de contraseña
-            if (!string.IsNullOrWhiteSpace(usuarios.passwordhash))
+            else
             {
                 existente.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
+                Console.WriteLine("contraseña escrita cambiada" + usuarios.passwordhash);
             }
 
                 await _context.SaveChangesAsync();
@@ -95,15 +98,14 @@ namespace API_AutomaG.Controllers
             {
                 nuevoNumero = int.Parse(ultimoId.Replace("USU", "")) + 1;
             }
-
             usuarios.idusu = $"USU{nuevoNumero}";
-
-            // 🔹 Hash de password
+            //Hash de password
+            if (usuarios.passwordhash != "vacio") { 
             usuarios.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
 
-            // 🔹 FIX POSTGRES: Aseguramos que la fecha sea UTC para evitar el error 500
+            // FIX POSTGRES: Aseguramos que la fecha sea UTC para evitar el error 500
             usuarios.fechacreacion = DateTime.UtcNow;
-
+            }
             _context.Usuarios.Add(usuarios);
             await _context.SaveChangesAsync();
 

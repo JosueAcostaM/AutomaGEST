@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Programas de Maestría";
 }
+@{
+    var niveles = ViewBag.Nivel as IEnumerable<Modelos_AutomaG.Niveles>;
+}
 
 <link rel="stylesheet" href="~/css/programas-lista.css" asp-append-version="true" />
 
@@ -19,13 +22,31 @@
 
     <div class="page-heading-row">
         <div>
-            <h1 class="page-title">Programas de Maestría</h1>
+            <h1 class="page-title">Programas de Postgrado</h1>
+             <div class="niveles-grid" style="margin-top: 1rem;">
+        <button type="button" class="nivel-btn activo" data-nivel="TODOS">
+        Todos
+         </button>
+
+            @if (niveles != null)
+            {
+             foreach (var n in niveles)
+             {
+             <button type="button" class="nivel-btn" data-nivel="@n.idniv">
+                @n.nombreniv
+            </button>
+                }
+            }
+            </div>
+
             <p class="page-subtitle">Gestiona los programas disponibles</p>
         </div>
-
+        @if(User.IsInRole("Super Administrador"))
+        {
         <a href="/Programas/Create" class="btn-add-program">
             <i data-lucide="plus" style="width: 18px;"></i> Nueva Maestría
         </a>
+        }
     </div>
 
     <div class="table-card">
@@ -40,7 +61,7 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr data-id-row="@item.idpro">
+                            <tr data-id-row="@item.idpro" data-nivel="@item.idniv">
                                 <td width="60%" class="prog-name">
                                     @item.nombrepro
                                 </td>
@@ -67,15 +88,18 @@
                                        style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
                                         Ver Detalles
                                     </a>
+
                                 </div>
                                         <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
-
+                                        @if (User.IsInRole("Super Administrador"))
+                                        {
                                         <button type="button"
                                                 class="btn-delete-ghost"
                                                 onclick="eliminarPrograma('@item.idpro')"
                                                 title="Eliminar Programa">
                                             <i data-lucide="trash-2" style="width: 18px;"></i>
                                         </button>
+                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -205,6 +229,28 @@
                         alert('No se pudo eliminar el programa');
                     });
             }
+        });
+        //filtro por niveles
+                // ===== FILTRO POR NIVEL =====
+        function filtrarPorNivel(idniv) {
+            document.querySelectorAll('#cuerpoProgramas tr').forEach(tr => {
+                const nivelRow = tr.getAttribute('data-nivel');
+
+                if (idniv === 'TODOS' || nivelRow === idniv) {
+                    tr.style.display = '';
+                } else {
+                    tr.style.display = 'none';
+                }
+            });
+        }
+
+        document.querySelectorAll('.nivel-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.nivel-btn').forEach(b => b.classList.remove('activo'));
+                this.classList.add('activo');
+
+                filtrarPorNivel(this.dataset.nivel);
+            });
         });
     </script>
 }

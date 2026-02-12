@@ -1,4 +1,5 @@
 ﻿using API_Consumer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modelos_AutomaG;
@@ -45,6 +46,7 @@ namespace MVC_AutomaG.Controllers
         }
 
         // GET: ProgramasController/Create
+        [Authorize(Roles = "Super Administrador")]
         public ActionResult Create()
         {
             try
@@ -60,7 +62,7 @@ namespace MVC_AutomaG.Controllers
                 return View(new Programas());
             }
         }
-
+        [Authorize(Roles = "Super Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Programas programa, IFormCollection form)
@@ -133,7 +135,7 @@ namespace MVC_AutomaG.Controllers
                 return View(programa);
             }
         }
-
+        [Authorize(Roles = "Super Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateProgramas(string id, IFormCollection form)

@@ -3,6 +3,7 @@
     ViewData["Title"] = "Registro de Aspirantes";
 }
 
+
 <link rel="stylesheet" href="~/css/aspirantes-lista.css" asp-append-version="true" />
 
 @section Breadcrumb {
@@ -273,11 +274,24 @@
                                 <td style="padding:1rem; vertical-align:middle;">@item.programainteres</td>
                                 <td style="padding:1rem; vertical-align:middle;">@item.estadoasp</td>
                                 <td style="padding:1rem; vertical-align:middle; text-align:right;">
-                                    <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp"
-                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
-                                        Ver Detalles
-                                    </a>
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Ver Detalles
+                                        </a>
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                    @if (User.IsInRole("Administrador") || User.IsInRole("Super Administrador")){
+                                        <button type="button"
+                                                class="btn-delete-ghost"
+                                                onclick="eliminarAspirante('@item.idasp')"
+                                                title="Eliminar Aspirante">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                         }
+                                    </div>
                                 </td>
+
                             </tr>
                         }
                     }
@@ -334,5 +348,56 @@
             filtroCampo.addEventListener('change', aplicarFiltro);
             filtroEstado.addEventListener('change', aplicarFiltro);
         });
+        //eliminar
+                window.eliminarAspirante = function (id) {
+            if (!confirm('¿Seguro que quieres eliminar este aspirante?')) return;
+
+            fetch(`https://localhost:7166/api/Aspirantes/${id}`, { method: 'DELETE' })
+                .then(r => {
+                    if (!r.ok) throw new Error('Error al eliminar');
+                    return r;
+                })
+                .then(() => {
+                    // Recargar tabla
+                    return fetch('https://localhost:7166/api/Aspirantes').then(r => r.json());
+                })
+                .then(data => {
+                    const cuerpo = document.getElementById('cuerpoAspirantes');
+                    cuerpo.innerHTML = '';
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.style.borderBottom = '1px solid #F3F4F6';
+
+                        row.innerHTML = `
+                            <td style="padding:1rem; vertical-align:middle; font-weight:500;">${item.nombreasp} ${item.apellidoasp}</td>
+                            <td style="padding:1rem; vertical-align:middle;">${item.ciudadasp}</td>
+                            <td style="padding:1rem; vertical-align:middle;">${item.programainteres}</td>
+                            <td style="padding:1rem; vertical-align:middle;">${item.estadoasp}</td>
+                            <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                    <a href="/Aspirantes/DetailsAspirantes/${item.idasp}"
+                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                        Ver Detalles
+                                    </a>
+                                    <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                    <button type="button" class="btn-delete-ghost" onclick="eliminarAspirante('${item.idasp}')" title="Eliminar Aspirante">
+                                        <i data-lucide="trash-2" style="width: 18px;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+
+                        cuerpo.appendChild(row);
+                    });
+
+                    lucide.createIcons();
+                    aplicarFiltro(); // para que el filtro se mantenga si estaba activo
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        }
+
     </script>
 }

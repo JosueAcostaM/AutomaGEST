@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_AutomaG.Controllers
 {

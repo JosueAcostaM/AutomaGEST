@@ -11,7 +11,7 @@
     </div>
 }
 
-
+@if (User.IsInRole("Super Administrador")){
 <link rel="stylesheet" href="~/css/programa-form.css" asp-append-version="true" />
 
 <div class="utn-form-container">
@@ -154,4 +154,5 @@
             lucide.createIcons();
         });
     </script>
+}
 }

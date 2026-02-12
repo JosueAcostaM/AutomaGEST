@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_AutomaG.Controllers
 {
@@ -39,7 +40,8 @@ namespace API_AutomaG.Controllers
                 .Include(p => p.Modalidad)
                 .Include(p => p.Precio)
                 .Include(p => p.ProgramasHorarios)       
-                    .ThenInclude(ph => ph.Horario)   
+                    .ThenInclude(ph => ph.Horario)
+                    .ThenInclude(h=> h.TipoHorario)
                 .FirstOrDefaultAsync(m => m.idpro == id);
 
             if (programas == null)

@@ -19,10 +19,11 @@
     <div class="page-heading">
         <h1 class="page-title">Administración de Usuarios</h1>
         <p class="page-subtitle">Gestione las cuentas de acceso y roles del sistema AutomaGest</p>
-
+        @if(User.IsInRole("Super Administrador")){
         <a href="/Login/Register" class="btn-add-program">
             <i data-lucide="plus" style="width: 18px;"></i> Nuevo Usuario
         </a>
+        }
     </div>
 
     <div class="filters-card">
@@ -65,7 +66,7 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr style="border-bottom: 1px solid #F3F4F6;">
+                            <tr data-id="@item.idusu" style="border-bottom: 1px solid #F3F4F6;">
                                 <td style="padding:1rem; vertical-align:middle; font-weight:500;">
                                     @item.nombreusu
                                 </td>
@@ -104,10 +105,23 @@
                                     }
                                 </td>
                                 <td style="padding:1rem; vertical-align:middle; text-align:right;">
-                                    <a asp-action="DetailsUsuarios" asp-route-id="@item.idusu"
-                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
-                                        Gestionar
-                                    </a>
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a asp-action="DetailsUsuarios" asp-route-id="@item.idusu"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Gestionar
+                                        </a>
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                        @if (User.IsInRole("Super Administrador"))
+                                        {
+                                            <button type="button"
+                                            class="btn-delete-ghost"
+                                            onclick="eliminarUsuario('@item.idusu')"
+                                            title="Eliminar Usuario">
+                                                <i data-lucide="trash-2" style="width: 18px;"></i>
+                                            </button>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -155,6 +169,79 @@
 
             filtroTexto.addEventListener('keyup', aplicarFiltro);
             filtroEstado.addEventListener('change', aplicarFiltro);
+        //eliminar
+        window.aplicarFiltroUsuarios = aplicarFiltro;
+
+            // ✅ ELIMINAR USUARIO
+            window.eliminarUsuario = function (id) {
+                if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
+
+                fetch(`https://localhost:7166/api/Usuarios/${id}`, { method: 'DELETE' })
+                    .then(r => {
+                        if (!r.ok) throw new Error('Error al eliminar');
+                        return r;
+                    })
+                    .then(() => fetch('https://localhost:7166/api/Usuarios').then(r => r.json()))
+                    .then(data => {
+                        const cuerpo = document.getElementById('cuerpoUsuarios');
+                        cuerpo.innerHTML = '';
+
+                        data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.style.borderBottom = '1px solid #F3F4F6';
+
+                            const estadoHtml = item.activousu
+                                ? `<span class="badge bg-success-subtle text-success border border-success-subtle px-2">Activo</span><span style="display:none;">activo</span>`
+                                : `<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2">Inactivo</span><span style="display:none;">inactivo</span>`;
+
+
+                         let rolHtml = `<span class="text-muted small">Sin rol</span>`;
+
+                         if (item.usuarioRoles && item.usuarioRoles.length > 0) {
+                                 rolHtml = item.usuarioRoles.map(ur => {
+                                 const codigo = (ur.rol?.codigorol || '').toUpperCase();
+                                const claseRol = (codigo === 'ADMIN')
+                                         ? 'bg-info-subtle text-info'
+                                         : 'bg-warning-subtle text-warning';
+
+                             return `<span class="badge ${claseRol} border px-2">
+                                      ${ur.rol?.nombrerol || 'Rol'}
+                                       </span>`;
+                            }).join(' ');
+                              }
+
+                            row.innerHTML = `
+                                <td style="padding:1rem; vertical-align:middle; font-weight:500;">${item.nombreusu}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${item.emailusu}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${estadoHtml}</td>
+                                <td style="padding:1rem; vertical-align:middle; color: #6B7280;">
+                                    ${new Date(item.fechacreacion).toLocaleDateString('es-EC')}
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle;">${rolHtml}</td>
+                                <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a href="/Accounts/DetailsUsuarios/${item.idusu}"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Gestionar
+                                        </a>
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                        <button type="button" class="btn-delete-ghost" onclick="eliminarUsuario('${item.idusu}')" title="Eliminar Usuario">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+
+                            cuerpo.appendChild(row);
+                        });
+
+                        lucide.createIcons();
+                        window.aplicarFiltroUsuarios(); // mantiene el filtro activo
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
+            }
         });
     </script>
 }

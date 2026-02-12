@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API_AutomaG.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace API_AutomaG.Controllers
 {
@@ -78,25 +81,44 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<Niveles>> PostNiveles(Niveles niveles)
         {
-            _context.Niveles.Add(niveles);
-            try
+            for (int intento = 1; intento <= 5; intento++)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (NivelesExists(niveles.idniv))
+                var ids = await _context.Niveles
+                    .AsNoTracking()
+                    .Where(p => p.idniv.StartsWith("NIV"))
+                    .Select(p => p.idniv)
+                    .ToListAsync();
+
+                int maxNum = 0;
+                foreach (var id in ids)
                 {
-                    return Conflict();
+                    if (id != null && id.StartsWith("NIV"))
+                    {
+                        var numStr = id.Substring(3);
+                        if (int.TryParse(numStr, out int n) && n > maxNum)
+                            maxNum = n;
+                    }
                 }
-                else
+
+                niveles.idniv = $"NIV{maxNum + 1}";
+
+                _context.Niveles.Add(niveles);
+
+                try
                 {
-                    throw;
+                    await _context.SaveChangesAsync();
+                    return CreatedAtAction("GetNiveles", new { id = niveles.idniv }, niveles);
+                }
+                catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg && pg.SqlState == "23505")
+                {
+                    _context.ChangeTracker.Clear();
+                    if (intento == 5) throw;
                 }
             }
 
-            return CreatedAtAction("GetNiveles", new { id = niveles.idniv }, niveles);
+            return StatusCode(500, "No se pudo crear el precio.");
         }
+
 
         // DELETE: api/Niveles/5
         [HttpDelete("{id}")]
