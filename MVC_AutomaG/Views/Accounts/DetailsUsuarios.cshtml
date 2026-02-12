@@ -9,7 +9,7 @@
     </li>
     <li class="breadcrumb-item active">Detalles de Usuario</li>
 }
-@if(User.IsInRole("Super Administrador")){
+
 <div class="container mt-4">
     <link rel="stylesheet" href="~/css/aspirantes-detalles.css" asp-append-version="true" />
 
@@ -20,10 +20,12 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="text-primary-emphasis mb-0">Gestión de Cuenta</h3>
-
-                    <button type="button" class="btn btn-primary" id="btnEditar">
-                        <i class="fas fa-user-edit me-2"></i>Editar Perfil
-                    </button>
+                    @if (User.IsInRole("Super Administrador"))
+                    {
+                        <button type="button" class="btn btn-primary" id="btnEditar">
+                            <i class="fas fa-user-edit me-2"></i>Editar Perfil
+                        </button>
+                    }
                 </div>
 
                 <div id="modoVisualizacion">
@@ -143,13 +145,14 @@
                                 <input type="password" class="form-control" name="nuevapassword"/>
                             </div>
                         </div>
-
-                        <div class="d-flex justify-content-between border-top pt-3">
-                            <button type="button" class="btn btn-danger" id="btnCancelar"> Cancelar </button>
-                            <button type="button" class="btn btn-success" id="btnGuardar"> Actualizar </button>
-                        </div>
-
-                    </form>
+                            @if (User.IsInRole("Super Administrador"))
+                            {
+                                <div class="d-flex justify-content-between border-top pt-3">
+                                    <button type="button" class="btn btn-danger" id="btnCancelar"> Cancelar </button>
+                                    <button type="button" class="btn btn-success" id="btnGuardar"> Actualizar </button>
+                                </div>
+                            }
+                        </form>
 
                 </div>
 
@@ -165,9 +168,12 @@
             </div>
 
             <div class="card shadow-sm border-0 p-4 bg-white rounded-4">
-                <button type="button" class="btn @(Model.activousu ? "btn-danger" : "btn-success") w-100" id="btnCambiarEstado">
-                    @(Model.activousu ? "Suspender Usuario" : "Activar Usuario")
-                </button>
+                    @if (User.IsInRole("Super Administrador"))
+                {
+                    <button type="button" class="btn @(Model.activousu ? "btn-danger" : "btn-success") w-100" id="btnCambiarEstado">
+                        @(Model.activousu ? "Suspender Usuario" : "Activar Usuario")
+                    </button>
+                }
             </div>
         </div>
 
@@ -230,5 +236,4 @@
             }
         });
     </script>
-}
 }
