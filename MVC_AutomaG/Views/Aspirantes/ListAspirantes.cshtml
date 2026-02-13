@@ -248,6 +248,9 @@
 
         </div>
     </div>
+    <button type="button" class="btn btn-success" id="btnExcel">
+        Descargar Excel general
+    </button>
 
     <div class="table-card">
         <h3 class="table-header-title">Listado Completo (@(Model != null ? Model.Count() : 0) registros)</h3>
@@ -303,53 +306,121 @@
 <!--Filtro de busqueda-->
 @section Scripts {
     <script>
+        // ====== Funciones globales para que sirvan en
+
+        function normalizarEstadoBonito(estado) {
+            const e = (estado || "").trim();
+            if (e === "En revisión" || e === "en revision" || e === "en revisión") return "en revisión";
+            if (e === "Revisado" || e === "revisado") return "revisado";
+            return "";
+        }
+
+        function getFiltros() {
+            const filtroTexto = document.getElementById('filtroTexto');
+            const filtroCampo = document.getElementById('filtroCampo');
+            const filtroEstado = document.getElementById('filtroEstado');
+
+            return {
+                texto: (filtroTexto?.value || '').trim(),
+                programa: (filtroCampo?.value || '').trim(),
+                estado: normalizarEstadoBonito(filtroEstado?.value || '')
+            };
+        }
+
+        function aplicarFiltro() {
+            const filtroTexto = document.getElementById('filtroTexto');
+            const filtroCampo = document.getElementById('filtroCampo');
+            const filtroEstado = document.getElementById('filtroEstado');
+            const tabla = document.getElementById('cuerpoAspirantes');
+
+            const texto = (filtroTexto.value || '').toLowerCase().trim();
+            const programa = (filtroCampo.value || '').toLowerCase().trim();
+            const estado = (filtroEstado.value || '').toLowerCase().trim(); // para comparar en tabla
+
+            const filas = tabla.getElementsByTagName('tr');
+
+            for (const fila of filas) {
+                if (fila.cells.length >= 4) {
+                    const tNombre = fila.cells[0].textContent.toLowerCase();
+                    const tCiudad = fila.cells[1].textContent.toLowerCase();
+                    const tProg = fila.cells[2].textContent.toLowerCase();
+                    const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
+
+                    const cumpleTexto = !texto || (
+                        tNombre.includes(texto) ||
+                        tCiudad.includes(texto) ||
+                        tProg.includes(texto) ||
+                        tEstadoAsp.includes(texto)
+                    );
+
+                    const cumplePrograma = !programa || tProg.includes(programa);
+                    const cumpleEstado = !estado || tEstadoAsp.includes(estado);
+
+                    fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado) ? '' : 'none';
+                }
+            }
+        }
+
+        function actualizarTextoBotonExcel() {
+            const btn = document.getElementById("btnExcel");
+            if (!btn) return;
+
+            const f = getFiltros();
+
+            let texto = "Descargar excel de aspirantes";
+
+            if (f.estado) {
+                texto += " " + f.estado;
+            } else {
+                texto += " general";
+            }
+
+            if (f.programa) {
+                texto += ` de este programa`;
+            }
+
+            btn.textContent = texto;
+        }
+
+        function buildUrlExcel() {
+            const f = getFiltros();
+            const params = new URLSearchParams();
+
+            if (f.texto) params.append("texto", f.texto);
+            if (f.programa) params.append("programa", f.programa);
+            if (f.estado) params.append("estado", f.estado); // "En revisión" con tilde
+
+            return "/Aspirantes/ReporteExcel?" + params.toString();
+        }
+
+        // ====== DOM Ready ======
         document.addEventListener('DOMContentLoaded', function () {
             lucide.createIcons();
 
             const filtroTexto = document.getElementById('filtroTexto');
             const filtroCampo = document.getElementById('filtroCampo');
             const filtroEstado = document.getElementById('filtroEstado');
-            const tabla = document.getElementById('cuerpoAspirantes');
+            const btnExcel = document.getElementById('btnExcel');
 
-            function aplicarFiltro() {
-                const texto = (filtroTexto.value || '').toLowerCase().trim();
-                const programa = (filtroCampo.value || '').toLowerCase().trim();
-                const estado = (filtroEstado.value || '').toLowerCase().trim();
+            // filtros
+            filtroTexto.addEventListener('keyup', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+            filtroCampo.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+            filtroEstado.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
 
-                const filas = tabla.getElementsByTagName('tr');
-
-                for (const fila of filas) {
-                    if (fila.cells.length >= 4) {
-                        const tNombre = fila.cells[0].textContent.toLowerCase();
-                        const tCiudad = fila.cells[1].textContent.toLowerCase();
-                        const tProg = fila.cells[2].textContent.toLowerCase();
-                        const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
-
-                        // 1) Filtro texto (busca en nombre/ciudad/programa/estado)
-                        const cumpleTexto = !texto || (
-                            tNombre.includes(texto) ||
-                            tCiudad.includes(texto) ||
-                            tProg.includes(texto) ||
-                            tEstadoAsp.includes(texto)
-                        );
-
-                        // 2) Filtro programa
-                        const cumplePrograma = !programa || tProg.includes(programa);
-
-                        // 3) Filtro estado
-                        const cumpleEstado = !estado || tEstadoAsp.includes(estado);
-
-                        fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado) ? '' : 'none';
-                    }
-                }
+            // botón excel
+            if (btnExcel) {
+                btnExcel.addEventListener("click", () => {
+                    window.location.href = buildUrlExcel();
+                });
             }
 
-            filtroTexto.addEventListener('keyup', aplicarFiltro);
-            filtroCampo.addEventListener('change', aplicarFiltro);
-            filtroEstado.addEventListener('change', aplicarFiltro);
+            // inicial
+            aplicarFiltro();
+            actualizarTextoBotonExcel();
         });
-        //eliminar
-                window.eliminarAspirante = function (id) {
+
+        // ====== Eliminar (global) ======
+        window.eliminarAspirante = function (id) {
             if (!confirm('¿Seguro que quieres eliminar este aspirante?')) return;
 
             fetch(`https://localhost:7166/api/Aspirantes/${id}`, { method: 'DELETE' })
@@ -357,10 +428,7 @@
                     if (!r.ok) throw new Error('Error al eliminar');
                     return r;
                 })
-                .then(() => {
-                    // Recargar tabla
-                    return fetch('https://localhost:7166/api/Aspirantes').then(r => r.json());
-                })
+                .then(() => fetch('https://localhost:7166/api/Aspirantes').then(r => r.json()))
                 .then(data => {
                     const cuerpo = document.getElementById('cuerpoAspirantes');
                     cuerpo.innerHTML = '';
@@ -392,12 +460,11 @@
                     });
 
                     lucide.createIcons();
-                    aplicarFiltro(); // para que el filtro se mantenga si estaba activo
+                    aplicarFiltro();
+                    actualizarTextoBotonExcel();
                 })
-                .catch(err => {
-                    console.error(err);
-                });
+                .catch(err => console.error(err));
         }
-
     </script>
 }
+

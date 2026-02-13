@@ -26,7 +26,9 @@ namespace API_AutomaG.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Aspirantes>>> GetAspirantes()
         {
-            return await _context.Aspirantes.ToListAsync();
+            return await _context.Aspirantes
+                 .Include(a => a.Contacto)
+                 .ToListAsync();
         }
 
         // GET: api/Aspirantes/5
