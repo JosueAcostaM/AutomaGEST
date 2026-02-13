@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API_AutomaG\API_AutomaG.csproj" />
     <ProjectReference Include="..\Modelos_AutomaG\Modelos_AutomaG.csproj" />
     <ProjectReference Include="..\Servicios_AutomaG\Servicios_AutomaG.csproj" />
   </ItemGroup>
