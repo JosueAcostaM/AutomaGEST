@@ -1,82 +1,83 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API_Consumer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Modelos_AutomaG;
 
 namespace MVC_AutomaG.Controllers
 {
     public class NivelesController : Controller
     {
-        // GET: NivelesController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: NivelesController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: NivelesController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: NivelesController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        // GET: Niveles/ListNiveles
+        public IActionResult ListNiveles()
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var niveles = CRUD<Niveles>.GetAll();
+                return View(niveles);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Error = "Error al conectar con la API: " + ex.Message;
+                return View(new List<Niveles>());
             }
         }
 
-        // GET: NivelesController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Niveles/DetailsNiveles/NIV-01
+        public IActionResult DetailsNiveles(string id)
         {
-            return View();
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            try
+            {
+                var nivel = CRUD<Niveles>.GetById(id);
+                if (nivel == null) return NotFound();
+
+                return View(nivel);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error al conectar con la API: " + ex.Message;
+                return View(new Niveles());
+            }
         }
 
-        // POST: NivelesController/Edit/5
+        // GET: Niveles/Create
+        public IActionResult Create()
+        {
+            return View(new Niveles());
+        }
+
+        // POST: Niveles/Create
+        [Authorize(Roles = "Super Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Create(Niveles nivel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                // Limpieza navegación (por si acaso)
+                nivel.Programas = null;
 
-        // GET: NivelesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+                // Si tu API genera idniv, mandamos TEMP
+                if (string.IsNullOrWhiteSpace(nivel.idniv))
+                    nivel.idniv = "TEMP";
 
-        // POST: NivelesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
+                nivel.codigoniv = nivel.nombreniv.ToUpper();
+                var creado = CRUD<Niveles>.Create(nivel);
+
+                if (creado == null || string.IsNullOrEmpty(creado.idniv))
+                {
+                    ViewBag.Error = "La API rechazó la creación del NIVEL. Verifica los datos.";
+                    return View(nivel);
+                }
+
+                return RedirectToAction(nameof(ListNiveles));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Error = "Error: " + ex.Message;
+                return View(nivel);
             }
         }
     }

@@ -26,33 +26,53 @@ namespace Servicios_AutomaG
 
         public async Task<bool> Login(string email, string password)
         {
-
             var usuarios = CRUD<Usuarios>.GetAll();
+
             foreach (var usuario in usuarios)
             {
                 if (usuario.emailusu == email)
                 {
-
-                    Console.WriteLine($"Comparando contraseña ingresado {password} con contraseña guardada {usuario.passwordhash} ");
                     if (BCrypt.Net.BCrypt.Verify(password, usuario.passwordhash))
                     {
+                        // Traer usuario completo con roles
+                        var usuarioFull = CRUD<Usuarios>.GetById(usuario.idusu);
+
                         var datosUsuario = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, usuario.nombreusu),
+                    new Claim(ClaimTypes.Email, usuario.emailusu),
+                };
+
+                        //AGREGAR ROLES A CLAIMS
+                        if (usuarioFull?.UsuarioRoles != null)
                         {
-                            new Claim(ClaimTypes.Name, usuario.nombreusu),
-                            new Claim(ClaimTypes.Email, usuario.emailusu),
-                        };
+                            foreach (var ur in usuarioFull.UsuarioRoles)
+                            {
+                                if (ur.Rol != null && !string.IsNullOrEmpty(ur.Rol.nombrerol))
+                                {
+                                    datosUsuario.Add(
+                                        new Claim(ClaimTypes.Role, ur.Rol.nombrerol)
+                                    );
+                                }
+                            }
+                        }
+
                         var credencialDigital = new ClaimsIdentity(datosUsuario, "Cookies");
                         var usuarioAutenticado = new ClaimsPrincipal(credencialDigital);
 
-                        await _httpContextAccessor.HttpContext.SignInAsync("Cookies", usuarioAutenticado);
+                        await _httpContextAccessor.HttpContext.SignInAsync(
+                            "Cookies",
+                            usuarioAutenticado
+                        );
+
                         return true;
                     }
                 }
             }
+
             return false;
-
-
         }
+
 
         public async Task<bool> Register(string email, string nombre, string apellido, string password)
         {

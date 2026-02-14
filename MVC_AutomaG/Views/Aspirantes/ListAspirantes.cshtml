@@ -3,6 +3,7 @@
     ViewData["Title"] = "Registro de Aspirantes";
 }
 
+
 <link rel="stylesheet" href="~/css/aspirantes-lista.css" asp-append-version="true" />
 
 @section Breadcrumb {
@@ -13,7 +14,201 @@
         Aspirantes
     </li>
 }
+<style>
+    body {
+        margin: 0;
+        background-color: #F3F4F6;
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+    }
 
+    .dashboard-wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
+
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+        width: 260px;
+        background: #fff;
+        border-right: 1px solid #E5E7EB;
+        padding: 1.5rem;
+        position: fixed;
+        height: 100vh;
+        z-index: 100;
+        transition: transform .3s ease;
+    }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+    .sidebar-header {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .logo-box {
+        width: 42px;
+        height: 42px;
+        background: #D91016;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .logo-text h5 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+
+    .logo-text small {
+        color: #6B7280;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #4B5563;
+        font-weight: 500;
+        transition: all .2s;
+    }
+
+        .nav-item:hover {
+            background: #F9FAFB;
+            color: #111827;
+        }
+
+        .nav-item.active {
+            background: #D91016;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(217,16,22,.3);
+        }
+
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        display: flex;
+        flex-direction: column;
+        background: #F3F4F6;
+        transition: all .3s ease;
+    }
+
+        .main-content.full {
+            margin-left: 0;
+            width: 100%;
+        }
+
+
+    /* ========== TOP BAR ========== */
+    .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #fff;
+        border-bottom: 1px solid #E5E7EB;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between; /* Esto empuja los elementos a los extremos */
+        align-items: center;
+    }
+
+    .top-bar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .top-bar-left h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .top-bar-left small {
+            color: #6B7280;
+        }
+
+
+    /* PARTE DERECHA DE LA BARRA */
+    .top-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #F3F4F6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        color: #4B5563;
+    }
+
+        .icon-btn:hover {
+            background: #E5E7EB;
+        }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        background: #D91016;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .main-container {
+        padding: 2rem;
+        flex: 1;
+    }
+
+    footer {
+        padding: 1.5rem;
+        text-align: center;
+        font-size: .8rem;
+        color: #9CA3AF;
+    }
+
+    @@media (max-width: 900px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+
+</style>
 <div class="container-fluid" style="padding: 2rem;">
 
     <div class="page-heading">
@@ -53,6 +248,9 @@
 
         </div>
     </div>
+    <button type="button" class="btn btn-success" id="btnExcel">
+        Descargar Excel general
+    </button>
 
     <div class="table-card">
         <h3 class="table-header-title">Listado Completo (@(Model != null ? Model.Count() : 0) registros)</h3>
@@ -79,11 +277,24 @@
                                 <td style="padding:1rem; vertical-align:middle;">@item.programainteres</td>
                                 <td style="padding:1rem; vertical-align:middle;">@item.estadoasp</td>
                                 <td style="padding:1rem; vertical-align:middle; text-align:right;">
-                                    <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp"
-                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
-                                        Ver Detalles
-                                    </a>
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a asp-action="DetailsAspirantes" asp-route-id="@item.idasp"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Ver Detalles
+                                        </a>
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                    @if (User.IsInRole("Administrador") || User.IsInRole("Super Administrador")){
+                                        <button type="button"
+                                                class="btn-delete-ghost"
+                                                onclick="eliminarAspirante('@item.idasp')"
+                                                title="Eliminar Aspirante">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                         }
+                                    </div>
                                 </td>
+
                             </tr>
                         }
                     }
@@ -95,50 +306,165 @@
 <!--Filtro de busqueda-->
 @section Scripts {
     <script>
+        // ====== Funciones globales para que sirvan en
+
+        function normalizarEstadoBonito(estado) {
+            const e = (estado || "").trim();
+            if (e === "En revisión" || e === "en revision" || e === "en revisión") return "en revisión";
+            if (e === "Revisado" || e === "revisado") return "revisado";
+            return "";
+        }
+
+        function getFiltros() {
+            const filtroTexto = document.getElementById('filtroTexto');
+            const filtroCampo = document.getElementById('filtroCampo');
+            const filtroEstado = document.getElementById('filtroEstado');
+
+            return {
+                texto: (filtroTexto?.value || '').trim(),
+                programa: (filtroCampo?.value || '').trim(),
+                estado: normalizarEstadoBonito(filtroEstado?.value || '')
+            };
+        }
+
+        function aplicarFiltro() {
+            const filtroTexto = document.getElementById('filtroTexto');
+            const filtroCampo = document.getElementById('filtroCampo');
+            const filtroEstado = document.getElementById('filtroEstado');
+            const tabla = document.getElementById('cuerpoAspirantes');
+
+            const texto = (filtroTexto.value || '').toLowerCase().trim();
+            const programa = (filtroCampo.value || '').toLowerCase().trim();
+            const estado = (filtroEstado.value || '').toLowerCase().trim(); // para comparar en tabla
+
+            const filas = tabla.getElementsByTagName('tr');
+
+            for (const fila of filas) {
+                if (fila.cells.length >= 4) {
+                    const tNombre = fila.cells[0].textContent.toLowerCase();
+                    const tCiudad = fila.cells[1].textContent.toLowerCase();
+                    const tProg = fila.cells[2].textContent.toLowerCase();
+                    const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
+
+                    const cumpleTexto = !texto || (
+                        tNombre.includes(texto) ||
+                        tCiudad.includes(texto) ||
+                        tProg.includes(texto) ||
+                        tEstadoAsp.includes(texto)
+                    );
+
+                    const cumplePrograma = !programa || tProg.includes(programa);
+                    const cumpleEstado = !estado || tEstadoAsp.includes(estado);
+
+                    fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado) ? '' : 'none';
+                }
+            }
+        }
+
+        function actualizarTextoBotonExcel() {
+            const btn = document.getElementById("btnExcel");
+            if (!btn) return;
+
+            const f = getFiltros();
+
+            let texto = "Descargar excel de aspirantes";
+
+            if (f.estado) {
+                texto += " " + f.estado;
+            } else {
+                texto += " general";
+            }
+
+            if (f.programa) {
+                texto += ` de este programa`;
+            }
+
+            btn.textContent = texto;
+        }
+
+        function buildUrlExcel() {
+            const f = getFiltros();
+            const params = new URLSearchParams();
+
+            if (f.texto) params.append("texto", f.texto);
+            if (f.programa) params.append("programa", f.programa);
+            if (f.estado) params.append("estado", f.estado); // "En revisión" con tilde
+
+            return "/Aspirantes/ReporteExcel?" + params.toString();
+        }
+
+        // ====== DOM Ready ======
         document.addEventListener('DOMContentLoaded', function () {
             lucide.createIcons();
 
             const filtroTexto = document.getElementById('filtroTexto');
             const filtroCampo = document.getElementById('filtroCampo');
             const filtroEstado = document.getElementById('filtroEstado');
-            const tabla = document.getElementById('cuerpoAspirantes');
+            const btnExcel = document.getElementById('btnExcel');
 
-            function aplicarFiltro() {
-                const texto = (filtroTexto.value || '').toLowerCase().trim();
-                const programa = (filtroCampo.value || '').toLowerCase().trim();
-                const estado = (filtroEstado.value || '').toLowerCase().trim();
+            // filtros
+            filtroTexto.addEventListener('keyup', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+            filtroCampo.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+            filtroEstado.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
 
-                const filas = tabla.getElementsByTagName('tr');
-
-                for (const fila of filas) {
-                    if (fila.cells.length >= 4) {
-                        const tNombre = fila.cells[0].textContent.toLowerCase();
-                        const tCiudad = fila.cells[1].textContent.toLowerCase();
-                        const tProg = fila.cells[2].textContent.toLowerCase();
-                        const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
-
-                        // 1) Filtro texto (busca en nombre/ciudad/programa/estado)
-                        const cumpleTexto = !texto || (
-                            tNombre.includes(texto) ||
-                            tCiudad.includes(texto) ||
-                            tProg.includes(texto) ||
-                            tEstadoAsp.includes(texto)
-                        );
-
-                        // 2) Filtro programa
-                        const cumplePrograma = !programa || tProg.includes(programa);
-
-                        // 3) Filtro estado
-                        const cumpleEstado = !estado || tEstadoAsp.includes(estado);
-
-                        fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado) ? '' : 'none';
-                    }
-                }
+            // botón excel
+            if (btnExcel) {
+                btnExcel.addEventListener("click", () => {
+                    window.location.href = buildUrlExcel();
+                });
             }
 
-            filtroTexto.addEventListener('keyup', aplicarFiltro);
-            filtroCampo.addEventListener('change', aplicarFiltro);
-            filtroEstado.addEventListener('change', aplicarFiltro);
+            // inicial
+            aplicarFiltro();
+            actualizarTextoBotonExcel();
         });
+
+        // ====== Eliminar (global) ======
+        window.eliminarAspirante = function (id) {
+            if (!confirm('¿Seguro que quieres eliminar este aspirante?')) return;
+
+            fetch(`https://localhost:7166/api/Aspirantes/${id}`, { method: 'DELETE' })
+                .then(r => {
+                    if (!r.ok) throw new Error('Error al eliminar');
+                    return r;
+                })
+                .then(() => fetch('https://localhost:7166/api/Aspirantes').then(r => r.json()))
+                .then(data => {
+                    const cuerpo = document.getElementById('cuerpoAspirantes');
+                    cuerpo.innerHTML = '';
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.style.borderBottom = '1px solid #F3F4F6';
+
+                        row.innerHTML = `
+                            <td style="padding:1rem; vertical-align:middle; font-weight:500;">${item.nombreasp} ${item.apellidoasp}</td>
+                            <td style="padding:1rem; vertical-align:middle;">${item.ciudadasp}</td>
+                            <td style="padding:1rem; vertical-align:middle;">${item.programainteres}</td>
+                            <td style="padding:1rem; vertical-align:middle;">${item.estadoasp}</td>
+                            <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                    <a href="/Aspirantes/DetailsAspirantes/${item.idasp}"
+                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                        Ver Detalles
+                                    </a>
+                                    <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                    <button type="button" class="btn-delete-ghost" onclick="eliminarAspirante('${item.idasp}')" title="Eliminar Aspirante">
+                                        <i data-lucide="trash-2" style="width: 18px;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+
+                        cuerpo.appendChild(row);
+                    });
+
+                    lucide.createIcons();
+                    aplicarFiltro();
+                    actualizarTextoBotonExcel();
+                })
+                .catch(err => console.error(err));
+        }
     </script>
 }
+

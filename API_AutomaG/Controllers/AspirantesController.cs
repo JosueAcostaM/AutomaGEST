@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_AutomaG.Controllers
 {
@@ -25,7 +26,9 @@ namespace API_AutomaG.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Aspirantes>>> GetAspirantes()
         {
-            return await _context.Aspirantes.ToListAsync();
+            return await _context.Aspirantes
+                 .Include(a => a.Contacto)
+                 .ToListAsync();
         }
 
         // GET: api/Aspirantes/5
@@ -34,7 +37,7 @@ namespace API_AutomaG.Controllers
         {
             var aspirante = await _context.Aspirantes.
                 Include(a => a.Contacto).
-                FirstOrDefaultAsync();
+                FirstOrDefaultAsync(a=> a.idasp==id);
                 
 
             if (aspirante == null)

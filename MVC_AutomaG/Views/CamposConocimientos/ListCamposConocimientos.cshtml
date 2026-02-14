@@ -54,9 +54,11 @@
                                         <a asp-action="DetailsCamposConocimientos" asp-route-id="@item.idcam" class="btn-action">
                                             Ver Detalles
                                         </a>
+                                        @if(User.IsInRole("Super Administrador")){
                                         <button type="button" class="btn-action" style="color:#DC2626; border-color:#FECACA; background:#FEF2F2;" onclick="eliminarCampo('@item.idcam')">
                                             <i data-lucide="trash-2" style="width:14px; margin-right:4px;"></i> Eliminar
                                         </button>
+                                        }
                                     </div>
                                 </td>
                             </tr>

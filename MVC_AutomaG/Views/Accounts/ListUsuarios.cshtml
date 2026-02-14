@@ -1,0 +1,247 @@
+﻿@model IEnumerable<Modelos_AutomaG.Usuarios>
+@{
+    ViewData["Title"] = "Registro de Usuarios";
+}
+
+<link rel="stylesheet" href="~/css/aspirantes-lista.css" asp-append-version="true" />
+
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Usuarios
+    </li>
+}
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+
+    <div class="page-heading">
+        <h1 class="page-title">Administración de Usuarios</h1>
+        <p class="page-subtitle">Gestione las cuentas de acceso y roles del sistema AutomaGest</p>
+        @if(User.IsInRole("Super Administrador")){
+        <a href="/Login/Register" class="btn-add-program">
+            <i data-lucide="plus" style="width: 18px;"></i> Nuevo Usuario
+        </a>
+        }
+    </div>
+
+    <div class="filters-card">
+        <div class="filter-row">
+
+            <div class="search-container">
+                <i data-lucide="search" class="input-icon"></i>
+                <input type="text" id="filtroTexto" class="custom-input" placeholder="Buscar por nombre o email...">
+            </div>
+
+            <div class="select-container">
+                <i data-lucide="shield-check" class="input-icon"></i>
+                <select id="filtroEstado" class="custom-select">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Solo Activos</option>
+                    <option value="inactivo">Solo Inactivos</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="table-card">
+        <h3 class="table-header-title">Usuarios Registrados (@(Model != null ? Model.Count() : 0))</h3>
+
+        <div class="table-responsive">
+            <table class="table mb-0" id="tablaUsuarios">
+                <thead style="background-color: #F9FAFB;">
+                    <tr>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">NOMBRE</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">EMAIL</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">ESTADO</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">FECHA CREACIÓN</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700;">ROL</th>
+                        <th style="padding:1rem; color:#6B7280; font-size:0.75rem; font-weight:700; text-align:right;">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoUsuarios">
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr data-id="@item.idusu" style="border-bottom: 1px solid #F3F4F6;">
+                                <td style="padding:1rem; vertical-align:middle; font-weight:500;">
+                                    @item.nombreusu
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle;">
+                                    @item.emailusu
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle;">
+                                    @if (item.activousu)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2">Activo</span>
+                                        <span style="display:none;">activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2">Inactivo</span>
+                                        <span style="display:none;">inactivo</span>
+                                    }
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle; color: #6B7280;">
+                                    @item.fechacreacion.ToString("dd/MM/yyyy")
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle;">
+                                    @if (item.UsuarioRoles != null && item.UsuarioRoles.Any())
+                                    {
+                                        foreach (var ur in item.UsuarioRoles)
+                                        {
+                                            var claseRol = ur.Rol?.codigorol == "ADMIN" ? "bg-info-subtle text-info" : "bg-warning-subtle text-warning";
+                                            <span class="badge @claseRol border px-2">
+                                                @ur.Rol?.nombrerol
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Sin rol</span>
+                                    }
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a asp-action="DetailsUsuarios" asp-route-id="@item.idusu"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Gestionar
+                                        </a>
+
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                        @if (User.IsInRole("Super Administrador"))
+                                        {
+                                            <button type="button"
+                                            class="btn-delete-ghost"
+                                            onclick="eliminarUsuario('@item.idusu')"
+                                            title="Eliminar Usuario">
+                                                <i data-lucide="trash-2" style="width: 18px;"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+
+            const filtroTexto = document.getElementById('filtroTexto');
+            const filtroEstado = document.getElementById('filtroEstado');
+            const tabla = document.getElementById('cuerpoUsuarios');
+
+            function aplicarFiltro() {
+                const texto = (filtroTexto.value || '').toLowerCase().trim();
+                const estado = (filtroEstado.value || '').toLowerCase().trim();
+
+                const filas = tabla.getElementsByTagName('tr');
+
+                for (const fila of filas) {
+                    if (fila.cells.length >= 4) {
+                        const tNombre = fila.cells[0].textContent.toLowerCase();
+                        const tEmail = fila.cells[1].textContent.toLowerCase();
+                        const tEstado = fila.cells[2].textContent.toLowerCase();
+
+                        // 1) Filtro texto (busca en nombre o email)
+                        const cumpleTexto = !texto || (
+                            tNombre.includes(texto) ||
+                            tEmail.includes(texto)
+                        );
+
+                        // 2) Filtro estado (activo/inactivo)
+                        const cumpleEstado = !estado || tEstado.includes(estado);
+
+                        fila.style.display = (cumpleTexto && cumpleEstado) ? '' : 'none';
+                    }
+                }
+            }
+
+            filtroTexto.addEventListener('keyup', aplicarFiltro);
+            filtroEstado.addEventListener('change', aplicarFiltro);
+        //eliminar
+        window.aplicarFiltroUsuarios = aplicarFiltro;
+
+            // ✅ ELIMINAR USUARIO
+            window.eliminarUsuario = function (id) {
+                if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
+
+                fetch(`https://localhost:7166/api/Usuarios/${id}`, { method: 'DELETE' })
+                    .then(r => {
+                        if (!r.ok) throw new Error('Error al eliminar');
+                        return r;
+                    })
+                    .then(() => fetch('https://localhost:7166/api/Usuarios').then(r => r.json()))
+                    .then(data => {
+                        const cuerpo = document.getElementById('cuerpoUsuarios');
+                        cuerpo.innerHTML = '';
+
+                        data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.style.borderBottom = '1px solid #F3F4F6';
+
+                            const estadoHtml = item.activousu
+                                ? `<span class="badge bg-success-subtle text-success border border-success-subtle px-2">Activo</span><span style="display:none;">activo</span>`
+                                : `<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2">Inactivo</span><span style="display:none;">inactivo</span>`;
+
+
+                         let rolHtml = `<span class="text-muted small">Sin rol</span>`;
+
+                         if (item.usuarioRoles && item.usuarioRoles.length > 0) {
+                                 rolHtml = item.usuarioRoles.map(ur => {
+                                 const codigo = (ur.rol?.codigorol || '').toUpperCase();
+                                const claseRol = (codigo === 'ADMIN')
+                                         ? 'bg-info-subtle text-info'
+                                         : 'bg-warning-subtle text-warning';
+
+                             return `<span class="badge ${claseRol} border px-2">
+                                      ${ur.rol?.nombrerol || 'Rol'}
+                                       </span>`;
+                            }).join(' ');
+                              }
+
+                            row.innerHTML = `
+                                <td style="padding:1rem; vertical-align:middle; font-weight:500;">${item.nombreusu}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${item.emailusu}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${estadoHtml}</td>
+                                <td style="padding:1rem; vertical-align:middle; color: #6B7280;">
+                                    ${new Date(item.fechacreacion).toLocaleDateString('es-EC')}
+                                </td>
+                                <td style="padding:1rem; vertical-align:middle;">${rolHtml}</td>
+                                <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a href="/Accounts/DetailsUsuarios/${item.idusu}"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Gestionar
+                                        </a>
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                        <button type="button" class="btn-delete-ghost" onclick="eliminarUsuario('${item.idusu}')" title="Eliminar Usuario">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+
+                            cuerpo.appendChild(row);
+                        });
+
+                        lucide.createIcons();
+                        window.aplicarFiltroUsuarios(); // mantiene el filtro activo
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
+            }
+        });
+    </script>
+}

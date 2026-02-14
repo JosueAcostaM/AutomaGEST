@@ -1,82 +1,83 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API_Consumer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Modelos_AutomaG;
 
 namespace MVC_AutomaG.Controllers
 {
     public class RolesController : Controller
     {
-        // GET: RolesController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: RolesController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: RolesController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: RolesController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        // GET: Roles/ListRoles
+        public IActionResult ListRoles()
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var roles = CRUD<Roles>.GetAll();
+                return View(roles);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Error = "Error al conectar con la API: " + ex.Message;
+                return View(new List<Roles>());
             }
         }
 
-        // GET: RolesController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Roles/DetailsRoles/ROL-01
+        public IActionResult DetailsRoles(string id)
         {
-            return View();
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            try
+            {
+                var rol = CRUD<Roles>.GetById(id);
+                if (rol == null) return NotFound();
+
+                return View(rol);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error al conectar con la API: " + ex.Message;
+                return View(new Roles());
+            }
         }
 
-        // POST: RolesController/Edit/5
+        // GET: Roles/Create
+        public IActionResult Create()
+        {
+            return View(new Roles());
+        }
+
+        // POST: Roles/Create
+        [Authorize(Roles = "Super Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Create(Roles rol)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                // Evitar enviar navegación
+                rol.UsuarioRoles = null;
 
-        // GET: RolesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+                // Si tu API genera idrol, enviamos TEMP
+                if (string.IsNullOrWhiteSpace(rol.idrol))
+                    rol.idrol = "TEMP";
+                rol.codigorol= rol.nombrerol?.ToUpper().Replace(" ", "_") ?? "ROL_TEMP";
 
-        // POST: RolesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
+                var creado = CRUD<Roles>.Create(rol);
+
+                if (creado == null || string.IsNullOrEmpty(creado.idrol))
+                {
+                    ViewBag.Error = "La API rechazó la creación del ROL. Verifica los datos.";
+                    return View(rol);
+                }
+
+                return RedirectToAction(nameof(ListRoles));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Error = "Error: " + ex.Message;
+                return View(rol);
             }
         }
     }

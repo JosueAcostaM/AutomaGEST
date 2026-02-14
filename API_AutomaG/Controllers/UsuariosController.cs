@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_AutomaG.Controllers
 {
@@ -25,14 +27,20 @@ namespace API_AutomaG.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Usuarios
+            .Include(u => u.UsuarioRoles)
+            .ThenInclude(ur => ur.Rol)
+            .ToListAsync();
         }
 
         // GET: api/Usuarios/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Usuarios>> GetUsuarios(string id)
         {
-            var usuarios = await _context.Usuarios.FindAsync(id);
+            var usuarios = await _context.Usuarios
+            .Include(u => u.UsuarioRoles)
+                .ThenInclude(ur => ur.Rol)
+            .FirstOrDefaultAsync(u => u.idusu == id);
 
             if (usuarios == null)
             {
@@ -41,62 +49,63 @@ namespace API_AutomaG.Controllers
 
             return usuarios;
         }
-
-        // PUT: api/Usuarios/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsuarios(string id, Usuarios usuarios)
         {
             if (id != usuarios.idusu)
+                return BadRequest("Id no coincide.");
+
+            var existente = await _context.Usuarios.FindAsync(id);
+            if (existente == null)
+                return NotFound();
+
+            // Actualizar campos básicos
+            existente.nombreusu = usuarios.nombreusu;
+            existente.emailusu = usuarios.emailusu;
+            existente.activousu = usuarios.activousu;
+
+            if (usuarios.passwordhash == "vacio")
             {
-                return BadRequest();
+                _context.Entry(existente).Property(x => x.passwordhash).IsModified = false;
+                Console.WriteLine("contraseña nulla entro en la condicion");
+            }
+            // Gestión de contraseña
+            else
+            {
+                existente.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
+                Console.WriteLine("contraseña escrita cambiada" + usuarios.passwordhash);
             }
 
-            _context.Entry(usuarios).State = EntityState.Modified;
-
-            try
-            {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UsuariosExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return NoContent();
         }
+
+
+
 
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Usuarios>> PostUsuarios(Usuarios usuarios)
         {
-            // 🔹 Generar ID tipo USU1, USU2...
             var ultimoId = await _context.Usuarios
                 .OrderByDescending(u => u.idusu)
                 .Select(u => u.idusu)
                 .FirstOrDefaultAsync();
 
             int nuevoNumero = 1;
-
             if (!string.IsNullOrEmpty(ultimoId))
             {
-                // USU15 -> 15
                 nuevoNumero = int.Parse(ultimoId.Replace("USU", "")) + 1;
             }
-
             usuarios.idusu = $"USU{nuevoNumero}";
-
-            // 🔹 Hash de password
+            //Hash de password
+            if (usuarios.passwordhash != "vacio") { 
             usuarios.passwordhash = BCrypt.Net.BCrypt.HashPassword(usuarios.passwordhash);
 
+            // FIX POSTGRES: Aseguramos que la fecha sea UTC para evitar el error 500
+            usuarios.fechacreacion = DateTime.UtcNow;
+            }
             _context.Usuarios.Add(usuarios);
             await _context.SaveChangesAsync();
 

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API_AutomaG.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API_AutomaG.Data;
 using Modelos_AutomaG;
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_AutomaG.Controllers
 {
@@ -32,12 +34,15 @@ namespace API_AutomaG.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Programas>> GetProgramas(string id)
         {
-            var programas = await _context.Programas.Include(p => p.Campo)
-                    .Include(p => p.Nivel)
-                    .Include(p => p.Modalidad)
-                    .Include(p => p.Precio)
-                    .Include(p => p.ProgramasHorarios)
-                    .FirstOrDefaultAsync(p => p.idpro == id);
+            var programas = await _context.Programas
+                .Include(p => p.Campo)
+                .Include(p => p.Nivel)
+                .Include(p => p.Modalidad)
+                .Include(p => p.Precio)
+                .Include(p => p.ProgramasHorarios)       
+                    .ThenInclude(ph => ph.Horario)
+                    .ThenInclude(h=> h.TipoHorario)
+                .FirstOrDefaultAsync(m => m.idpro == id);
 
             if (programas == null)
             {
@@ -78,30 +83,57 @@ namespace API_AutomaG.Controllers
             return NoContent();
         }
 
-        // POST: api/Programas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Programas>> PostProgramas(Programas programas)
         {
-            _context.Programas.Add(programas);
-            try
+            // (Opcional) estado por defecto
+            if (string.IsNullOrWhiteSpace(programas.estadopro))
+                programas.estadopro = "activo";
+
+            // ✅ Reintento por si 2 personas crean a la vez y choca el ID (23505)
+            for (int intento = 1; intento <= 5; intento++)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProgramasExists(programas.idpro))
+                // Traer solo ids a memoria (evita el error de traducción)
+                var ids = await _context.Programas
+                    .AsNoTracking()
+                    .Where(p => p.idpro.StartsWith("PRO"))
+                    .Select(p => p.idpro)
+                    .ToListAsync();
+
+                int maxNum = 0;
+                foreach (var id in ids)
                 {
-                    return Conflict();
+                    if (id != null && id.StartsWith("PRO"))
+                    {
+                        var numStr = id.Substring(3); // "1", "10", "100"
+                        if (int.TryParse(numStr, out int n) && n > maxNum)
+                            maxNum = n;
+                    }
                 }
-                else
+
+                programas.idpro = $"PRO{maxNum + 1}";
+
+                _context.Programas.Add(programas);
+
+                try
                 {
-                    throw;
+                    await _context.SaveChangesAsync();
+                    return CreatedAtAction("GetProgramas", new { id = programas.idpro }, programas);
+                }
+                catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg && pg.SqlState == "23505")
+                {
+                    // ID duplicado por concurrencia, reintentar
+                    _context.ChangeTracker.Clear();
+                    if (intento == 5) throw; // ya reintentamos suficiente
                 }
             }
 
-            return CreatedAtAction("GetProgramas", new { id = programas.idpro }, programas);
+            return StatusCode(500, "No se pudo crear el programa.");
         }
+
+
+
+
 
         // DELETE: api/Programas/5
         [HttpDelete("{id}")]

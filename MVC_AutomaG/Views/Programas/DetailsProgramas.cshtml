@@ -1,344 +1,315 @@
 ﻿@model Modelos_AutomaG.Programas
 
-@section Breadcrumb {
-    <li class="breadcrumb-item">
-        <a asp-controller="Home" asp-action="Index">Inicio</a>
-    </li>
-    <li class="breadcrumb-item">
-        <a asp-controller="Programas" asp-action="ListProgramas">
-            Programas
-        </a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">
-        Aspirantes Programa
-    </li>
-}
-
 <div class="container mt-4">
     <link rel="stylesheet" href="~/css/aspirantes-detalles.css" asp-append-version="true" />
+
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm border-0 p-4 mb-4 bg-white rounded-4">
 
-                <!-- CABECERA CON BOTÓN EDITAR -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="text-primary-emphasis mb-0">Información del Programa</h3>
-
-                    <button type="button" class="btn btn-primary" id="btnEditar">
-                        <i class="fas fa-edit me-2"></i>Editar Información
-                    </button>
+                <!-- CABECERA -->
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                    <h3 class="text-primary-emphasis mb-0">Gestión de Programa</h3>
+                    @if (User.IsInRole("Super Administrador"))
+                    {
+                        <button type="button" class="btn btn-primary rounded-pill px-4" id="btnEditar">
+                            <i class="fas fa-edit me-2"></i>Editar
+                        </button>
+                    }
                 </div>
 
-                <!-- MODO VISUALIZACIÓN -->
+                <!-- ================= VISUAL ================= -->
                 <div id="modoVisualizacion">
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small fw-bold text-uppercase">Nombre del Programa</label>
-                            <p class="fs-5">@Model.nombrepro</p>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="text-muted small fw-bold text-uppercase">Nombre</label>
+                            <p class="fs-5 fw-medium">@Model.nombrepro</p>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label class="text-muted small fw-bold text-uppercase">Duración</label>
-                            <p class="fs-5">@(Model.duracionpro ?? "N/A")</p>
+                            <p class="fs-5">@(Model.duracionpro ?? "No definida")</p>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-3">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
                             <label class="text-muted small fw-bold text-uppercase">Campo</label>
-                            <p class="fs-5">@((Model.Campo?.nombrecam) ?? "N/A")</p>
+                            <p>@(Model.Campo?.nombrecam ?? "N/A")</p>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4">
                             <label class="text-muted small fw-bold text-uppercase">Nivel</label>
-                            <p class="fs-5">@((Model.Nivel?.nombreniv) ?? "N/A")</p>
+                            <p>@(Model.Nivel?.nombreniv ?? "N/A")</p>
                         </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4">
                             <label class="text-muted small fw-bold text-uppercase">Modalidad</label>
-                            <p class="fs-5">@((Model.Modalidad?.nombremod) ?? "N/A")</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small fw-bold text-uppercase">Precio Matricula</label>
-                            <p class="fs-5">@((Model.Precio?.matriculapre.ToString() + Model.Precio?.monedapre) ?? "N/A")</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small fw-bold text-uppercase">Precio Arancel</label>
-                            <p class="fs-5">@((Model.Precio?.arancelpre.ToString()+Model.Precio?.monedapre) ?? "N/A")</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small fw-bold text-uppercase">Precio Inscripcion</label>
-                            <p class="fs-5">@((Model.Precio?.inscripcionpre.ToString()) ?? "N/A")</p>
+                            <p>@(Model.Modalidad?.nombremod ?? "N/A")</p>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small fw-bold text-uppercase">Estado</label>
-                            <p>
-                                <span class="badge bg-info-subtle text-info-emphasis px-3 py-2 rounded-pill">
-                                    @Model.estadopro
-                                </span>
-                            </p>
+                    <div class="row mb-4 p-3 bg-light rounded-3">
+                        <div class="col-md-12 mb-2">
+                            <label class="text-muted small fw-bold text-uppercase">Costos</label>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="text-muted small fw-bold text-uppercase">Horarios</label>
-                            <p class="fs-5">
-                                @(Model.ProgramasHorarios != null ? Model.ProgramasHorarios.Count.ToString() : "0")
-                            </p>
+
+                        <div class="col-md-4">
+                            <small>Matrícula</small><br />
+                            <b>@(Model.Precio?.matriculapre ?? 0) @(Model.Precio?.monedapre ?? "$")</b>
+                        </div>
+
+                        <div class="col-md-4">
+                            <small>Arancel</small><br />
+                            <b>@(Model.Precio?.arancelpre ?? 0) @(Model.Precio?.monedapre ?? "$")</b>
+                        </div>
+
+                        <div class="col-md-4">
+                            <small>Inscripción</small><br />
+                            <b>@(Model.Precio?.inscripcionpre ?? 0) @(Model.Precio?.monedapre ?? "$")</b>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12">
                             <label class="text-muted small fw-bold text-uppercase">Descripción</label>
-                            <p class="text-secondary">@(Model.descripcionpro ?? "Sin descripción")</p>
+                            <p>@(Model.descripcionpro ?? "Sin descripción")</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- MODO EDICIÓN -->
+                    <hr class="my-4" />
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="text-muted small fw-bold text-uppercase">Horarios</label>
+
+                            @if (Model.ProgramasHorarios != null && Model.ProgramasHorarios.Any()
+                                                        && Model.ProgramasHorarios.Any(ph => ph.Horario != null))
+                            {
+                                <ul class="list-group mt-2">
+                                    @foreach (var ph in Model.ProgramasHorarios.Where(x => x.Horario != null))
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <b>@ph.Horario.dia</b>
+                                                <span class="text-muted ms-2">
+                                                    (@(ph.Horario.TipoHorario?.nombretipo ?? "Sin tipo"))
+                                                </span>
+                                            </div>
+
+                                            <span class="badge bg-secondary">
+                                                @ph.Horario.horainicio.ToString(@"hh\:mm") - @ph.Horario.horafin.ToString(@"hh\:mm")
+                                            </span>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted mt-2">Este programa no tiene horarios asignados.</p>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                @if (User.IsInRole("Super Administrador")){
+                <!-- ================= EDICIÓN ================= -->
                 <div id="modoEdicion" style="display:none;">
+
                     <form id="formEdicion"
-                          data-action="@Url.Action("UpdateProgramas", "Programas")"
+                          data-action="@Url.Action("UpdateProgramas","Programas")"
                           data-id="@Model.idpro">
+
                         @Html.AntiForgeryToken()
 
+                        <!-- Nombre / Duración -->
                         <div class="row mb-3">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Nombre del Programa</label>
-                                <input type="text" class="form-control" name="nombrepro" value="@Model.nombrepro" />
+
+                            <div class="col-md-6">
+                                <label>Nombre</label>
+                                <input class="form-control" name="nombrepro" value="@Model.nombrepro" />
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Duración</label>
-                                <input type="text" class="form-control" name="duracionpro" value="@Model.duracionpro" />
+
+                            <div class="col-md-6">
+                                <label>Duración</label>
+                                <input class="form-control" name="duracionpro" value="@Model.duracionpro" />
                             </div>
+
                         </div>
 
+                        <!-- Selects -->
                         <div class="row mb-3">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Campo</label>
-                                <select class="form-select" name="idcam" required>
-                                    <option value="">-- Seleccione un campo --</option>
-                                    @if (ViewBag.CamposConocimientos != null)
+
+                            <!-- CAMPO -->
+                            <div class="col-md-4">
+                                <label>Campo</label>
+                                <select class="form-select" name="idcam">
+
+                                    @foreach (var c in (IEnumerable<Modelos_AutomaG.CamposConocimiento>)ViewBag.CamposConocimientos)
                                     {
-                                        foreach (var c in (IEnumerable<Modelos_AutomaG.CamposConocimiento>)ViewBag.CamposConocimientos)
+                                        if (Model.idcam == c.idcam)
                                         {
-                                            <option value="@c.idcam" selected="@(Model.idcam == c.idcam)">
-                                                @c.nombrecam
-                                            </option>
+                                            <option value="@c.idcam" selected>@c.nombrecam</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@c.idcam">@c.nombrecam</option>
                                         }
                                     }
+
                                 </select>
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Nivel</label>
-                                <select class="form-select" name="idniv" required>
-                                    <option value="">-- Seleccione un nivel --</option>
-                                    @if (ViewBag.Nivel != null)
+                            <!-- NIVEL -->
+                            <div class="col-md-4">
+                                <label>Nivel</label>
+                                <select class="form-select" name="idniv">
+
+                                    @foreach (var n in (IEnumerable<Modelos_AutomaG.Niveles>)ViewBag.Nivel)
                                     {
-                                        foreach (var n in (IEnumerable<Modelos_AutomaG.Niveles>)ViewBag.Nivel)
+                                        if (Model.idniv == n.idniv)
                                         {
-                                            <option value="@n.idniv" selected="@(Model.idniv == n.idniv)">
-                                                @n.nombreniv
-                                            </option>
+                                            <option value="@n.idniv" selected>@n.nombreniv</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@n.idniv">@n.nombreniv</option>
                                         }
                                     }
+
                                 </select>
                             </div>
+
+                            <!-- MODALIDAD -->
+                            <div class="col-md-4">
+                                <label>Modalidad</label>
+                                <select class="form-select" name="idmod">
+
+                                    @foreach (var m in (IEnumerable<Modelos_AutomaG.Modalidades>)ViewBag.Modalidad)
+                                    {
+                                        if (Model.idmod == m.idmod)
+                                        {
+                                            <option value="@m.idmod" selected>@m.nombremod</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@m.idmod">@m.nombremod</option>
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+
                         </div>
 
+                        <!-- PRECIOS -->
                         <div class="row mb-3">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Modalidad</label>
-                                <select class="form-select" name="idmod" required>
-                                    <option value="">-- Seleccione una modalidad --</option>
-                                    @if (ViewBag.Modalidad != null)
-                                    {
-                                        foreach (var m in (IEnumerable<Modelos_AutomaG.Modalidades>)ViewBag.Modalidad)
-                                        {
-                                            <option value="@m.idmod" selected="@(Model.idmod == m.idmod)">
-                                                @m.nombremod
-                                            </option>
-                                        }
-                                    }
-                                </select>
+
+                            <div class="col-md-3">
+                                <label>Matrícula</label>
+                                <input type="number" step="0.01" class="form-control"
+                                       name="matriculapre"
+                                       value="@(Model.Precio?.matriculapre ?? 0)" />
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Precio Matricula</label>
-
-                                <!-- 3 selects separados (sincronizados) -->
-                                <select class="form-select mb-2" id="selMatricula">
-                                    <option value="">-- Matrícula --</option>
-                                    @if (ViewBag.Precio != null)
-                                    {
-                                        foreach (var p in (IEnumerable<Modelos_AutomaG.Precios>)ViewBag.Precio)
-                                        {
-                                            <option value="@p.idpre" selected="@(Model.idpre == p.idpre)">
-                                                @p.matriculapre@p.monedapre
-                                            </option>
-                                        }
-                                    }
-                                </select>
-                                <label class="form-label text-muted small fw-bold text-uppercase">Precio Arancel</label>
-                                <select class="form-select mb-2" id="selArancel">
-                                    <option value="">-- Arancel --</option>
-                                    @if (ViewBag.Precio != null)
-                                    {
-                                        foreach (var p in (IEnumerable<Modelos_AutomaG.Precios>)ViewBag.Precio)
-                                        {
-                                            <option value="@p.idpre" selected="@(Model.idpre == p.idpre)">
-                                                @p.arancelpre@p.monedapre
-                                            </option>
-                                        }
-                                    }
-                                </select>
-                                <label class="form-label text-muted small fw-bold text-uppercase">Precio Inscripcion</label>
-                                <select class="form-select" id="selInscripcion">
-                                    <option value="">-- Inscripción --</option>
-                                    @if (ViewBag.Precio != null)
-                                    {
-                                        foreach (var p in (IEnumerable<Modelos_AutomaG.Precios>)ViewBag.Precio)
-                                        {
-                                            <option value="@p.idpre" selected="@(Model.idpre == p.idpre)">
-                                                @p.inscripcionpre@p.monedapre
-                                            </option>
-                                        }
-                                    }
-                                </select>
-
-                                <!-- Este es el que se envia -->
-                                <input type="hidden" name="idpre" id="idpre" value="@Model.idpre" />
+                            <div class="col-md-3">
+                                <label>Arancel</label>
+                                <input type="number" step="0.01" class="form-control"
+                                       name="arancelpre"
+                                       value="@(Model.Precio?.arancelpre ?? 0)" />
                             </div>
+
+                            <div class="col-md-3">
+                                <label>Inscripción</label>
+                                <input type="number" step="0.01" class="form-control"
+                                       name="inscripcionpre"
+                                       value="@(Model.Precio?.inscripcionpre ?? 0)" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label>Moneda</label>
+                                <input class="form-control"
+                                       name="monedapre"
+                                       value="@(Model.Precio?.monedapre ?? "$")" />
+                            </div>
+
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Descripción</label>
-                                <textarea class="form-control" name="descripcionpro" rows="3">@Model.descripcionpro</textarea>
-                            </div>
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label>Descripción</label>
+                            <textarea class="form-control"
+                                      name="descripcionpro">@Model.descripcionpro</textarea>
                         </div>
 
-                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                            <button type="button" class="btn btn-danger btn-lg px-4" id="btnCancelar">
-                                <i class="fas fa-times me-2"></i>Cancelar
+                        <div class="d-flex justify-content-between">
+
+                            <button type="button" class="btn btn-danger" id="btnCancelar">
+                                Cancelar
                             </button>
 
-                            <button type="button" class="btn btn-success btn-lg px-4" id="btnGuardar">
-                                <i class="fas fa-save me-2"></i>Guardar Información
+                            <button type="button" class="btn btn-success" id="btnGuardar">
+                                Guardar
                             </button>
+
                         </div>
+
                     </form>
+
                 </div>
-
-
+                }
             </div>
         </div>
 
-        <!-- COLUMNA DERECHA -->
+        <!-- Auditoría -->
         <div class="col-md-4">
-            <div class="card shadow-sm border-0 p-4 bg-white rounded-4">
-                <h5 class="text-secondary mb-3">Info Adicional</h5>
+            <div class="card p-4">
 
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">ID:</span>
-                    <span class="fw-bold">@Model.idpro</span>
-                </div>
+                <b>ID:</b> @Model.idpro <br />
+                <b>Estado:</b>
+                <span class="badge @(Model.estadopro == "activo" ? "bg-success" : "bg-danger")">
+                    @Model.estadopro
+                </span>
 
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Estado:</span>
-                    <span class="fw-bold">@Model.estadopro</span>
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <span class="text-muted">Fuente:</span>
-                    <span class="fw-bold">Web</span>
-                </div>
             </div>
         </div>
+
     </div>
 </div>
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
 
-            // --- Editar / cancelar (igual que aspirantes) ---
-            const btnEditar = document.getElementById('btnEditar');
-            const btnCancelar = document.getElementById('btnCancelar');
-            const btnGuardar = document.getElementById('btnGuardar');
-            const modoVisualizacion = document.getElementById('modoVisualizacion');
-            const modoEdicion = document.getElementById('modoEdicion');
-            const formulario = document.getElementById('formEdicion');
+        document.getElementById('btnEditar').onclick = () => {
+            modoVisualizacion.style.display = 'none';
+            modoEdicion.style.display = 'block';
+        };
 
-            btnEditar.addEventListener('click', function () {
-                modoVisualizacion.style.display = 'none';
-                modoEdicion.style.display = 'block';
-                btnEditar.style.display = 'none';
+        document.getElementById('btnCancelar').onclick = () => {
+            modoVisualizacion.style.display = 'block';
+            modoEdicion.style.display = 'none';
+        };
+
+        document.getElementById('btnGuardar').onclick = async () => {
+
+            const form = document.getElementById('formEdicion');
+            const data = new FormData(form);
+            data.append('id', form.dataset.id);
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const res = await fetch(form.dataset.action, {
+                method: 'POST',
+                body: data,
+                headers: { 'RequestVerificationToken': token }
             });
 
-            btnCancelar.addEventListener('click', function () {
-                modoVisualizacion.style.display = 'block';
-                modoEdicion.style.display = 'none';
-                btnEditar.style.display = 'block';
-            });
-
-            // --- Sincronizar precios (3 selects -> 1 idpre hidden) ---
-            const selMatricula = document.getElementById('selMatricula');
-            const selArancel = document.getElementById('selArancel');
-            const selInscripcion = document.getElementById('selInscripcion');
-            const hiddenIdpre = document.getElementById('idpre');
-
-            function syncAll(value) {
-                selMatricula.value = value;
-                selArancel.value = value;
-                selInscripcion.value = value;
-                hiddenIdpre.value = value;
+            if (res.ok) {
+                alert('Guardado');
+                location.reload();
+            } else {
+                alert(await res.text());
             }
 
-            // inicializa al abrir edición
-            if (hiddenIdpre && hiddenIdpre.value) {
-                syncAll(hiddenIdpre.value);
-            }
+        };
 
-            selMatricula.addEventListener('change', function () { syncAll(this.value); });
-            selArancel.addEventListener('change', function () { syncAll(this.value); });
-            selInscripcion.addEventListener('change', function () { syncAll(this.value); });
-
-            // --- Guardar ---
-            btnGuardar.addEventListener('click', async function () {
-                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
-                btnGuardar.disabled = true;
-
-                try {
-                    const formData = new FormData(formulario);
-                    formData.append('id', formulario.dataset.id);
-
-                    const response = await fetch(formulario.dataset.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                        }
-                    });
-
-                    if (response.ok) {
-                        alert('Información guardada correctamente');
-                        location.reload();
-                    } else {
-                        const error = await response.text();
-                        alert('Error: ' + error);
-                    }
-                } catch (error) {
-                    alert('Error de conexión: ' + error.message);
-                } finally {
-                    btnGuardar.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Información';
-                    btnGuardar.disabled = false;
-                }
-            });
-        });
     </script>
 }
-

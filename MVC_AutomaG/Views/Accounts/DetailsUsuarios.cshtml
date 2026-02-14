@@ -1,0 +1,239 @@
+﻿@model Modelos_AutomaG.Usuarios
+
+@section Breadcrumb {
+    <li class="breadcrumb-item">
+        <a asp-controller="Home" asp-action="Index">Inicio</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Accounts" asp-action="ListUsuarios">Usuarios</a>
+    </li>
+    <li class="breadcrumb-item active">Detalles de Usuario</li>
+}
+
+<div class="container mt-4">
+    <link rel="stylesheet" href="~/css/aspirantes-detalles.css" asp-append-version="true" />
+
+    <div class="row">
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 p-4 mb-4 bg-white rounded-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-primary-emphasis mb-0">Gestión de Cuenta</h3>
+                    @if (User.IsInRole("Super Administrador"))
+                    {
+                        <button type="button" class="btn btn-primary" id="btnEditar">
+                            <i class="fas fa-user-edit me-2"></i>Editar Perfil
+                        </button>
+                    }
+                </div>
+
+                <div id="modoVisualizacion">
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Nombre</label>
+                            <p class="fs-5">@Model.nombreusu</p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Correo</label>
+                            <p class="fs-5">@Model.emailusu</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Estado</label>
+                            <p>
+                                @if (Model.activousu)
+                                {
+                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                                        Activo
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">
+                                        Suspendido
+                                    </span>
+                                }
+                            </p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small fw-bold text-uppercase">Roles Asignados</label>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                @if (Model.UsuarioRoles != null && Model.UsuarioRoles.Any())
+                                {
+                                    foreach (var ur in Model.UsuarioRoles)
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+                                            @ur.Rol?.nombrerol
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Sin roles asignados</span>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="text-muted small fw-bold text-uppercase"> Seguridad </label>
+                            <p class="text-secondary small">
+                                La contraseña está cifrada con BCrypt y no se muestra.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="modoEdicion" style="display:none;">
+
+                    <form id="formEdicion" data-action="@Url.Action("UpdateUsuarios","Accounts", new { id = Model.idusu })">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Nombre</label>
+                                <input type="text" class="form-control" name="nombreusu" value="@Model.nombreusu" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Email</label>
+                                <input type="email" class="form-control" name="emailusu" value="@Model.emailusu" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Estado</label>
+                                <select class="form-select" name="activousu">
+                                    <option value="true" selected="@(Model.activousu ? "selected" : null)">Activo</option>
+                                    <option value="false" selected="@(!Model.activousu ? "selected" : null)">Suspendido</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Cambiar Rol</label>
+                                <select class="form-select" name="idrol">
+                                    <option value="">-- Seleccione un Rol --</option>
+                                    @if (ViewBag.RolesDisponibles != null)
+                                    {
+                                        foreach (var rol in (IEnumerable<Modelos_AutomaG.Roles>)ViewBag.RolesDisponibles)
+                                        {
+                                            bool tieneEsteRol = Model.UsuarioRoles?.Any(ur => ur.idrol == rol.idrol) ?? false;
+                                            <option value="@rol.idrol" selected="@(tieneEsteRol ? "selected" : null)">
+                                                @rol.nombrerol
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label small fw-bold"> Nueva Contraseña (Opcional) </label>
+                                <input type="password" class="form-control" name="nuevapassword"/>
+                            </div>
+                        </div>
+                            @if (User.IsInRole("Super Administrador"))
+                            {
+                                <div class="d-flex justify-content-between border-top pt-3">
+                                    <button type="button" class="btn btn-danger" id="btnCancelar"> Cancelar </button>
+                                    <button type="button" class="btn btn-success" id="btnGuardar"> Actualizar </button>
+                                </div>
+                            }
+                        </form>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 mb-3 bg-white rounded-4 text-center">
+                <h5 class="text-secondary mb-3">Miembro desde</h5>
+                <p class="fs-4 fw-light">
+                    @Model.fechacreacion.ToString("dd 'de' MMMM, yyyy")
+                </p>
+            </div>
+
+            <div class="card shadow-sm border-0 p-4 bg-white rounded-4">
+                    @if (User.IsInRole("Super Administrador"))
+                {
+                    <button type="button" class="btn @(Model.activousu ? "btn-danger" : "btn-success") w-100" id="btnCambiarEstado">
+                        @(Model.activousu ? "Suspender Usuario" : "Activar Usuario")
+                    </button>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Botones de cambio de modo
+            const btnEditar = document.getElementById('btnEditar');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const modoVisualizacion = document.getElementById('modoVisualizacion');
+            const modoEdicion = document.getElementById('modoEdicion');
+            const formEdicion = document.getElementById('formEdicion');
+
+            btnEditar.onclick = () => {
+                modoVisualizacion.style.display = 'none';
+                modoEdicion.style.display = 'block';
+            };
+
+            btnCancelar.onclick = () => {
+                modoVisualizacion.style.display = 'block';
+                modoEdicion.style.display = 'none';
+            };
+
+            // Guardar cambios
+            const btnGuardar = document.getElementById('btnGuardar');
+            btnGuardar.onclick = async () => {
+                const formData = new FormData(formEdicion);
+                const res = await fetch(formEdicion.dataset.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert('Usuario actualizado correctamente');
+                    location.reload();
+                } else {
+                    alert('Error: ' + await res.text());
+                }
+            };
+
+            // Cambiar estado rápido
+            const btnCE = document.getElementById('btnCambiarEstado');
+            if (btnCE) {
+                btnCE.onclick = async () => {
+                    const res = await fetch(`/Accounts/CambiarEstado/${'@Model.idusu'}`, { 
+                        method: 'POST' 
+                    });
+
+                    if (res.ok) {
+                        alert('Estado actualizado');
+                        location.reload();
+                    } else {
+                        alert('Error al cambiar estado');
+                    }
+                };
+            }
+        });
+    </script>
+}

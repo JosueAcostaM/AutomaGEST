@@ -37,11 +37,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// 🔹 Activar Swagger siempre, incluso en producción
+app.UseSwagger();
+
+// 🔹 Configurar Swagger UI para que se abra en la raíz
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Automagest API V1");
+    c.RoutePrefix = ""; // Esto hace que Swagger se abra en /
+});
 
 app.UseHttpsRedirection();
 
