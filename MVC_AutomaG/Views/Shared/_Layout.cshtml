@@ -1,4 +1,19 @@
-﻿<!DOCTYPE html>
+﻿@using Modelos_AutomaG
+@using API_Consumer
+
+@{
+    var aspirantesLayout = CRUD<Aspirantes>.GetAll();
+
+    var notificacionesLayout = aspirantesLayout
+        .OrderByDescending(a => a.fecharegistro)
+        .Take(5)
+        .ToList();
+
+    var notificacionesHoyLayout = aspirantesLayout
+        .Count(a => a.fecharegistro.Date == DateTime.Today);
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -25,6 +40,16 @@
                         min-height: 100vh;
 
         }
+
+        /* ===== NOTIFICACIONES ===== */
+        .notificacion-texto {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            max-width: 100%;
+        }
+
 
 
         /* ========== SIDEBAR ========== */
@@ -204,11 +229,11 @@
 
         }
 
-                .main-container {
-                        padding: 2rem;
-                        flex: 1;
-
+        .main-container {
+            padding: .5rem 2rem 2rem 2rem;
+            flex: 1;
         }
+
 
                 footer {
                         padding: 1.5rem;
@@ -308,9 +333,72 @@
                 </div>
 
                 <div class="top-bar-right">
-                    <div class="icon-btn">
-                        <i data-lucide="bell"></i>
+
+                    <!-- NOTIFICACIONES -->
+                    <div class="dropdown position-relative">
+
+                        <div id="btnNotificaciones"
+                             class="icon-btn dropdown-toggle"
+                             data-bs-toggle="dropdown"
+                             style="cursor:pointer;">
+                            <i data-lucide="bell"></i>
+                        </div>
+
+                        @if (notificacionesHoyLayout > 0)
+
+                        {
+                            <span id="badgeNotificaciones"
+                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                @ViewBag.NotificacionesNoLeidas
+                            </span>
+                        }
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow p-2"
+                            style="width:320px; border-radius:12px;">
+
+                            <li class="dropdown-header fw-bold">
+                                Nuevos Aspirantes
+                            </li>
+                            <li><hr class="dropdown-divider" /></li>
+
+                            @if (notificacionesLayout.Count > 0)
+                            {
+                                foreach (var n in notificacionesLayout)
+                                {
+                                    <li class="dropdown-item small py-2">
+
+                                        <div class="notificacion-texto"
+                                             title="@n.nombreasp se registró en @n.programainteres">
+                                            <strong>@n.nombreasp</strong> se registró en
+                                            <strong>@n.programainteres</strong>
+                                        </div>
+
+
+                                        <small class="text-muted">
+                                            @n.fecharegistro.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider" /></li>
+                                }
+
+                                <li>
+                                    <a asp-controller="Aspirantes"
+                                       asp-action="ListAspirantes"
+                                       class="dropdown-item text-center fw-semibold text-danger">
+                                        Ver todos
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="dropdown-item text-muted">
+                                    No hay notificaciones
+                                </li>
+                            }
+                        </ul>
                     </div>
+
 
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -371,6 +459,15 @@
             iconContainer.innerHTML = `<i data-lucide="${iconName}"></i>`;
             lucide.createIcons();
         });
+
+            const btnNoti = document.getElementById("btnNotificaciones");
+        const badgeNoti = document.getElementById("badgeNotificaciones");
+
+        if (btnNoti && badgeNoti) {
+            btnNoti.addEventListener("click", () => {
+                badgeNoti.style.display = "none";
+            });
+        }
     </script>
 
     @RenderSection("Scripts", required: false)
