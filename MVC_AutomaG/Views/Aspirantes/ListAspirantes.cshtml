@@ -284,7 +284,7 @@
                                         </a>
 
                                         <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
-                                    @if (User.IsInRole("Administrador") || User.IsInRole("Super Administrador")){
+                                    @if (User.IsInRole("Coordinador") || User.IsInRole("Super Administrador")){
                                         <button type="button"
                                                 class="btn-delete-ghost"
                                                 onclick="eliminarAspirante('@item.idasp')"

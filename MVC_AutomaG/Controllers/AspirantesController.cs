@@ -88,7 +88,7 @@ namespace MVC_AutomaG.Controllers
             }
         }
         //Editar Informacion Aspirante
-        [Authorize(Roles = "Administrador,Super Administrador")]
+        [Authorize(Roles = "Coordinador,Super Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Update(string id, IFormCollection form)

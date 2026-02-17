@@ -80,7 +80,7 @@
                 </div>
 
                 <!-- MODO EDICIÓN (oculto inicialmente) -->
-                @if (User.IsInRole("Super Administrador") || User.IsInRole("Administrador")) { 
+                @if (User.IsInRole("Super Administrador") || User.IsInRole("Coordinador")) { 
                 <div id="modoEdicion" style="display: none;">
                     <form id="formEdicion"
                           data-action="@Url.Action("Update", "Aspirantes")"
