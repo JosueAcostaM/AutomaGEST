@@ -14,7 +14,8 @@
         Campos de conocimientos
     </li>
 }
-
+@if (User.IsInRole("Super Administrador"))
+                    {
 <div class="aspirantes-page" style="margin-top: 20px; padding: 2rem;">
     <div class="page-heading">
         <h1 class="page-title">Campos de Conocimiento</h1>
@@ -69,7 +70,7 @@
         </div>
     </div>
 </div>
-
+}
 @section Scripts {
     <script>
         // Inicializar iconos al cargar

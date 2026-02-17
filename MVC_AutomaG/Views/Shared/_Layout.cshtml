@@ -287,21 +287,27 @@
                              class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Aspirantes" ? "active" : "")">
                     <i data-lucide="users"></i> Aspirantes
                 </a>
-
-                <a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos"
-                             class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CamposConocimientos" ? "active" : "")">
-                    <i data-lucide="book-open"></i> Campos Conoc.
-                </a>
-
-                <a asp-controller="Programas" asp-action="ListProgramas"
-                             class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programas" ? "active" : "")">
-                    <i data-lucide="graduation-cap"></i> Programas
-                </a>
-
-                <a asp-controller="Accounts" asp-action="ListUsuarios"
-                   class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Accounts" ? "active" : "")">
-                    <i data-lucide="shield"></i> Personal Administrativo
-                </a>
+                                @if (User.IsInRole("Super Administrador"))
+                {
+                    <a asp-controller="CamposConocimientos" asp-action="ListCamposConocimientos"
+                    class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CamposConocimientos" ? "active" : "")">
+                        <i data-lucide="book-open"></i> Campos Conoc.
+                    </a>
+                }
+                @if (User.IsInRole("Super Administrador"))
+                {
+                    <a asp-controller="Programas" asp-action="ListProgramas"
+                    class="nav-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programas" ? "active" : "")">
+                        <i data-lucide="graduation-cap"></i> Programas
+                    </a>
+                }
+                @if (User.IsInRole("Super Administrador"))
+                {
+                    <a asp-controller="Accounts" asp-action="ListUsuarios"
+                    class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Accounts" ? "active" : "")">
+                        <i data-lucide="shield"></i> Personal Administrativo
+                    </a>
+                }
                 @if (User.IsInRole("Super Administrador"))
                 {
                     <a asp-controller="Niveles" asp-action="ListNiveles"

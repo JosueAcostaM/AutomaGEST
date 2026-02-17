@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_AutomaG.Migrations
 {
     [DbContext(typeof(API_AutomaGContext))]
-    [Migration("20260204141632_automagest_bdd")]
+    [Migration("20260217145654_automagest_bdd")]
     partial class automagest_bdd
     {
         /// <inheritdoc />

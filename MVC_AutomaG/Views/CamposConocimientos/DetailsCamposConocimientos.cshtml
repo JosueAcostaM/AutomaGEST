@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Detalles del Campo";
 }
-
+@if (User.IsInRole("Super Administrador"))
+{ 
 @section Breadcrumb {
     <li class="breadcrumb-item">
         <a asp-controller="Home" asp-action="Index">Inicio</a>
@@ -64,7 +65,6 @@
                 <thead>
                     <tr>
                         <th style="width: 70%;">NOMBRE DEL PROGRAMA</th>
-                        <th style="width: 30%; text-align: center;">ACCIONES RÁPIDAS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,16 +79,9 @@
                                         @programa.nombrepro
                                     </div>
                                 </td>
-                                <td style="text-align: center;">
-                                    <a asp-controller="Aspirantes"
-                                       asp-action="ListByPrograma"
-                                       asp-route-idPrograma="@programa.nombrepro"
-                                       class="btn-action">
-                                        <i data-lucide="users" style="width: 16px; margin-right: 8px;"></i>
-                                        Ver Aspirantes
-                                    </a>
-                                </td>
+                                
                             </tr>
+
                         }
                     }
                     else
@@ -114,4 +107,5 @@
             lucide.createIcons();
         });
     </script>
+}
 }

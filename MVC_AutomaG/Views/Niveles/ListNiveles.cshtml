@@ -5,7 +5,8 @@
 }
 
 <link rel="stylesheet" href="~/css/programas-lista.css" asp-append-version="true" />
-
+        @if (User.IsInRole("Super Administrador"))
+        {
 @section Breadcrumb {
     <li class="breadcrumb-item">
         <a asp-controller="Home" asp-action="Index">Inicio</a>
@@ -22,13 +23,12 @@
             <h1 class="page-title">Niveles</h1>
             <p class="page-subtitle">Gestiona los niveles disponibles</p>
         </div>
-        @if (User.IsInRole("Super Administrador"))
-        {
+
             <a asp-controller="Niveles" asp-action="Create" class="btn-add-program">
                 <i data-lucide="plus" style="width: 18px;"></i> Nuevo Nivel
             </a>
 
-        }
+
     </div>
 
     <div class="table-card">
@@ -134,3 +134,4 @@
         });
     </script>
 }
+        }

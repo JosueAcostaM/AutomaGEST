@@ -13,17 +13,17 @@
         Usuarios
     </li>
 }
-
+        @if(User.IsInRole("Super Administrador")){
 <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
 
     <div class="page-heading">
         <h1 class="page-title">Administración de Usuarios</h1>
         <p class="page-subtitle">Gestione las cuentas de acceso y roles del sistema AutomaGest</p>
-        @if(User.IsInRole("Super Administrador")){
+
         <a href="/Login/Register" class="btn-add-program">
             <i data-lucide="plus" style="width: 18px;"></i> Nuevo Usuario
         </a>
-        }
+       
     </div>
 
     <div class="filters-card">
@@ -112,15 +112,13 @@
                                         </a>
 
                                         <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
-                                        @if (User.IsInRole("Super Administrador"))
-                                        {
+
                                             <button type="button"
                                             class="btn-delete-ghost"
                                             onclick="eliminarUsuario('@item.idusu')"
                                             title="Eliminar Usuario">
                                                 <i data-lucide="trash-2" style="width: 18px;"></i>
                                             </button>
-                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -131,7 +129,7 @@
         </div>
     </div>
 </div>
-
+}
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -172,7 +170,7 @@
         //eliminar
         window.aplicarFiltroUsuarios = aplicarFiltro;
 
-            // ✅ ELIMINAR USUARIO
+            // ELIMINAR USUARIO
             window.eliminarUsuario = function (id) {
                 if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
 
@@ -244,4 +242,5 @@
             }
         });
     </script>
+}
 }

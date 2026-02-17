@@ -10,12 +10,10 @@
                 <!-- CABECERA -->
                 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h3 class="text-primary-emphasis mb-0">Gestión de Programa</h3>
-                    @if (User.IsInRole("Super Administrador"))
-                    {
+
                         <button type="button" class="btn btn-primary rounded-pill px-4" id="btnEditar">
                             <i class="fas fa-edit me-2"></i>Editar
                         </button>
-                    }
                 </div>
 
                 <!-- ================= VISUAL ================= -->
@@ -110,7 +108,6 @@
                     </div>
 
                 </div>
-                @if (User.IsInRole("Super Administrador")){
                 <!-- ================= EDICIÓN ================= -->
                 <div id="modoEdicion" style="display:none;">
 
@@ -255,7 +252,7 @@
                     </form>
 
                 </div>
-                }
+                
             </div>
         </div>
 
