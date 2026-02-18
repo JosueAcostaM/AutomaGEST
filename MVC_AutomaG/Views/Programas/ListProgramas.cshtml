@@ -162,7 +162,7 @@
                 window.eliminarPrograma = function(id) {
                     if(!confirm('¿Seguro que quieres eliminar este programa?')) return;
 
-                    fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Programas/${id}`, { method: 'DELETE' })
+                    fetch(`https://Localhost:7166/api/Programas/${id}`, { method: 'DELETE' })
                         .then(r => {
                             if (!r.ok) throw new Error('Error al eliminar');
                             location.reload();

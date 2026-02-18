@@ -45,6 +45,14 @@
                     <option value="revisado">Revisado</option>
                 </select>
             </div>
+                <div class="select-container">
+                    <i data-lucide="mail" class="input-icon"></i>
+                    <select id="filtroInteres" class="custom-select">
+                        <option value="">Todos</option>
+                        <option value="interesado">Interesados</option>
+                        <option value="nointeresado">No interesados</option>
+                    </select>
+                </div>
         </div>
     </div>
 
@@ -73,7 +81,7 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            <tr data-email="@item.emailasp">
                                 <td class="fw-500">@item.nombreasp @item.apellidoasp</td>
                                 <td>@item.ciudadasp</td>
                                 <td>@item.programainteres</td>
@@ -102,160 +110,186 @@
         </div>
     </div>
 </div>
+    @section Scripts {
+        <script>
+            function normalizarEstadoBonito(estado) {
+                const e = (estado || "").trim();
+                if (e === "En revisión" || e === "en revision" || e === "en revisión") return "en revisión";
+                if (e === "Revisado" || e === "revisado") return "revisado";
+                return "";
+            }
 
-@section Scripts {
-    <script>
-        function normalizarEstadoBonito(estado) {
-            const e = (estado || "").trim();
-            if (e === "En revisión" || e === "en revision" || e === "en revisión") return "en revisión";
-            if (e === "Revisado" || e === "revisado") return "revisado";
-            return "";
-        }
+            function getFiltros() {
+                const filtroTexto = document.getElementById('filtroTexto');
+                const filtroCampo = document.getElementById('filtroCampo');
+                const filtroEstado = document.getElementById('filtroEstado');
+                const filtroInteres = document.getElementById('filtroInteres');
 
-        function getFiltros() {
-            const filtroTexto = document.getElementById('filtroTexto');
-            const filtroCampo = document.getElementById('filtroCampo');
-            const filtroEstado = document.getElementById('filtroEstado');
+                return {
+                    texto: (filtroTexto?.value || '').trim(),
+                    programa: (filtroCampo?.value || '').trim(),
+                    estado: normalizarEstadoBonito(filtroEstado?.value || ''),
+                    interes: (filtroInteres?.value || '').trim().toLowerCase()
+                };
+            }
 
-            return {
-                texto: (filtroTexto?.value || '').trim(),
-                programa: (filtroCampo?.value || '').trim(),
-                estado: normalizarEstadoBonito(filtroEstado?.value || '')
-            };
-        }
+            function aplicarFiltro() {
+                const filtroTexto = document.getElementById('filtroTexto');
+                const filtroCampo = document.getElementById('filtroCampo');
+                const filtroEstado = document.getElementById('filtroEstado');
+                const filtroInteres = document.getElementById('filtroInteres');
+                const tabla = document.getElementById('cuerpoAspirantes');
 
-        function aplicarFiltro() {
-            const filtroTexto = document.getElementById('filtroTexto');
-            const filtroCampo = document.getElementById('filtroCampo');
-            const filtroEstado = document.getElementById('filtroEstado');
-            const tabla = document.getElementById('cuerpoAspirantes');
+                const texto = (filtroTexto.value || '').toLowerCase().trim();
+                const programa = (filtroCampo.value || '').toLowerCase().trim();
+                const estado = (filtroEstado.value || '').toLowerCase().trim();
+                const interes = (filtroInteres.value || '').toLowerCase().trim();
 
-            const texto = (filtroTexto.value || '').toLowerCase().trim();
-            const programa = (filtroCampo.value || '').toLowerCase().trim();
-            const estado = (filtroEstado.value || '').toLowerCase().trim();
+                const filas = tabla.getElementsByTagName('tr');
 
-            const filas = tabla.getElementsByTagName('tr');
+                for (const fila of filas) {
+                    if (fila.cells.length >= 4) {
+                        const tNombre = fila.cells[0].textContent.toLowerCase();
+                        const tCiudad = fila.cells[1].textContent.toLowerCase();
+                        const tProg = fila.cells[2].textContent.toLowerCase();
+                        const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
 
-            for (const fila of filas) {
-                if (fila.cells.length >= 4) {
-                    const tNombre = fila.cells[0].textContent.toLowerCase();
-                    const tCiudad = fila.cells[1].textContent.toLowerCase();
-                    const tProg = fila.cells[2].textContent.toLowerCase();
-                    const tEstadoAsp = fila.cells[3].textContent.toLowerCase();
+                        const email = (fila.getAttribute('data-email') || '').trim().toLowerCase();
 
-                    const cumpleTexto = !texto || (
-                        tNombre.includes(texto) ||
-                        tCiudad.includes(texto) ||
-                        tProg.includes(texto) ||
-                        tEstadoAsp.includes(texto)
-                    );
+                        // 1) Filtro texto
+                        const cumpleTexto = !texto || (
+                            tNombre.includes(texto) ||
+                            tCiudad.includes(texto) ||
+                            tProg.includes(texto) ||
+                            tEstadoAsp.includes(texto)
+                        );
 
-                    const cumplePrograma = !programa || tProg.includes(programa);
-                    const cumpleEstado = !estado || tEstadoAsp.includes(estado);
+                        const cumplePrograma = !programa || tProg.includes(programa);
 
-                    fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado) ? '' : 'none';
+                        const cumpleEstado = !estado || tEstadoAsp.includes(estado);
+
+                        let cumpleInteres = true;
+
+                        if (interes === "interesado") {
+                            cumpleInteres = email !== "";
+                        }
+                        else if (interes === "nointeresado") {
+                            cumpleInteres = email === "";
+                        }
+
+                        fila.style.display = (cumpleTexto && cumplePrograma && cumpleEstado && cumpleInteres) ? '' : 'none';
+                    }
                 }
             }
-        }
 
-        function actualizarTextoBotonExcel() {
-            const btn = document.getElementById("btnExcel");
-            if (!btn) return;
+            function actualizarTextoBotonExcel() {
+                const btn = document.getElementById("btnExcel");
+                if (!btn) return;
 
-            const f = getFiltros();
-            let texto = "Descargar excel de aspirantes";
+                const f = getFiltros();
+                let texto = "Descargar excel de aspirantes";
 
-            if (f.estado) {
-                texto += " " + f.estado;
-            } else {
-                texto += " general";
+                if (f.interes === "interesado") texto += " interesados";
+                if (f.interes === "nointeresado") texto += " no interesados";
+
+                if (f.estado) {
+                    texto += " " + f.estado;
+                } else {
+                    texto += " general";
+                }
+
+                if (f.programa) {
+                    texto += ` de este programa`;
+                }
+
+                btn.textContent = texto;
             }
 
-            if (f.programa) {
-                texto += ` de este programa`;
+            function buildUrlExcel() {
+                const f = getFiltros();
+                const params = new URLSearchParams();
+
+                if (f.texto) params.append("texto", f.texto);
+                if (f.programa) params.append("programa", f.programa);
+                if (f.estado) params.append("estado", f.estado);
+                if (f.interes) params.append("interes", f.interes);
+
+
+                return "/Aspirantes/ReporteExcel?" + params.toString();
             }
 
-            btn.textContent = texto;
-        }
+            document.addEventListener('DOMContentLoaded', function () {
+                lucide.createIcons();
 
-        function buildUrlExcel() {
-            const f = getFiltros();
-            const params = new URLSearchParams();
+                const filtroTexto = document.getElementById('filtroTexto');
+                const filtroCampo = document.getElementById('filtroCampo');
+                const filtroEstado = document.getElementById('filtroEstado');
+                const filtroInteres = document.getElementById('filtroInteres');
+                const btnExcel = document.getElementById('btnExcel');
 
-            if (f.texto) params.append("texto", f.texto);
-            if (f.programa) params.append("programa", f.programa);
-            if (f.estado) params.append("estado", f.estado);
+                filtroTexto.addEventListener('keyup', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+                filtroCampo.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+                filtroEstado.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
+                filtroInteres.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
 
-            return "/Aspirantes/ReporteExcel?" + params.toString();
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            lucide.createIcons();
-
-            const filtroTexto = document.getElementById('filtroTexto');
-            const filtroCampo = document.getElementById('filtroCampo');
-            const filtroEstado = document.getElementById('filtroEstado');
-            const btnExcel = document.getElementById('btnExcel');
-
-            filtroTexto.addEventListener('keyup', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
-            filtroCampo.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
-            filtroEstado.addEventListener('change', () => { aplicarFiltro(); actualizarTextoBotonExcel(); });
-
-            if (btnExcel) {
-                btnExcel.addEventListener("click", () => {
-                    window.location.href = buildUrlExcel();
-                });
-            }
-
-            aplicarFiltro();
-            actualizarTextoBotonExcel();
-        });
-
-        window.eliminarAspirante = function (id) {
-            if (!confirm('¿Seguro que quieres eliminar este aspirante?')) return;
-
-            fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Aspirantes/${id}`, { method: 'DELETE' })
-                .then(r => {
-                    if (!r.ok) throw new Error('Error al eliminar');
-                    return r;
-                })
-                .then(() => fetch('https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Aspirantes').then(r => r.json()))
-                .then(data => {
-                    const cuerpo = document.getElementById('cuerpoAspirantes');
-                    cuerpo.innerHTML = '';
-
-                    data.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.style.borderBottom = '1px solid #F3F4F6';
-
-                        row.innerHTML = `
-                            <td style="padding:1rem; vertical-align:middle; font-weight:500;">${item.nombreasp} ${item.apellidoasp}</td>
-                            <td style="padding:1rem; vertical-align:middle;">${item.ciudadasp}</td>
-                            <td style="padding:1rem; vertical-align:middle;">${item.programainteres}</td>
-                            <td style="padding:1rem; vertical-align:middle;">${item.estadoasp}</td>
-                            <td style="padding:1rem; vertical-align:middle; text-align:right;">
-                                <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
-                                    <a href="/Aspirantes/DetailsAspirantes/${item.idasp}"
-                                       style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
-                                        Ver Detalles
-                                    </a>
-                                    <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
-                                    <button type="button" class="btn-delete-ghost" onclick="eliminarAspirante('${item.idasp}')" title="Eliminar Aspirante">
-                                        <i data-lucide="trash-2" style="width: 18px;"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        `;
-
-                        cuerpo.appendChild(row);
+                if (btnExcel) {
+                    btnExcel.addEventListener("click", () => {
+                        window.location.href = buildUrlExcel();
                     });
+                }
 
-                    lucide.createIcons();
-                    aplicarFiltro();
-                    actualizarTextoBotonExcel();
-                })
-                .catch(err => console.error(err));
-        }
-    </script>
-}
+                aplicarFiltro();
+                actualizarTextoBotonExcel();
+            });
+
+            window.eliminarAspirante = function (id) {
+                if (!confirm('¿Seguro que quieres eliminar este aspirante?')) return;
+
+                fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Aspirantes/${id}`, { method: 'DELETE' })
+                    .then(r => {
+                        if (!r.ok) throw new Error('Error al eliminar');
+                        return r;
+                    })
+                    .then(() => fetch('https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Aspirantes').then(r => r.json()))
+                    .then(data => {
+                        const cuerpo = document.getElementById('cuerpoAspirantes');
+                        cuerpo.innerHTML = '';
+
+                        data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.style.borderBottom = '1px solid #F3F4F6';
+
+                            //IMPORTANTE: volver a poner data-email
+                            row.setAttribute('data-email', (item.emailasp || '').trim());
+
+                            row.innerHTML = `
+                                <td style="padding:1rem; vertical-align:middle; font-weight:500;">${item.nombreasp} ${item.apellidoasp}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${item.ciudadasp}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${item.programainteres}</td>
+                                <td style="padding:1rem; vertical-align:middle;">${item.estadoasp}</td>
+                                <td style="padding:1rem; vertical-align:middle; text-align:right;">
+                                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+                                        <a href="/Aspirantes/DetailsAspirantes/${item.idasp}"
+                                           style="color:#D91016; border:1px solid #E5E7EB; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:0.85rem; font-weight:600;">
+                                            Ver Detalles
+                                        </a>
+                                        <div style="width: 1px; height: 24px; background: #E5E7EB;"></div>
+                                        <button type="button" class="btn-delete-ghost" onclick="eliminarAspirante('${item.idasp}')" title="Eliminar Aspirante">
+                                            <i data-lucide="trash-2" style="width: 18px;"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+
+                            cuerpo.appendChild(row);
+                        });
+
+                        lucide.createIcons();
+                        aplicarFiltro();
+                        actualizarTextoBotonExcel();
+                    })
+                    .catch(err => console.error(err));
+            }
+        </script>
+    }
 }

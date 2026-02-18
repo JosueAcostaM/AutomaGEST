@@ -174,7 +174,7 @@
             window.eliminarUsuario = function (id) {
                 if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
 
-                fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/Usuarios/${id}`, { method: 'DELETE' })
+                fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Usuarios/${id}`, { method: 'DELETE' })
                     .then(r => {
                         if (!r.ok) throw new Error('Error al eliminar');
                         return r;
