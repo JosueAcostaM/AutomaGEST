@@ -179,6 +179,27 @@
         color: var(--utn-red);
     }
 
+/* Botón "Nueva Maestría" Rojo */
+.btn-add-program {
+    background-color: #D91016;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(217, 16, 22, 0.3);
+    transition: all 0.2s;
+    border: none;
+}
+
+    .btn-add-program:hover {
+        background-color: #B91C1C;
+        transform: translateY(-1px);
+        color: white;
+    }
 .divider-v {
     width: 1px;
     height: 24px;
