@@ -82,7 +82,7 @@ namespace MVC_AutomaG.Controllers
                 if (ok && !string.IsNullOrEmpty(nuevoRolId))
                 {
                     // Configuramos el EndPoint por si acaso
-                    CRUD<UsuarioRoles>.EndPoint = "https://localhost:7166/api/UsuarioRoles";
+                    CRUD<UsuarioRoles>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/UsuarioRoles";
 
                     var relacion = new UsuarioRoles
                     {

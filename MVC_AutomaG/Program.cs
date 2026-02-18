@@ -4,15 +4,14 @@ using API_AutomaG;
 using Servicios_AutomaG;
 using API_Consumer;
 
-
-CRUD<Usuarios>.EndPoint = "https://localhost:7166/api/Usuarios";
-CRUD<Aspirantes>.EndPoint = "https://localhost:7166/api/Aspirantes";
-CRUD<CamposConocimiento>.EndPoint = "https://localhost:7166/api/CamposConocimientos";
-CRUD<Programas>.EndPoint = "https://localhost:7166/api/Programas";
-CRUD<Niveles>.EndPoint = "https://localhost:7166/api/Niveles";
-CRUD<Modalidades>.EndPoint = "https://localhost:7166/api/Modalidades";
-CRUD<Precios>.EndPoint = "https://localhost:7166/api/Precios";
-CRUD<Roles>.EndPoint = "https://localhost:7166/api/Roles";
+CRUD<Usuarios>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Usuarios";
+CRUD<Aspirantes>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Aspirantes";
+CRUD<CamposConocimiento>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/CamposConocimientos";
+CRUD<Programas>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Programas";
+CRUD<Niveles>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Niveles";
+CRUD<Modalidades>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Modalidades";
+CRUD<Precios>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Precios";
+CRUD<Roles>.EndPoint = "https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Roles";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

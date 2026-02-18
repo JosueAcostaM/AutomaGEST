@@ -79,14 +79,14 @@
             window.eliminarRol = function (id) {
                 if (!confirm('¿Seguro que quieres eliminar este rol?')) return;
 
-                fetch(`https://localhost:7166/api/Roles/${id}`, { method: 'DELETE' })
+                    fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Roles/${id}`, { method: 'DELETE' })
                     .then(r => {
                         if (!r.ok) throw new Error('Error al eliminar');
                         return r;
                     })
                     .then(() => {
                         // Recargar tabla
-                        fetch('https://localhost:7166/api/Roles')
+                            fetch('https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/Roles')
                             .then(r => r.json())
                             .then(data => {
                                 const cuerpo = document.getElementById('cuerpoRoles');
