@@ -2,90 +2,65 @@
    ESTILO "VIBRANTE & CON CARÁCTER" - LISTA DE ASPIRANTES
    ================================================================= */
 
-/* --- 1. ENCABEZADO DE PÁGINA --- */
+:root {
+    --utn-red: #D91016;
+    --utn-red-light: #FEF2F2;
+    --utn-red-border: #FECACA;
+    --text-dark: #111827;
+    --text-gray: #6B7280;
+    --bg-light: #F3F4F6;
+    --bg-white: #FFFFFF;
+    --font-heading: 'Playfair Display', serif;
+    --font-main: 'Inter', sans-serif;
+}
+
+/* --- ENCABEZADO DE PÁGINA --- */
 .page-heading {
     margin-bottom: 2.5rem;
 }
 
 .page-title {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     font-size: 2.2rem;
     font-weight: 800;
-    color: #111827;
+    color: var(--text-dark);
     margin: 0;
     letter-spacing: -0.02em;
 }
 
 .page-subtitle {
-    font-family: 'Inter', sans-serif;
-    color: #6B7280;
+    font-family: var(--font-main);
+    color: var(--text-gray);
     font-size: 1.05rem;
     margin-top: 0.5rem;
 }
 
-
-
-/* --- 2. TARJETAS CON FUERZA VISUAL --- */
+/* --- TARJETAS --- */
 .filters-card, .table-card {
-    background-color: #FFFFFF;
-    border: 1px solid #F3F4F6;
+    background-color: var(--bg-white);
+    border: 1px solid var(--bg-light);
     border-radius: 12px;
-    /* Sombra 3D suave para profundidad */
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
     margin-bottom: 2rem;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Botón "Nueva Maestría" Rojo */
-.btn-add-program {
-    background-color: #D91016;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 6px -1px rgba(217, 16, 22, 0.3);
-    transition: all 0.2s;
-    border: none;
-}
-
-    .filters-card:hover, .table-card:hover {
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-    }
-
-/* --- CAMBIO CLAVE: LA FRANJA ROJA EN EL ENCABEZADO --- */
-.card-header-bar {
+.table-header-title {
     padding: 1.5rem 2rem;
-    /* AQUÍ ESTÁ EL CAMBIO: Línea roja sólida de 3px */
-    border-bottom: 3px solid #D91016;
-    background-color: #FFFFFF;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-title {
     margin: 0;
     font-size: 1.2rem;
     font-weight: 700;
     color: #1F2937;
-    border-left: 4px solid #D91016; /* Mantenemos el acento lateral también */
-    padding-left: 12px;
 }
 
-/* --- 3. FILTROS --- */
+/* --- FILTROS --- */
 .filter-row {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     width: 100%;
     padding: 1.5rem 2rem;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #F3F4F6; /* Separador sutil con la tabla */
 }
 
 .search-container {
@@ -107,14 +82,13 @@
     border-radius: 8px;
     background-color: #F9FAFB;
     font-size: 0.95rem;
-    color: #374151;
     outline: none;
     transition: all 0.2s;
 }
 
     .custom-input:focus, .custom-select:focus {
-        background-color: #FFFFFF;
-        border-color: #D91016;
+        background-color: var(--bg-white);
+        border-color: var(--utn-red);
         box-shadow: 0 0 0 4px rgba(217, 16, 22, 0.1);
     }
 
@@ -125,92 +99,89 @@
     transform: translateY(-50%);
     color: #9CA3AF;
     width: 20px;
-    height: 20px;
-    pointer-events: none;
 }
 
-/* --- 4. TABLA MÁS VIVA Y DEFINIDA --- */
+/* --- TABLA DEFINIDA (REEMPLAZA ESTILOS INLINE) --- */
 .utn-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-    /* Encabezados de tabla más oscuros para contraste */
-    .utn-table th {
-        background-color: #F1F5F9; /* Gris un poco más oscuro que antes */
-        text-align: left;
-        padding: 1.2rem 2rem;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #475569; /* Texto más oscuro */
-        font-weight: 800; /* Más grueso */
-        border-bottom: 1px solid #E2E8F0;
+    .utn-table thead {
+        background-color: #F9FAFB;
     }
+
+    .utn-table th {
+        padding: 1rem;
+        color: var(--text-gray);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: left;
+        text-transform: uppercase;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+        .utn-table th.text-right {
+            text-align: right;
+        }
 
     .utn-table td {
-        padding: 1.2rem 2rem;
-        border-bottom: 1px solid #F3F4F6;
-        color: #334155;
-        font-size: 0.95rem;
+        padding: 1rem;
         vertical-align: middle;
-        background-color: #FFFFFF;
-        transition: background-color 0.2s;
+        border-bottom: 1px solid var(--bg-light);
+        color: #334155;
     }
 
-        .utn-table td:first-child {
-            font-weight: 600;
-            color: #0F172A;
+        .utn-table td.fw-500 {
+            font-weight: 500;
+        }
+
+        .utn-table td.text-right {
+            text-align: right;
         }
 
     .utn-table tbody tr:hover td {
-        background-color: #FEF2F2;
+        background-color: var(--utn-red-light);
     }
 
-/* --- 5. BOTONES ROJOS VIBRANTES --- */
+/* --- BOTONES --- */
 .btn-action {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    padding: 0.5rem 1.2rem;
-    background-color: #FEF2F2;
-    border: 1px solid #FECACA;
-    color: #D91016;
-    border-radius: 8px;
+    padding: 5px 12px;
+    background-color: var(--utn-red-light);
+    border: 1px solid var(--utn-red-border);
+    color: var(--utn-red);
+    border-radius: 6px;
     text-decoration: none;
     font-size: 0.85rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s;
 }
 
     .btn-action:hover {
-        background-color: #D91016;
-        border-color: #D91016;
-        color: #FFFFFF;
+        background-color: var(--utn-red);
+        color: var(--bg-white);
         transform: translateY(-2px);
-        box-shadow: 0 4px 6px -1px rgba(217, 16, 22, 0.3);
     }
 
-    .btn-action:active {
-        transform: translateY(0);
-    }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .filter-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .select-container {
-        width: 100%;
-    }
-
-    .card-header-bar {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-    }
+.btn-delete-ghost {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
 }
+
+    .btn-delete-ghost:hover {
+        color: var(--utn-red);
+    }
+
+.divider-v {
+    width: 1px;
+    height: 24px;
+    background: #E5E7EB;
+}
+
