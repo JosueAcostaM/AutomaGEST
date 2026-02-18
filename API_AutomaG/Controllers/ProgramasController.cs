@@ -90,7 +90,7 @@ namespace API_AutomaG.Controllers
             if (string.IsNullOrWhiteSpace(programas.estadopro))
                 programas.estadopro = "activo";
 
-            // ✅ Reintento por si 2 personas crean a la vez y choca el ID (23505)
+            // Reintento por si 2 personas crean a la vez y choca el ID (23505)
             for (int intento = 1; intento <= 5; intento++)
             {
                 // Traer solo ids a memoria (evita el error de traducción)

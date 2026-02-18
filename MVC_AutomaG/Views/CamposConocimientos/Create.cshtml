@@ -1,0 +1,77 @@
+﻿@model Modelos_AutomaG.CamposConocimiento
+
+@{
+    ViewData["Title"] = "Registrar Campo de Conocimiento";
+}
+
+@if (User.IsInRole("Super Administrador"))
+{
+    <link rel="stylesheet" href="~/css/programa-form.css" asp-append-version="true" />
+
+    <div class="utn-form-container">
+
+        <div class="utn-form-header">
+            <h1 class="utn-title">Nuevo Campo de Conocimiento</h1>
+            <p class="utn-subtitle">Complete la información para registrar un nuevo campo</p>
+        </div>
+
+        <div class="utn-card">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                @* Error servidor *@
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger" style="margin-bottom:1rem;">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:1rem;"></div>
+
+                <div class="utn-grid">
+                    <div class="utn-form-item">
+                        <label asp-for="nombrecam" class="utn-label">Nombre</label>
+                        <input asp-for="nombrecam" class="utn-field" placeholder="Ej. Ciencias de la Computación" required />
+                        <span asp-validation-for="nombrecam" class="text-danger"></span>
+                    </div>
+
+                    <div class="utn-form-item utn-full-width">
+                        <label asp-for="descripcioncam" class="utn-label">Descripción</label>
+                        <textarea asp-for="descripcioncam" class="utn-field" rows="4"
+                                  placeholder="Descripción opcional"></textarea>
+                        <span asp-validation-for="descripcioncam" class="text-danger"></span>
+                    </div>
+
+                    @* Estado fijo para evitar activo/Activo *@
+                    <div class="utn-form-item">
+                        <label asp-for="estadocam" class="utn-label">Estado Inicial</label>
+                        <input asp-for="estadocam" class="utn-field" value="activo" readonly />
+                        <span asp-validation-for="estadocam" class="text-danger"></span>
+                    </div>
+
+                    <div class="utn-footer">
+                        <a asp-action="ListCamposConocimientos" class="utn-btn-cancel">
+                            <i data-lucide="x" style="width:18px;"></i> Cancelar
+                        </a>
+                        <button type="submit" class="utn-btn-save">
+                            <i data-lucide="save" style="width:18px;"></i> Guardar Campo
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                lucide.createIcons();
+            });
+        </script>
+    }
+}

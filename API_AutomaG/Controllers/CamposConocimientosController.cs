@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API_AutomaG.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API_AutomaG.Data;
+using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using Modelos_AutomaG;
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace API_AutomaG.Controllers
 {
@@ -80,15 +82,54 @@ namespace API_AutomaG.Controllers
         [HttpPost]
         public async Task<ActionResult<CamposConocimiento>> PostCamposConocimiento(CamposConocimiento camposConocimiento)
         {
-            _context.CamposConocimiento.Add(camposConocimiento);
-            await _context.SaveChangesAsync();
+            // Estado consistente
+            camposConocimiento.estadocam = "activo";
 
-            return CreatedAtAction(
-                "GetCamposConocimiento",
-                new { id = camposConocimiento.idcam },
-                camposConocimiento
-            );
+            for (int intento = 1; intento <= 5; intento++)
+            {
+                // FILTRAR POR IDCAM, NO POR CODIGOCAM
+                var ids = await _context.CamposConocimiento
+                    .AsNoTracking()
+                    .Where(c => c.idcam.StartsWith("CAM"))
+                    .Select(c => c.idcam)
+                    .ToListAsync();
+
+                int maxNum = 0;
+
+                foreach (var id in ids)
+                {
+                    if (!string.IsNullOrWhiteSpace(id) && id.StartsWith("CAM"))
+                    {
+                        var numStr = id.Substring(3); // "1", "10", "100"
+                        if (int.TryParse(numStr, out int n) && n > maxNum)
+                            maxNum = n;
+                    }
+                }
+
+                // Genera el siguiente id
+                camposConocimiento.idcam = $"CAM{maxNum + 1}";
+
+                _context.CamposConocimiento.Add(camposConocimiento);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return CreatedAtAction("GetCamposConocimiento",
+                        new { id = camposConocimiento.idcam },
+                        camposConocimiento);
+                }
+                catch (DbUpdateException ex) when (ex.InnerException is PostgresException pg && pg.SqlState == "23505")
+                {
+                    // duplicado -> reintentar
+                    _context.ChangeTracker.Clear();
+
+                    if (intento == 5) throw;
+                }
+            }
+
+            return StatusCode(500, "No se pudo crear el Campo.");
         }
+
 
         // DELETE: api/CamposConocimientos/{id}
         [HttpDelete("{id}")]
