@@ -149,12 +149,14 @@ namespace MVC_AutomaG.Controllers
         }
         //Exportar a Excel
         [HttpGet]
-        public IActionResult ReporteExcel(string texto = "", string programa = "", string estado = "")
+        public IActionResult ReporteExcel(string texto = "", string programa = "", string estado = "", string interes = "")
         {
             var aspirantes = CRUD<Aspirantes>.GetAll() ?? new List<Aspirantes>();
+
             string t = (texto ?? "").Trim().ToLower();
             string p = (programa ?? "").Trim().ToLower();
             string e = (estado ?? "").Trim().ToLower();
+            string i = (interes ?? "").Trim().ToLower(); 
 
             var filtrados = aspirantes.Where(a =>
             {
@@ -162,7 +164,8 @@ namespace MVC_AutomaG.Controllers
                 string ciudad = (a.ciudadasp ?? "").ToLower();
                 string prog = (a.programainteres ?? "").ToLower();
                 string est = (a.estadoasp ?? "").Trim().ToLower();
-                string nivel = (a.nivelinteres ?? "").ToLower();
+
+                string email = (a.emailasp ?? "").Trim().ToLower();
 
                 bool cumpleTexto = string.IsNullOrEmpty(t) ||
                                    nombre.Contains(t) ||
@@ -173,7 +176,13 @@ namespace MVC_AutomaG.Controllers
                 bool cumplePrograma = string.IsNullOrEmpty(p) || prog.Contains(p);
                 bool cumpleEstado = string.IsNullOrEmpty(e) || est == e;
 
-                return cumpleTexto && cumplePrograma && cumpleEstado;
+                bool cumpleInteres = true;
+                if (i == "interesado")
+                    cumpleInteres = !string.IsNullOrWhiteSpace(email);
+                else if (i == "nointeresado")
+                    cumpleInteres = string.IsNullOrWhiteSpace(email);
+
+                return cumpleTexto && cumplePrograma && cumpleEstado && cumpleInteres;
             }).ToList();
 
             using var wb = new XLWorkbook();
@@ -203,22 +212,23 @@ namespace MVC_AutomaG.Controllers
             ws.Range(1, 1, 1, 7).Style.Font.Bold = true;
             ws.Columns().AdjustToContents();
 
-            // Nombre dinámico
-            if(estado == "revisado")
-            {
-                estado += "s";
-            }
-            string estadoNombre = string.IsNullOrWhiteSpace(estado) ? "General" : estado;  // "En revisión" con tilde
+            if (estado == "revisado") estado += "s";
+
+            string estadoNombre = string.IsNullOrWhiteSpace(estado) ? "General" : estado;
             string programaNombre = string.IsNullOrWhiteSpace(programa) ? "" : "_" + programa;
 
-            // limpiar caracteres inválidos del nombre
+            string interesNombre = "";
+            if (i == "interesado") interesNombre = "_Interesados";
+            if (i == "nointeresado") interesNombre = "_NoInteresados";
+
             foreach (var c in Path.GetInvalidFileNameChars())
             {
                 estadoNombre = estadoNombre.Replace(c.ToString(), "");
                 programaNombre = programaNombre.Replace(c.ToString(), "");
+                interesNombre = interesNombre.Replace(c.ToString(), "");
             }
 
-            var fileName = $"Aspirantes_{estadoNombre}{programaNombre}_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+            var fileName = $"Aspirantes{interesNombre}_{estadoNombre}{programaNombre}_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
 
             using var stream = new MemoryStream();
             wb.SaveAs(stream);
@@ -228,5 +238,6 @@ namespace MVC_AutomaG.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 fileName);
         }
+
     }
 }

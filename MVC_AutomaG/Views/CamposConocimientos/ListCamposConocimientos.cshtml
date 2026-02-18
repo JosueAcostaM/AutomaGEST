@@ -84,7 +84,7 @@
         window.eliminarCampo = function(id) {
             if(!confirm('¿Seguro que quieres eliminar este campo?')) return;
 
-            fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.netapi/CamposConocimientos/${id}`, { method: 'DELETE' })
+            fetch(`https://automagestapi-a6fsfueugkbrc0ez.canadacentral-01.azurewebsites.net/api/CamposConocimientos/${id}`, { method: 'DELETE' })
                 .then(r => {
                     if (!r.ok) throw new Error('Error al eliminar');
                     return r;
